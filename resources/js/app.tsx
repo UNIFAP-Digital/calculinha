@@ -1,6 +1,7 @@
 import '../css/app.css'
 import './bootstrap'
 
+import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
@@ -15,6 +16,8 @@ createInertiaApp({
       (module) => /* eslint-disable */ {
         // @ts-ignore
         if (name.startsWith('auth/')) module.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
+        // @ts-ignore
+        else module.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
         return module
       } /* eslint-enable */,
     ),
@@ -24,6 +27,6 @@ createInertiaApp({
     root.render(<App {...props} />)
   },
   progress: {
-    color: '#4B5563',
+    color: '#3B82F6',
   },
 })
