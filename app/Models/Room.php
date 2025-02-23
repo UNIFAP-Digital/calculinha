@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     protected $fillable = [
-        'owner_id',
         'name',
         'invite_code',
         'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active'  => 'boolean',
+        'created_at' => 'datetime',
     ];
 
     public function owner(): BelongsTo
@@ -24,8 +24,13 @@ class Room extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function flows(): HasMany
+    {
+        return $this->hasMany(Flow::class);
+    }
+
     public function participants(): HasMany
     {
-        return $this->hasMany(RoomParticipant::class);
+        return $this->hasMany(Participant::class);
     }
 }

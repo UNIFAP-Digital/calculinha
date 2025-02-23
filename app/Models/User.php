@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     protected $fillable = [
         'name',
@@ -34,5 +32,10 @@ class User extends Authenticatable
     public function rooms(): HasMany
     {
         return $this->hasMany(Room::class, 'owner_id');
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class, 'owner_id');
     }
 }
