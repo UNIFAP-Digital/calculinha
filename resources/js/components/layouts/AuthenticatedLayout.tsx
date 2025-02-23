@@ -1,4 +1,5 @@
 import { Button, buttonVariants } from '@/components/ui/button'
+import { Toaster } from '@/components/ui/sonner'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Link, usePage } from '@inertiajs/react'
 import { clsx } from 'clsx'
@@ -6,8 +7,8 @@ import { GroupIcon, LogOutIcon, MenuIcon, ShapesIcon, XIcon } from 'lucide-react
 import { PropsWithChildren } from 'react'
 
 const navigation = [
-  { name: 'Salas', route: 'dashboard', icon: GroupIcon },
-  { name: 'Atividades', route: 'login', icon: ShapesIcon },
+  { name: 'Salas', route: 'rooms.index', icon: GroupIcon },
+  { name: 'Atividades', route: 'question.index', icon: ShapesIcon },
 ]
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
@@ -15,7 +16,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="border-b border-zinc-200 bg-white">
+        <Disclosure as="nav" className="border bg-card shadow">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
               <div className="flex">
@@ -32,9 +33,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                       href={route(item.route)}
                       aria-current={route().current() == item.route ? 'page' : undefined}
                       className={clsx(
-                        route().current() == item.route
-                          ? 'border-primary text-gray-900'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                        route().current() == item.route ? 'text- border-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                       )}
                     >
@@ -109,6 +108,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
         {children}
       </div>
+      <Toaster />
     </>
   )
 }

@@ -6,10 +6,6 @@ html, body, #app {
     height: 100%;
 }
 
-#app {
-    @apply bg-muted;
-}
-
 @layer base {
     :root {
         --background: 0 0% 100%;
