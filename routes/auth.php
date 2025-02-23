@@ -23,5 +23,5 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::put('senha', [PasswordController::class, 'update'])->name('password.update');
-    Route::post('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::delete('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
