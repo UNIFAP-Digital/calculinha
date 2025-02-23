@@ -1,9 +1,10 @@
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
+import { useTheme } from '@/hooks/useTheme'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 import { clsx } from 'clsx'
-import { GroupIcon, LogOutIcon, MenuIcon, ShapesIcon, XIcon } from 'lucide-react'
+import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, XIcon } from 'lucide-react'
 import { PropsWithChildren } from 'react'
 
 const navigation = [
@@ -13,10 +14,18 @@ const navigation = [
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   const user = usePage().props.auth.user
+  const { theme, toggleTheme } = useTheme()
+
+  const handleLogout = () => {
+    router.delete('/sair', {
+      onSuccess() {},
+    })
+  }
+
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="border bg-card shadow">
+        <Disclosure as="nav" className="border bg-card shadow-sm">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
               <div className="flex">
@@ -33,7 +42,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                       href={route(item.route)}
                       aria-current={route().current() == item.route ? 'page' : undefined}
                       className={clsx(
-                        route().current() == item.route ? 'text- border-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                        route().current() == item.route ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                       )}
                     >
@@ -46,18 +55,28 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <div className="me-3 flex flex-col items-end">
-                  <span className="text-base font-medium text-gray-800">{user.name}</span>
+                  <span className="text-base font-medium text-foreground">{user.name}</span>
                   <span className="text-sm font-medium text-muted-foreground">{user.email}</span>
                 </div>
 
-                <Link className={buttonVariants({ variant: 'ghost', size: 'icon' })} href={route('logout')}>
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="mr-2">
+                  {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
+                  <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
+                </Button>
+
+                <Button variant="ghost" size="icon" onClick={handleLogout}>
                   <span className="sr-only">Sair</span>
                   <LogOutIcon aria-hidden="true" className="size-6" />
-                </Link>
+                </Button>
               </div>
 
               {/* MOBILE MENU BUTTON */}
               <div className="flex items-center sm:hidden">
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="mr-2">
+                  {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
+                  <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
+                </Button>
+
                 <DisclosureButton as={Button} variant="ghost" size="icon" className="group">
                   <span className="sr-only">Abrir menu principal</span>
                   <MenuIcon aria-hidden="true" className="block group-data-[open]:hidden" />
@@ -73,13 +92,11 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
               {navigation.map((item) => (
                 <DisclosureButton
                   key={item.name}
-                  as="a"
+                  as={Link}
                   href={route(item.route)}
                   aria-current={route().current() == item.route ? 'page' : undefined}
                   className={clsx(
-                    route().current() == item.route
-                      ? 'border-primary bg-muted text-primary'
-                      : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
+                    route().current() == item.route ? 'border-primary bg-muted text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
                     'block border-l-4 py-2 pl-3 pr-4 text-base font-medium',
                   )}
                 >
@@ -89,16 +106,12 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
             </div>
             <div className="border-t border-gray-200 pb-3 pt-4">
               <div className="px-4">
-                <div className="text-base font-medium text-gray-800">{user.name}</div>
+                <div className="text-base font-medium text-foreground">{user.name}</div>
                 <div className="text-sm font-medium text-muted-foreground">{user.email}</div>
               </div>
 
               <div className="mt-3 space-y-1">
-                <DisclosureButton
-                  as="a"
-                  href={route('logout')}
-                  className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                >
+                <DisclosureButton onClick={handleLogout} className="block px-4 py-2 text-base font-medium text-muted-foreground hover:text-primary">
                   Sair
                 </DisclosureButton>
               </div>
