@@ -10,6 +10,7 @@ import { FormEventHandler } from 'react'
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
+import { ArrowRight } from 'lucide-react'
 
 export default function InvitePage() {
   const { data, setData, post, processing, errors } = useForm({
@@ -72,6 +73,7 @@ export default function InvitePage() {
                       </div>
                       <Button tabIndex={4} type="submit" className="w-full" disabled={processing}>
                         Continuar
+                        <ArrowRight />
                       </Button>
                     </div>
                     <InputError message={errors.invite} />
