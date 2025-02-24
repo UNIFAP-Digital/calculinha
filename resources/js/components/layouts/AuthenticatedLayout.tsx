@@ -9,7 +9,7 @@ import { PropsWithChildren } from 'react'
 
 const navigation = [
   { name: 'Salas', route: 'rooms.index', icon: GroupIcon },
-  { name: 'Atividades', route: 'question.index', icon: ShapesIcon },
+  { name: 'Atividades', route: 'activities.index', icon: ShapesIcon },
 ]
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
