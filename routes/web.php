@@ -1,27 +1,42 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\FlowActivityController;
+use App\Http\Controllers\FlowController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::redirect('/', '/convite');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::controller(RoomController::class)->prefix('/salas')->group(function () {
+        Route::get('/{room?}', 'index')->name('rooms.index');
+        Route::post('/', 'store')->name('rooms.store');
+        Route::put('/{room}', 'update')->name('rooms.update');
+        Route::delete('/{room}', 'destroy')->name('rooms.destroy');
+
+        Route::controller(FlowController::class)->prefix('/{room}/trilhas')->group(function () {
+            Route::post('/', 'store')->name('flows.store');
+            Route::put('/{flow}', 'update')->name('flows.update');
+            Route::delete('/{flow}', 'destroy')->name('flows.destroy');
+            Route::post('/{flow}/move-up', 'moveUp')->name('flows.move-up');
+            Route::post('/{flow}/move-down', 'moveDown')->name('flows.move-down');
+
+            Route::controller(FlowActivityController::class)->prefix('/{flow}/activities')->group(function () {
+                Route::post('/', 'store')->name('flow-activities.store');
+                Route::delete('/{flowActivity}', 'destroy')->name('flow-activities.destroy');
+                Route::post('/{flowActivity}/move-up', 'moveUp')->name('flow-activities.move-up');
+                Route::post('/{flowActivity}/move-down', 'moveDown')->name('flow-activities.move-down');
+            });
+        });
+    });
+
+    Route::controller(ActivityController::class)->prefix('/atividades')->group(function () {
+        Route::get('/', 'index')->name('activities.index');
+        Route::post('/', 'store')->name('activities.store');
+        Route::put('/{activity}', 'update')->name('activities.update');
+        Route::delete('/{activity}', 'destroy')->name('activities.destroy');
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
