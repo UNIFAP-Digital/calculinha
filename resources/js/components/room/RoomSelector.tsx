@@ -1,19 +1,19 @@
-import CreateRoomCard from '@/components/CreateRoomCard'
-import RoomCard from '@/components/RoomCard'
+import CreateRoomCard from '@/components/room/CreateRoomCard'
+import RoomCard from '@/components/room/RoomCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import Room from '@/types/room'
+import Room from '@/models/room'
 import { Book, Plus } from 'lucide-react'
 
 interface RoomSelectorProps {
   rooms: Room[]
   selectedRoom: Room | null
-  onSelectRoom: (room: Room) => void
-  onCreateRoom: () => void
+  onSelect: (room: Room) => void
+  onCreate: () => void
 }
 
-export default function RoomSelector({ rooms, selectedRoom, onSelectRoom, onCreateRoom }: RoomSelectorProps) {
+export default function RoomSelector({ rooms, selectedRoom, onSelect, onCreate }: RoomSelectorProps) {
   return (
     <div className="md:w-80">
       {/* Mobile View */}
@@ -21,7 +21,7 @@ export default function RoomSelector({ rooms, selectedRoom, onSelectRoom, onCrea
         <Select
           onValueChange={(id) => {
             const room = rooms.find((r) => r.id === Number(id))
-            if (room) onSelectRoom(room)
+            if (room) onSelect(room)
           }}
           value={selectedRoom?.id?.toString()}
         >
@@ -42,7 +42,7 @@ export default function RoomSelector({ rooms, selectedRoom, onSelectRoom, onCrea
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={onCreateRoom} variant="outline" className="w-full">
+        <Button onClick={onCreate} variant="outline" className="w-full">
           <Plus className="mr-2 h-4 w-4" />
           Criar Nova Sala
         </Button>
@@ -51,9 +51,9 @@ export default function RoomSelector({ rooms, selectedRoom, onSelectRoom, onCrea
       {/* Desktop View */}
       <div className="hidden md:block">
         <div className="space-y-3">
-          <CreateRoomCard onClick={onCreateRoom} />
+          <CreateRoomCard onClick={onCreate} />
           {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} isSelected={selectedRoom?.id === room.id} onClick={() => onSelectRoom(room)} />
+            <RoomCard key={room.id} room={room} isSelected={selectedRoom?.id === room.id} onClick={() => onSelect(room)} />
           ))}
         </div>
       </div>

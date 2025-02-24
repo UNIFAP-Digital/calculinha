@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import Room from '@/types/room'
+import Room from '@/models/room'
 import { Book, Users } from 'lucide-react'
 
 interface RoomCardProps {
