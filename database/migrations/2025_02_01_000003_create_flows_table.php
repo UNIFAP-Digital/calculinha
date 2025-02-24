@@ -18,15 +18,16 @@ return new class extends Migration {
             $table->string('icon');
             $table->string('description')->nullable();
             $table->string('color');
-            $table->integer('order');
+            $table->integer('position');
             $table->timestamps();
         });
 
-        Schema::create('flow_activity', function (Blueprint $table) {
+        Schema::create('flow_activities', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
 
-            $table->string('order');
+            $table->integer('position');
         });
     }
 
@@ -36,6 +37,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('flows');
-        Schema::dropIfExists('flow_activity');
+        Schema::dropIfExists('flow_activities');
     }
 };
