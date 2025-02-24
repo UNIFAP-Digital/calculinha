@@ -26,37 +26,35 @@ class DatabaseSeeder extends Seeder
 
         $room = $user->rooms()->create([
             'invite_code' => '0311',
-            'name' => 'Turma 311',
+            'name'        => 'Turma 311',
         ]);
 
         $flow = $room->flows()->create([
             'name'        => 'Adição',
             'icon'        => '➕',
-            'description' => 'Aprenda a somar dois números!',
+            'description' => 'Aprendendo adição com dois números!',
             'color'       => '#32a852',
-            'order'       => 1,
+            'position'    => 10000,
         ]);
 
-        $flow->activities()->attach(1, ['order' => 1]);
-        $flow->activities()->attach(2, ['order' => 2]);
-        $flow->activities()->attach(3, ['order' => 3]);
-        $flow->activities()->attach(4, ['order' => 4]);
-        $flow->activities()->attach(5, ['order' => 5]);
-        $flow->activities()->attach(6, ['order' => 6]);
-        $flow->activities()->attach(7, ['order' => 7]);
-        $flow->activities()->attach(8, ['order' => 8]);
-        $flow->activities()->attach(9, ['order' => 9]);
-        $flow->activities()->attach(10, ['order' => 10]);
+        Activity::all()->reduce(function (int $position, Activity $activity) use ($flow) {
+            $flow->flowActivities()->create([
+                'activity_id' => $activity->id,
+                'position'    => $position,
+            ]);
+
+            return $position + 1000;
+        }, 10000);
     }
 
     public function createSystemActivities(): void
     {
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 🍎🍎🍎 + 🍎🍎',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 🍎🍎🍎 + 🍎🍎?',
                 'correct_answer' => '🍎🍎🍎🍎🍎',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍎🍎🍎🍎',
                     '🍎🍎🍏🍎🍎',
                     '🍎🍎🍎',
@@ -66,10 +64,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 🍓🍓 + 🍓🍓',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 🍓🍓 + 🍓🍓?',
                 'correct_answer' => '🍓🍓🍓🍓',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍓🍓🍓🍓🍓',
                     '🍓🍓',
                     '🍓🍓🍓',
@@ -79,10 +77,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 🍉 + 🍉🍉🍉',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 🍉 + 🍉🍉🍉?',
                 'correct_answer' => '🍉🍉🍉🍉',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍉🍉',
                     '🍉🍉🍉🍉🍉',
                     '🍉🍉🍉',
@@ -92,10 +90,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 1 melância + 🍉🍉🍉',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 1 melância + 🍉🍉🍉?',
                 'correct_answer' => '4 melâncias',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍉🍉',
                     '1 melância',
                     '🍉🍉🍉',
@@ -105,10 +103,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 2 morangos + 🍓🍓🍓',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 2 morangos + 🍓🍓🍓?',
                 'correct_answer' => '🍓🍓🍓🍓🍓',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍓🍓🍓',
                     '2 morangos',
                     '🍓🍓🍓🍓',
@@ -118,10 +116,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 🍎 + 4 maçãs',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 🍎 + 4 maçãs?',
                 'correct_answer' => '5 maçãs',
-                'choices'        => [
+                'wrong_answers'  => [
                     '🍎',
                     '6 maçãs',
                     '🍎🍎',
@@ -131,10 +129,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 1 + 4',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 1 + 4?',
                 'correct_answer' => '5',
-                'choices'        => [
+                'wrong_answers'  => [
                     '6',
                     '2',
                     '3',
@@ -144,10 +142,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 3 + 7 maçãs',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 3 + 7 maçãs?',
                 'correct_answer' => '10',
-                'choices'        => [
+                'wrong_answers'  => [
                     '9',
                     '11',
                     '7',
@@ -157,10 +155,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 6 + 2 maçãs',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 6 + 2 maçãs?',
                 'correct_answer' => '8',
-                'choices'        => [
+                'wrong_answers'  => [
                     '4',
                     '5',
                     '7',
@@ -170,10 +168,10 @@ class DatabaseSeeder extends Seeder
 
         Activity::create([
             'content' => [
-                'type'           => 'multiple-choice',
-                'question'       => 'Quanto é 3 + 4 maçãs',
+                'type'           => 'multiple_choice',
+                'question'       => 'Quanto é 3 + 4 maçãs?',
                 'correct_answer' => '7',
-                'choices'        => [
+                'wrong_answers'  => [
                     '3',
                     '4',
                     '8',
