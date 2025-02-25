@@ -1,4 +1,5 @@
 import ActivityList from '@/components/room/tabs/flows/activity/ActivityList'
+import FlowFormDialog from '@/components/room/tabs/flows/FlowFormDialog'
 import { Separator } from '@/components/ui/separator'
 import { Flow } from '@/models/flow'
 import { useState } from 'react'
@@ -10,14 +11,14 @@ export interface FlowCardProps {
   order: number
   isFirst: boolean
   isLast: boolean
-  onEdit: () => void
   onDelete: () => void
   onMoveUp: () => void
   onMoveDown: () => void
 }
 
-export default function FlowCard({ flow, order, isFirst, isLast, onDelete, onMoveDown, onMoveUp, onEdit }: FlowCardProps) {
+export default function FlowCard({ flow, order, isFirst, isLast, onDelete, onMoveDown, onMoveUp }: FlowCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   return (
     <>
@@ -31,7 +32,7 @@ export default function FlowCard({ flow, order, isFirst, isLast, onDelete, onMov
               isFirst={isFirst}
               isLast={isLast}
               isExpanded={isExpanded}
-              onEdit={onEdit}
+              onEdit={() => setIsFormOpen(true)}
               onDelete={onDelete}
               onMoveUp={onMoveUp}
               onMoveDown={onMoveDown}
@@ -47,6 +48,8 @@ export default function FlowCard({ flow, order, isFirst, isLast, onDelete, onMov
           </>
         )}
       </div>
+
+      <FlowFormDialog open={isFormOpen} onOpenChange={setIsFormOpen} roomId={flow.room_id} flow={flow} />
     </>
   )
 }
