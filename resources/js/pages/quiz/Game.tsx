@@ -44,7 +44,7 @@ export default function GamePage({ flow }: GamePageProps) {
         <QuizProvider flowActivities={flow.flow_activities!} onComplete={handleQuizComplete}>
           <QuizIntro flow={flow} primaryColor={theme.primaryColor} textColor={theme.textColor} />
           <QuizGame primaryColor={theme.primaryColor} secondaryColor={theme.secondaryColor} />
-          <QuizResult primaryColor={theme.primaryColor} />
+          <QuizResult roomId={flow.room_id} primaryColor={theme.primaryColor} />
         </QuizProvider>
       </div>
     </>

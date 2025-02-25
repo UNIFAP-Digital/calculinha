@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\QuizResultRequest;
 use App\Http\Resources\FlowResource;
 use App\Http\Resources\RoomResource;
-use App\Models\Attempt;
 use App\Models\Flow;
 use App\Models\FlowActivity;
 use App\Models\Room;
@@ -47,29 +46,22 @@ class QuizController extends Controller
 
         $validated = $request->validated();
         $attempts = $validated['attempts'];
-        $processedAttempts = [];
 
         foreach ($attempts as $attemptData) {
             $flowActivityId = $attemptData['flow_activity_id'];
             $answer = $attemptData['answer'];
 
             $flowActivity = FlowActivity::findOrFail($flowActivityId);
-            $correctAnswer = $flowActivity->activity->correct_answer ?? null;
+            $correctAnswer = $flowActivity->activity->content['correct_answer'] ?? null;
             $isCorrect = $correctAnswer !== null && $answer === $correctAnswer;
 
-            $processedAttempts[] = [
-                'participant_id'   => $participantId,
-                'flow_activity_id' => $flowActivityId,
-                'answer'           => $answer,
-                'is_correct'       => $isCorrect
-            ];
+            $flowActivity->participants()->syncWithoutDetaching([
+                $participantId => [
+                    'answer'     => $answer,
+                    'is_correct' => $isCorrect
+                ]
+            ]);
         }
-
-        Attempt::upsert(
-            $processedAttempts,
-            ['participant_id', 'flow_activity_id'],
-            ['answer', 'is_correct']
-        );
 
         return response()->noContent();
     }

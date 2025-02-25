@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class FlowActivity extends Model
 {
@@ -30,6 +31,12 @@ class FlowActivity extends Model
     public function flow(): BelongsTo
     {
         return $this->belongsTo(Flow::class);
+    }
+
+    public function participants(): BelongsToMany
+    {
+        return $this->belongsToMany(Participant::class, 'attempts')
+            ->withPivot(['is_correct', 'answer', 'created_at']);
     }
 
     public static function getInitialPosition(int $flowId): int
