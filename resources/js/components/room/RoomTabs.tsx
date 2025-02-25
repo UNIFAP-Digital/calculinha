@@ -2,31 +2,12 @@ import FlowsTab from '@/components/room/tabs/FlowsTab'
 import ParticipantsTab from '@/components/room/tabs/ParticipantsTab'
 import StatisticsTab from '@/components/room/tabs/StatisticsTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useRoomTabs } from '@/hooks/useRoomTabs'
 import Room from '@/models/room'
 import { ChartLine, Users, Workflow } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 export default function RoomTabs({ room }: { room: Room }) {
-  const [activeTab, setActiveTab] = useState(() => {
-    const hash = window.location.hash.replace('#', '')
-    return ['participants', 'flows', 'statistic'].includes(hash) ? hash : 'participants'
-  })
-
-  useEffect(() => {
-    window.location.hash = activeTab
-  }, [activeTab])
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '')
-      if (['participants', 'flows', 'statistic'].includes(hash)) {
-        setActiveTab(hash)
-      }
-    }
-
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
+  const { activeTab, setActiveTab } = useRoomTabs()
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
