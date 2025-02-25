@@ -1,6 +1,6 @@
 import DeleteAlertDialog from '@/components/DeleteAlertDialog'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/ui'
 import { ChevronDown, MoveDown, MoveUp, Pencil } from 'lucide-react'
 
 interface FlowActionsProps {

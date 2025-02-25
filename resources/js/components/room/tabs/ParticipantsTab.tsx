@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import Room from '@/models/room'
+import { cn } from '@/utils/ui'
 import { Copy, Medal, Trophy, Users } from 'lucide-react'
 
 const mockParticipants = [
