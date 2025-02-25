@@ -16,6 +16,8 @@ createInertiaApp({
       (module) => /* eslint-disable */ {
         // @ts-ignore
         if (name.startsWith('auth/')) module.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
+        else if (name.startsWith('quiz/')) {
+        }
         // @ts-ignore
         else module.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
         return module
