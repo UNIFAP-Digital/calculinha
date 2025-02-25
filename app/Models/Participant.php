@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Participant extends Model
 {
     protected $fillable = [
-        'name'
+        'name',
+        'room_id',
     ];
 
     protected $casts = [
