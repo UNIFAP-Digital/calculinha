@@ -16,7 +16,8 @@ class RoomController extends Controller
         if ($room) Gate::authorize('view', [Room::class, $room]);
 
         $room?->load([
-            'participants',
+            'participants.flowActivities.activity',
+            'participants.flowActivities.flow',
             'flows'                => fn($query) => $query->withCount('flowActivities')->orderBy('position'),
             'flows.flowActivities' => fn($query) => $query->orderBy('position'),
             'flows.flowActivities.activity'
@@ -50,17 +51,7 @@ class RoomController extends Controller
         Gate::authorize('create', Room::class);
 
         $validated = $request->validated();
-
-        $validInviteCode = function (): string {
-            do {
-                $code = str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
-                $exists = Room::where('invite_code', $code)->exists();
-            } while ($exists);
-
-            return $code;
-        };
-
-        $validated['invite_code'] = $validInviteCode();
+        $validated['invite_code'] = Room::generateValidInviteCode();
 
         $request->user()->rooms()->create($validated);
 
