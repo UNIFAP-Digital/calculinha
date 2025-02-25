@@ -11,11 +11,11 @@ interface RoomCardProps {
 
 export default function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
   return (
-    <Card className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'border-primary shadow-sm' : 'hover:border-gray-300'}`} onClick={onClick}>
+    <Card className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'border-primary shadow-xs' : 'hover:border-gray-300'}`} onClick={onClick}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center">
-            <Book className="mr-2 h-4 w-4 text-primary" />
+            <Book className="text-primary mr-2 h-4 w-4" />
             <div>
               <h3 className="font-medium">{room.name}</h3>
               <div className="mt-1 flex items-center text-sm text-gray-500">

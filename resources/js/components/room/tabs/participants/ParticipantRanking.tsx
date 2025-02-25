@@ -22,11 +22,11 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
   const getRankingStyles = (position: number) => {
     switch (position) {
       case 1:
-        return 'dark:bg-gradient-to-r dark:from-yellow-900/80 dark:to-amber-800/50 dark:border-yellow-600/50 dark:shadow-inner dark:shadow-yellow-950/20 bg-gradient-to-r from-yellow-100 to-yellow-50 border-yellow-200'
+        return 'dark:bg-linear-to-r dark:from-yellow-900/80 dark:to-amber-800/50 dark:border-yellow-600/50 dark:shadow-inner dark:shadow-yellow-950/20 bg-linear-to-r from-yellow-100 to-yellow-50 border-yellow-200'
       case 2:
-        return 'dark:bg-gradient-to-r dark:from-zinc-900/50 dark:to-zinc-800/30 dark:border-zinc-700/50 bg-gradient-to-r from-zinc-100 to-zinc-50 border-zinc-200'
+        return 'dark:bg-linear-to-r dark:from-zinc-900/50 dark:to-zinc-800/30 dark:border-zinc-700/50 bg-linear-to-r from-zinc-100 to-zinc-50 border-zinc-200'
       case 3:
-        return 'dark:bg-gradient-to-r dark:from-orange-950/50 dark:to-orange-900/30 dark:border-orange-800/50 bg-gradient-to-r from-orange-100 to-orange-50 border-orange-200'
+        return 'dark:bg-linear-to-r dark:from-orange-950/50 dark:to-orange-900/30 dark:border-orange-800/50 bg-linear-to-r from-orange-100 to-orange-50 border-orange-200'
       default:
         return 'bg-card'
     }
@@ -41,30 +41,30 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
       case 3:
         return <Medal className="h-5 w-5 text-orange-400" />
       default:
-        return <span className="text-sm font-medium text-muted-foreground">{position}º</span>
+        return <span className="text-muted-foreground text-sm font-medium">{position}º</span>
     }
   }
 
   return (
-    <Collapsible className="overflow-hidden rounded-lg border shadow-sm">
+    <Collapsible className="overflow-hidden rounded-lg border shadow-xs">
       <CollapsibleTrigger className="w-full" disabled={participant.stats?.total == 0}>
         <div className={cn('flex w-full items-center gap-4 p-4 transition-all', getRankingStyles(position))}>
           <div className="flex h-8 w-8 items-center justify-center">{getRankingIcon(position)}</div>
 
           <div className="flex flex-1 items-center justify-between">
             <div className="text-start">
-              <h3 className="font-medium text-foreground">{participant.name}</h3>
-              <p className="text-sm text-muted-foreground">Entrou em {new Date(participant.created_at).toLocaleDateString('pt-BR')}</p>
+              <h3 className="text-foreground font-medium">{participant.name}</h3>
+              <p className="text-muted-foreground text-sm">Entrou em {new Date(participant.created_at).toLocaleDateString('pt-BR')}</p>
             </div>
 
             <div className="flex items-center gap-2">
               {participant.stats?.total == 0 ? (
-                <p className="text-lg font-semibold text-foreground">Ainda não jogou</p>
+                <p className="text-foreground text-lg font-semibold">Ainda não jogou</p>
               ) : (
                 <>
                   <div className="text-end">
-                    <p className="text-lg font-semibold text-foreground">{participant.stats?.ratio}</p>
-                    <p className="text-sm text-muted-foreground">pontos</p>
+                    <p className="text-foreground text-lg font-semibold">{participant.stats?.ratio}</p>
+                    <p className="text-muted-foreground text-sm">pontos</p>
                   </div>
                   <ChevronDown className="ui-expanded:rotate-180 h-5 w-5 transition-all" />
                 </>
@@ -75,7 +75,7 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="border-t bg-background">
+        <div className="bg-background border-t">
           <div className="divide-y">
             {participant.flows!.map((flow) => (
               <Collapsible key={flow.id} onOpenChange={() => toggleFlow(flow.id.toString())} open={openFlows[flow.id.toString()]}>
@@ -90,7 +90,7 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
                     <div className="flex flex-1 items-center justify-between">
                       <div className="text-start">
                         <h4 className="font-medium">{flow.name}</h4>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                           {`${flow.stats?.correct}/${flow.stats?.total} atividades corretas (${flow.stats?.percentage}%)`}
                         </p>
                       </div>
@@ -109,12 +109,12 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
                       {flow.flow_activities!.map((activity) => (
                         <div key={activity.id} className="flex items-center gap-3 px-4 py-2">
                           <div className="flex h-6 w-6 items-center justify-center">
-                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            <FileText className="text-muted-foreground h-4 w-4" />
                           </div>
 
                           <div className="flex-1">
                             <p className="text-sm">{activity.activity!.question}</p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-muted-foreground text-xs">
                               Tentativa: {activity.attempt!.answer!.substring(0, 25) + (activity.attempt!.answer.length > 25 ? '...' : '')}
                             </p>
                           </div>
@@ -127,7 +127,7 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
                                 <CircleSlash className="h-5 w-5 text-red-500" />
                               )
                             ) : (
-                              <FileText className="h-5 w-5 text-muted-foreground" />
+                              <FileText className="text-muted-foreground h-5 w-5" />
                             )}
                           </div>
                         </div>

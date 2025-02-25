@@ -13,23 +13,23 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
   }
 
   return (
-    <div className="rounded-lg bg-background p-8 shadow-sm">
+    <div className="bg-background rounded-lg p-8 shadow-xs">
       <div className="flex flex-col items-center justify-center text-center">
-        <div className="mb-4 rounded-full bg-muted p-3">
-          <Users className="h-6 w-6 text-muted-foreground" />
+        <div className="bg-muted mb-4 rounded-full p-3">
+          <Users className="text-muted-foreground h-6 w-6" />
         </div>
-        <h3 className="mb-2 text-lg font-medium text-foreground">Nenhum participante ainda</h3>
-        <p className="mb-6 max-w-sm text-sm text-muted-foreground">Para convidar participantes, compartilhe estas instruções:</p>
+        <h3 className="text-foreground mb-2 text-lg font-medium">Nenhum participante ainda</h3>
+        <p className="text-muted-foreground mb-6 max-w-sm text-sm">Para convidar participantes, compartilhe estas instruções:</p>
 
-        <div className="mb-6 w-full max-w-sm space-y-4 rounded-lg bg-muted p-4 text-left">
-          <p className="text-sm text-foreground">
-            1. Acesse: <span className="mt-1 block break-all rounded bg-background px-3 py-2 font-mono text-sm">{route('invite')}</span>
+        <div className="bg-muted mb-6 w-full max-w-sm space-y-4 rounded-lg p-4 text-left">
+          <p className="text-foreground text-sm">
+            1. Acesse: <span className="bg-background mt-1 block rounded px-3 py-2 font-mono text-sm break-all">{route('invite')}</span>
           </p>
 
-          <p className="text-sm text-foreground">
+          <p className="text-foreground text-sm">
             2. Insira o código:
             <div className="mt-1 flex items-center gap-2">
-              <code className="flex-1 rounded bg-background px-3 py-2 font-mono text-sm">{room.invite_code}</code>
+              <code className="bg-background flex-1 rounded px-3 py-2 font-mono text-sm">{room.invite_code}</code>
               <Button variant="outline" size="icon" className="shrink-0" onClick={handleCopyCode}>
                 <Copy className="h-4 w-4" />
               </Button>
@@ -37,7 +37,7 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
           </p>
         </div>
 
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           <p>Após inserir o código, o participante terá acesso imediato à sala.</p>
         </div>
       </div>

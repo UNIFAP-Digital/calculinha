@@ -93,7 +93,7 @@ export default function IntroPage({ room }: IntroPageProps) {
                     <div></div>
                     <div className="col-span-7">
                       <div className="mt-2 flex items-center gap-2">
-                        <div className="h-2 flex-grow overflow-hidden rounded-full bg-border">
+                        <div className="bg-border h-2 grow overflow-hidden rounded-full">
                           <div
                             className="h-full rounded-full"
                             style={{
@@ -103,7 +103,7 @@ export default function IntroPage({ room }: IntroPageProps) {
                           ></div>
                         </div>
 
-                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow" style={{ color: flow.textColor, backgroundColor: flow.color }}>
+                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow-sm" style={{ color: flow.textColor, backgroundColor: flow.color }}>
                           {index + 1} de {totalFlows}
                         </div>
                       </div>

@@ -64,17 +64,17 @@ export default function SelectActivityDialog({ flow, onSelectActivity }: SelectA
         </DialogHeader>
 
         <div className="relative mt-4">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
           <Input placeholder="Buscar por questão ou resposta..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
 
         <ScrollArea className="mt-4 max-h-[300px] pr-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
             </div>
           ) : error ? (
-            <div className="py-8 text-center text-destructive">
+            <div className="text-destructive py-8 text-center">
               {error}
               <Button variant="outline" size="sm" className="mt-2" onClick={fetchActivities}>
                 Tentar Novamente
@@ -85,7 +85,7 @@ export default function SelectActivityDialog({ flow, onSelectActivity }: SelectA
               {filteredActivities.map((activity) => (
                 <div
                   key={activity.id}
-                  className="group flex cursor-pointer flex-col gap-2 rounded-lg border p-4 hover:bg-accent"
+                  className="group hover:bg-accent flex cursor-pointer flex-col gap-2 rounded-lg border p-4"
                   onClick={() => handleSelectActivity(activity)}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -94,14 +94,14 @@ export default function SelectActivityDialog({ flow, onSelectActivity }: SelectA
                       Múltipla Escolha
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     <span className="font-medium">Resposta:</span> {activity.correct_answer}
                   </p>
                 </div>
               ))}
 
               {filteredActivities.length === 0 && !isLoading && (
-                <div className="py-8 text-center text-muted-foreground">
+                <div className="text-muted-foreground py-8 text-center">
                   {activities.length === 0 ? 'Nenhuma atividade disponível.' : `Nenhuma questão encontrada para "${searchTerm}"`}
                 </div>
               )}

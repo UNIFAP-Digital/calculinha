@@ -22,7 +22,7 @@ export default function FlowCard({ flow, order, isFirst, isLast, onDelete, onMov
 
   return (
     <>
-      <div className="rounded-lg border bg-card" style={{ borderColor: flow.color }}>
+      <div className="bg-card rounded-lg border" style={{ borderColor: flow.color }}>
         <div className="flex items-center justify-between">
           <FlowHeader flow={flow} order={order} onClick={() => setIsExpanded(!isExpanded)} />
 

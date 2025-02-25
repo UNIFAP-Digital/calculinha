@@ -25,7 +25,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="border bg-card shadow-sm">
+        <Disclosure as="nav" className="bg-card border shadow-xs">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
               <div className="flex">
@@ -42,7 +42,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                       href={route(item.route)}
                       aria-current={route().current() == item.route ? 'page' : undefined}
                       className={cn(
-                        route().current() == item.route ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
+                        route().current() == item.route ? 'border-primary text-primary' : 'text-muted-foreground hover:text-primary border-transparent',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                       )}
                     >
@@ -55,8 +55,8 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <div className="me-3 flex flex-col items-end">
-                  <span className="text-base font-medium text-foreground">{user.name}</span>
-                  <span className="text-sm font-medium text-muted-foreground">{user.email}</span>
+                  <span className="text-foreground text-base font-medium">{user.name}</span>
+                  <span className="text-muted-foreground text-sm font-medium">{user.email}</span>
                 </div>
 
                 <Button variant="ghost" size="icon" onClick={toggleTheme} className="mr-2">
@@ -79,8 +79,8 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
                 <DisclosureButton as={Button} variant="ghost" size="icon" className="group">
                   <span className="sr-only">Abrir menu principal</span>
-                  <MenuIcon aria-hidden="true" className="block group-data-[open]:hidden" />
-                  <XIcon aria-hidden="true" className="hidden group-data-[open]:block" />
+                  <MenuIcon aria-hidden="true" className="block group-data-open:hidden" />
+                  <XIcon aria-hidden="true" className="hidden group-data-open:block" />
                 </DisclosureButton>
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
           {/* MOBILE MENU */}
           <DisclosurePanel className="sm:hidden">
-            <div className="space-y-1 pb-3 pt-2">
+            <div className="space-y-1 pt-2 pb-3">
               {navigation.map((item) => (
                 <DisclosureButton
                   key={item.name}
@@ -96,22 +96,22 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                   href={route(item.route)}
                   aria-current={route().current() == item.route ? 'page' : undefined}
                   className={cn(
-                    route().current() == item.route ? 'border-primary bg-muted text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
-                    'block border-l-4 py-2 pl-3 pr-4 text-base font-medium',
+                    route().current() == item.route ? 'border-primary bg-muted text-primary' : 'text-muted-foreground hover:text-primary border-transparent',
+                    'block border-l-4 py-2 pr-4 pl-3 text-base font-medium',
                   )}
                 >
                   {item.name}
                 </DisclosureButton>
               ))}
             </div>
-            <div className="border-t border-gray-200 pb-3 pt-4">
+            <div className="border-t border-gray-200 pt-4 pb-3">
               <div className="px-4">
-                <div className="text-base font-medium text-foreground">{user.name}</div>
-                <div className="text-sm font-medium text-muted-foreground">{user.email}</div>
+                <div className="text-foreground text-base font-medium">{user.name}</div>
+                <div className="text-muted-foreground text-sm font-medium">{user.email}</div>
               </div>
 
               <div className="mt-3 space-y-1">
-                <DisclosureButton onClick={handleLogout} className="block px-4 py-2 text-base font-medium text-muted-foreground hover:text-primary">
+                <DisclosureButton onClick={handleLogout} className="text-muted-foreground hover:text-primary block px-4 py-2 text-base font-medium">
                   Sair
                 </DisclosureButton>
               </div>

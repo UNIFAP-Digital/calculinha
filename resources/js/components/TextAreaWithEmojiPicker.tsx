@@ -30,7 +30,7 @@ export default function TextAreaWithEmojiPicker({ id, label, value, onChange, pl
       <div className="relative">
         <Textarea id={id} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="pr-10" />
 
-        <div className="absolute right-2 top-2">
+        <div className="absolute top-2 right-2">
           <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" type="button" className="h-6 w-6 rounded-full bg-transparent p-0 hover:bg-slate-100 dark:hover:bg-slate-800">

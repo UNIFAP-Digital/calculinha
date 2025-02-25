@@ -63,7 +63,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
 
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-md border-2 border-primary text-primary">
+            <div className="border-primary text-primary flex items-center justify-center rounded-md border-2">
               <Check className="h-4 w-4" />
             </div>
             <div className="w-full space-y-2">
@@ -77,7 +77,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-md border-2 border-destructive text-destructive">
+            <div className="border-destructive text-destructive flex items-center justify-center rounded-md border-2">
               <X className="h-4 w-4" />
             </div>
             <div className="w-full space-y-2">
@@ -96,7 +96,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-md border-2 border-destructive text-destructive">
+            <div className="border-destructive text-destructive flex items-center justify-center rounded-md border-2">
               <X className="h-4 w-4" />
             </div>
             <div className="w-full space-y-2">
@@ -115,7 +115,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-md border-2 border-destructive text-destructive">
+            <div className="border-destructive text-destructive flex items-center justify-center rounded-md border-2">
               <X className="h-4 w-4" />
             </div>
             <div className="w-full space-y-2">

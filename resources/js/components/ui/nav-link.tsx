@@ -6,7 +6,7 @@ import * as React from 'react'
 type ColorVariant = 'primary' | 'secondary' | 'muted'
 type StyleVariant = 'default' | 'underline'
 
-const linkVariants = cva('inline-flex items-center text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none', {
+const linkVariants = cva('inline-flex items-center text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-hidden', {
   variants: {
     variant: {
       default: '',

@@ -27,12 +27,12 @@ export default function ActivityDetailsDialog({ activity, className, size }: Act
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Tipo</h4>
-            <p className="text-sm text-muted-foreground">{activity.type === 'multiple_choice' ? 'Múltipla Escolha' : activity.type}</p>
+            <p className="text-muted-foreground text-sm">{activity.type === 'multiple_choice' ? 'Múltipla Escolha' : activity.type}</p>
           </div>
 
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Questão</h4>
-            <p className="text-sm text-muted-foreground">{activity.question}</p>
+            <p className="text-muted-foreground text-sm">{activity.question}</p>
           </div>
 
           <div className="space-y-2">

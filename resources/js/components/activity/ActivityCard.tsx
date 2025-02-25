@@ -19,7 +19,7 @@ export default function ActivityCard({ activity, onEdit, onDelete }: ActivityCar
       <CardContent className="flex justify-between p-4">
         <div>
           <p className="mb-2 text-sm font-medium">{activity.question}</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             <span className="font-medium">Resposta correta:</span> {activity.correct_answer}
           </p>
         </div>

@@ -54,7 +54,7 @@ export default function FlowsTab({ room }: FlowsTabProps) {
         </Fragment>
       ))}
 
-      <div className="flex justify-center rounded-lg bg-background p-4 shadow-sm">
+      <div className="bg-background flex justify-center rounded-lg p-4 shadow-xs">
         <Button variant="ghost" onClick={() => setIsFormOpen(true)}>
           <Plus />
           Adicionar trilha

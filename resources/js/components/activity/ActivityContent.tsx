@@ -33,7 +33,7 @@ export default function ActivityContent({ activities, className, searchTerm, onA
       <ActivityList activities={filteredActivities} />
 
       {activities.length === 0 && (
-        <div className="py-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground py-8 text-center">
           {filteredActivities.length === 0 ? 'Nenhuma atividade disponível.' : `Nenhuma atividade encontrada para "${searchTerm}"`}
         </div>
       )}
