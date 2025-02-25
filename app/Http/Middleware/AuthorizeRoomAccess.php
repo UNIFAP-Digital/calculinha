@@ -13,8 +13,8 @@ class AuthorizeRoomAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $roomId = $request->route('room');
-        $room = Room::findOrFail($roomId);
+        $roomOrId = $request->route('room');
+        $room = $roomOrId instanceof Room ? $roomOrId : Room::find($roomOrId);
 
         if (!$room instanceof Room) {
             abort(404, 'Sala não encontrada');
