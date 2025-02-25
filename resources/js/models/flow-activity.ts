@@ -1,4 +1,5 @@
 import { Activity } from '@/models/activity'
+import { Attempt } from '@/models/attempt'
 
 export interface FlowActivity {
   id: number
@@ -7,4 +8,5 @@ export interface FlowActivity {
   position: number
 
   activity?: Activity
+  attempt?: Attempt
 }

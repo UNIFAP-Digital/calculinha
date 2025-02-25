@@ -1,4 +1,5 @@
 import { FlowActivity } from '@/models/flow-activity'
+import Stats from '@/models/stats'
 
 export interface Flow {
   id: number
@@ -10,4 +11,5 @@ export interface Flow {
   room_id: number
   flow_activities_count?: number
   flow_activities?: FlowActivity[]
+  stats?: Stats
 }
