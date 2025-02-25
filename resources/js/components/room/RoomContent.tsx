@@ -3,7 +3,7 @@ import RoomFormDialog from '@/components/room/RoomFormDialog'
 import RoomTabs from '@/components/room/RoomTabs'
 import { Badge } from '@/components/ui/badge'
 import Room from '@/models/room'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import { Pencil, Play } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -19,11 +19,6 @@ export default function RoomContent({ room }: RoomContentProps) {
   const handleDelete = () => {
     router.delete(route('rooms.destroy', room.id))
     toast('Sala apagada com sucesso.')
-  }
-
-  const handlePlay = () => {
-    router.get(route('rooms.play', room.id))
-    toast('Iniciando sala...')
   }
 
   return (
@@ -42,9 +37,11 @@ export default function RoomContent({ room }: RoomContentProps) {
             <p className="text-muted-foreground">Gerencie a sala</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="default" onClick={handlePlay}>
-              <Play />
-              Jogar
+            <Button asChild variant="default">
+              <Link href={route('quiz.index', room.id)}>
+                <Play />
+                Jogar
+              </Link>
             </Button>
 
             <Button variant="outline" size="icon" onClick={() => setIsFormOpen(true)}>
