@@ -15,7 +15,7 @@ export const httpGet = async <T>(url: string): Promise<T> => {
   return response.json()
 }
 
-export const httpPost = async <T>(url: string, data: any): Promise<T> => {
+export const httpPost = async <T, R = undefined>(url: string, data: R): Promise<T> => {
   // Obter o token CSRF da meta tag para Laravel
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
 
@@ -28,7 +28,7 @@ export const httpPost = async <T>(url: string, data: any): Promise<T> => {
       'X-CSRF-TOKEN': csrfToken,
     },
     credentials: 'include',
-    body: JSON.stringify(data),
+    body: JSON.stringify(data ?? ''),
   })
 
   if (!response.ok) {
