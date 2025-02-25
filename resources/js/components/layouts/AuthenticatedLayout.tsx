@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
 import { useTheme } from '@/hooks/useTheme'
+import { cn } from '@/utils/ui'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Link, router, usePage } from '@inertiajs/react'
-import { clsx } from 'clsx'
 import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, XIcon } from 'lucide-react'
 import { PropsWithChildren } from 'react'
 
@@ -41,7 +41,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                       key={item.name}
                       href={route(item.route)}
                       aria-current={route().current() == item.route ? 'page' : undefined}
-                      className={clsx(
+                      className={cn(
                         route().current() == item.route ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                       )}
@@ -95,7 +95,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                   as={Link}
                   href={route(item.route)}
                   aria-current={route().current() == item.route ? 'page' : undefined}
-                  className={clsx(
+                  className={cn(
                     route().current() == item.route ? 'border-primary bg-muted text-primary' : 'border-transparent text-muted-foreground hover:text-primary',
                     'block border-l-4 py-2 pl-3 pr-4 text-base font-medium',
                   )}
