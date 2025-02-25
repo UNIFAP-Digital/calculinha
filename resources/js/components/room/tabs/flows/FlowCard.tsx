@@ -1,4 +1,4 @@
-import ActivityList from '@/components/room/flow/activity/ActivityList'
+import ActivityList from '@/components/room/tabs/flows/activity/ActivityList'
 import { Separator } from '@/components/ui/separator'
 import { Flow } from '@/models/flow'
 import { useState } from 'react'

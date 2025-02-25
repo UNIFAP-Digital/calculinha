@@ -1,5 +1,5 @@
-import ActivityItem from '@/components/room/flow/activity/ActivityItem'
-import SelectActivityDialog from '@/components/room/flow/activity/SelectActivityDialog'
+import ActivityItem from '@/components/room/tabs/flows/activity/ActivityItem'
+import SelectActivityDialog from '@/components/room/tabs/flows/activity/SelectActivityDialog'
 import { Activity } from '@/models/activity'
 import { Flow } from '@/models/flow'
 import { FlowActivity } from '@/models/flow-activity'

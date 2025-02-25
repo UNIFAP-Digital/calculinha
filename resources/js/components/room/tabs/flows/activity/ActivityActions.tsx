@@ -1,5 +1,5 @@
 import ActivityDetailsDialog from '@/components/activity/ActivityDetailsDialog'
-import ActivityUnlinkAlertDialog from '@/components/room/flow/activity/ActivityUnlinkAlertDialog'
+import ActivityUnlinkAlertDialog from '@/components/room/tabs/flows/activity/ActivityUnlinkAlertDialog'
 import { Button } from '@/components/ui/button'
 import { Activity } from '@/models/activity'
 import { MoveDown, MoveUp } from 'lucide-react'

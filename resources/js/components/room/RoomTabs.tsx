@@ -1,5 +1,5 @@
-import FlowsTab from '@/components/room/tabs/FlowsTab'
-import ParticipantsTab from '@/components/room/tabs/ParticipantsTab'
+import FlowsTab from '@/components/room/tabs/flows/FlowsTab'
+import ParticipantsTab from '@/components/room/tabs/participants/ParticipantsTab'
 import StatisticsTab from '@/components/room/tabs/StatisticsTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRoomTabs } from '@/hooks/useRoomTabs'

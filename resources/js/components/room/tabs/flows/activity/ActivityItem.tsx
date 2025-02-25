@@ -1,4 +1,4 @@
-import ActivityActions from '@/components/room/flow/activity/ActivityActions'
+import ActivityActions from '@/components/room/tabs/flows/activity/ActivityActions'
 import { Badge } from '@/components/ui/badge'
 import { FlowActivity } from '@/models/flow-activity'
 import { useMemo } from 'react'
