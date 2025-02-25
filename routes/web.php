@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/convite');
 
-Route::get('/salas/{room}/quiz', [QuizController::class, 'index'])->name('quiz.index');
-Route::get('/salas/{room}/quiz/{flow}', [QuizController::class, 'game'])->name('quiz.game');
+Route::controller(QuizController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
+    Route::get('/', 'index')->name('quiz.index');
+    Route::get('/{flow}', 'game')->name('quiz.game');
+    Route::post('/result', 'result')->name('quiz.result');
+});
 
 Route::middleware('auth')->group(function () {
     Route::controller(RoomController::class)->prefix('/salas')->group(function () {
