@@ -1,31 +1,29 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "unifap-digital/calculinha",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Um projeto de mestrado voltado para o ensino de matemática a crianças especiais.",
     "keywords": [
-        "laravel",
-        "framework"
+        "unifap",
+        "autismo"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
-        "laravel/framework": "^11.31",
-        "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9",
-        "tightenco/ziggy": "^2.0"
+        "laravel/framework": "^12.0.1",
+        "laravel/tinker": "^2.10.1",
+        "tightenco/ziggy": "^2.5.1"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
-        "laravel/breeze": "^2.3",
-        "laravel/pail": "^1.1",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.26",
+        "fakerphp/faker": "^1.24.1",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.21",
+        "laravel/sail": "^1.41",
         "laravel/telescope": "^5.5",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.1",
-        "pestphp/pest": "^3.7",
+        "mockery/mockery": "^1.6.12",
+        "nunomaduro/collision": "^8.6.1",
+        "pestphp/pest": "^3.7.4",
         "pestphp/pest-plugin-laravel": "^3.1"
     },
     "autoload": {
