@@ -24,21 +24,21 @@ class FlowController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Flow $flow)
+    public function destroy(Room $room, Flow $flow)
     {
         Gate::authorize('delete', $flow);
         $flow->delete();
         return redirect()->back();
     }
 
-    public function moveUp(Flow $flow)
+    public function moveUp(Room $room, Flow $flow)
     {
         Gate::authorize('update', $flow->room);
         $flow->moveUp();
         return redirect()->back();
     }
 
-    public function moveDown(Flow $flow)
+    public function moveDown(Room $room, Flow $flow)
     {
         Gate::authorize('update', $flow->room);
         $flow->moveDown();
