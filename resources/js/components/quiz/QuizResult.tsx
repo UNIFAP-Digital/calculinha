@@ -1,14 +1,16 @@
 import QuizButton from '@/components/quiz/QuizButton'
 import QuizCard from '@/components/quiz/QuizCard'
 import { useQuiz } from '@/contexts/QuizContext'
+import { Link } from '@inertiajs/react'
 import { motion } from 'framer-motion'
 import { Trophy } from 'lucide-react'
 
 interface QuizResultProps {
   primaryColor: string
+  roomId: number
 }
 
-export default function QuizResult({ primaryColor }: QuizResultProps) {
+export default function QuizResult({ primaryColor, roomId }: QuizResultProps) {
   const { gameState, score, totalActivities, startGame } = useQuiz()
 
   if (gameState !== 'finished') return null
@@ -49,6 +51,11 @@ export default function QuizResult({ primaryColor }: QuizResultProps) {
         <QuizButton onClick={startGame} color="white" textColor={primaryColor} hoverColor="#E5E5E5" className="px-8 py-6 text-lg">
           Jogar Novamente
         </QuizButton>
+        <Link href={route('quiz.index', roomId)}>
+          <QuizButton onClick={startGame} color="white" textColor={primaryColor} hoverColor="#E5E5E5" className="px-8 py-6 text-lg">
+            Voltar à sala
+          </QuizButton>
+        </Link>
       </div>
     </QuizCard>
   )
