@@ -15,7 +15,6 @@ interface FlowsTabProps {
 export default function FlowsTab({ room }: FlowsTabProps) {
   const flows = useMemo(() => room.flows ?? [], [room])
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedFlow, setSelectedFlow] = useState<Flow | undefined>(undefined)
 
   const handleDelete = (flow: Flow) => {
     router.delete(route('flows.destroy', [room.id, flow.id]), {
@@ -46,10 +45,6 @@ export default function FlowsTab({ room }: FlowsTabProps) {
             order={index + 1}
             isFirst={index === 0}
             isLast={index === flows.length - 1}
-            onEdit={() => {
-              setSelectedFlow(flow)
-              setIsFormOpen(true)
-            }}
             onDelete={() => handleDelete(flow)}
             onMoveUp={() => handleMoveUp(flow)}
             onMoveDown={() => handleMoveDown(flow)}
@@ -66,15 +61,7 @@ export default function FlowsTab({ room }: FlowsTabProps) {
         </Button>
       </div>
 
-      <FlowFormDialog
-        open={isFormOpen}
-        onOpenChange={() => {
-          if (isFormOpen) setSelectedFlow(undefined)
-          setIsFormOpen(false)
-        }}
-        roomId={room.id}
-        flow={selectedFlow}
-      />
+      <FlowFormDialog open={isFormOpen} onOpenChange={setIsFormOpen} roomId={room.id} />
     </>
   )
 }
