@@ -40,13 +40,11 @@ export default function GamePage({ flow }: GamePageProps) {
   return (
     <>
       <Head title="Quiz" />
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        <QuizProvider flowActivities={flow.flow_activities!} onComplete={handleQuizComplete}>
-          <QuizIntro flow={flow} primaryColor={theme.primaryColor} textColor={theme.textColor} />
-          <QuizGame primaryColor={theme.primaryColor} secondaryColor={theme.secondaryColor} />
-          <QuizResult roomId={flow.room_id} primaryColor={theme.primaryColor} />
-        </QuizProvider>
-      </div>
+      <QuizProvider flowActivities={flow.flow_activities!} onComplete={handleQuizComplete}>
+        <QuizIntro flow={flow} primaryColor={theme.primaryColor} textColor={theme.textColor} />
+        <QuizGame />
+        <QuizResult roomId={flow.room_id} primaryColor={theme.primaryColor} />
+      </QuizProvider>
     </>
   )
 }

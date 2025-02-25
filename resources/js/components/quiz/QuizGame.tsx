@@ -1,88 +1,99 @@
-import QuizButton from '@/components/quiz/QuizButton'
-import QuizCard from '@/components/quiz/QuizCard'
-import QuizProgress from '@/components/quiz/QuizProgress'
+import { quizToast } from '@/components/quiz/QuizFeedback'
+import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { useQuiz } from '@/contexts/QuizContext'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
+import { FlameIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
-interface QuizGameProps {
-  primaryColor: string
-  secondaryColor: string
-}
+export default function QuizGame() {
+  const { gameState, currentActivity, currentActivityIndex, totalActivities, selectedAnswer, score, handleAnswerSelect: selectAnswer, nextActivity } = useQuiz()
 
-export default function QuizGame({ primaryColor, secondaryColor }: QuizGameProps) {
-  const { gameState, currentActivity, currentActivityIndex, nextActivity, selectedAnswer, totalActivities, handleAnswerSelect } = useQuiz()
+  const [correctAnswersStreak, setCorrectAnswersStreak] = useState(0)
 
-  if (gameState !== 'playing') return null
+  const shuffledAnswers = useMemo(() => {
+    if (!currentActivity?.activity) {
+      return { answers: [], correctIndex: -1 }
+    }
+
+    const allAnswers = [...currentActivity.activity.wrong_answers]
+    const correctAnswer = currentActivity.activity.correct_answer
+    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
+    allAnswers.splice(randomIndex, 0, correctAnswer)
+    return { answers: allAnswers, correctIndex: randomIndex }
+  }, [currentActivity?.activity])
+
+  if (gameState !== 'playing' || !currentActivity || !currentActivity.activity) {
+    return null
+  }
+
+  const handleAnswerSelect = (answer: string) => {
+    selectAnswer(answer)
+
+    const isCorrect = answer === currentActivity.activity!.correct_answer
+    const message = isCorrect ? 'Resposta correta!' : 'Resposta incorreta!'
+
+    if (isCorrect) {
+      setCorrectAnswersStreak(correctAnswersStreak + 1)
+    } else {
+      setCorrectAnswersStreak(0)
+    }
+
+    quizToast({
+      message,
+      type: isCorrect ? 'correct' : 'incorrect',
+      button: {
+        onClick: () => nextActivity(),
+      },
+    })
+  }
 
   return (
-    <QuizCard
-      backgroundColor={primaryColor}
-      animation={{
-        initial: { opacity: 0, x: 100 },
-        animate: { opacity: 1, x: 0 },
-        transition: { duration: 0.5 },
-      }}
-    >
-      <div className="space-y-4">
-        <h2 className="mt-4 text-center text-2xl font-bold text-white">
-          Atividade {currentActivityIndex + 1}/{totalActivities}
-        </h2>
-
-        <div className="space-y-4">
-          <p className="text-center text-xl font-semibold text-white">{currentActivity.activity!.question}</p>
-          <div className="grid grid-cols-2 gap-4">
-            {(() => {
-              // Combinando as respostas erradas com a correta
-              const allAnswers = [...currentActivity.activity!.wrong_answers]
-
-              // Adicionando a resposta correta ao array
-              const correctAnswer = currentActivity.activity!.correct_answer
-
-              // Gerando um índice aleatório para inserir a resposta correta
-              const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
-
-              // Inserindo a resposta correta na posição aleatória
-              allAnswers.splice(randomIndex, 0, correctAnswer)
-
-              // Mapeando todas as respostas para renderizar os botões
-              return allAnswers.map((choice) => (
-                <QuizButton
-                  key={choice}
-                  onClick={() => handleAnswerSelect(choice)}
-                  color={selectedAnswer === choice ? (choice === currentActivity.activity!.correct_answer ? secondaryColor : '#FF4B4B') : 'white'}
-                  textColor={selectedAnswer === choice ? 'white' : primaryColor}
-                  disabled={selectedAnswer !== null}
-                  className="h-24 w-full text-lg"
-                >
-                  {choice}
-                </QuizButton>
-              ))
-            })()}
-          </div>
+    <div id="grid" className="bg-blue-500 px-2 text-white sm:px-4">
+      <header className="flex items-center justify-between">
+        <div className="flex gap-4">
+          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
+            <FlameIcon fill="red" stroke="orange" />
+            <span>{correctAnswersStreak}</span>
+          </span>
+          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
+            <span>✅ {score}</span>
+          </span>
+        </div>
+      </header>
+      <div className="grid">
+        {/* Question Text */}
+        <div className="flex min-h-0 items-center justify-center py-10">
+          <Card className="relative mx-auto max-h-full max-w-3xl min-w-[75%] overflow-visible text-center">
+            <Badge className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-slate-700 px-3 py-1 tracking-widest">
+              {currentActivityIndex + 1}/{totalActivities}
+            </Badge>
+            <CardContent className="p-4 px-8 text-slate-950">
+              <h1 className="text-xl sm:text-3xl">{currentActivity.activity!.question}</h1>
+            </CardContent>
+          </Card>
         </div>
 
-        <QuizProgress current={currentActivityIndex + 1} total={totalActivities} backgroundColor={secondaryColor} />
-
-        <AnimatePresence>
-          {selectedAnswer && (
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className={`rounded-xl p-6 ${selectedAnswer === currentActivity.activity!.correct_answer ? 'bg-[#D7FFB8]' : 'bg-[#FFC1C1]'}`}
-            >
-              <p className="text-center text-lg font-bold text-[#4B4B4B]">
-                {selectedAnswer === currentActivity.activity!.correct_answer ? 'Acertou' : 'Errou'}
-              </p>
-              <div className="mt-4 flex justify-center">
-                <QuizButton onClick={nextActivity} color={primaryColor} hoverColor={secondaryColor} className="px-6 py-4 text-lg">
-                  Próxima Pergunta
-                </QuizButton>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="resizable-grid grid gap-4" key={currentActivityIndex}>
+          <AnimatePresence>
+            {/* Options Cards */}
+            {shuffledAnswers.answers.map((answer, index) => (
+              <QuizOptionCard
+                option={{
+                  id: `option-${index}`,
+                  text: answer,
+                }}
+                index={index}
+                correctIndex={shuffledAnswers.correctIndex}
+                selectedAnswer={selectedAnswer !== null ? shuffledAnswers.answers.indexOf(selectedAnswer) : null}
+                key={`option-${index}`}
+                onClick={() => handleAnswerSelect(answer)}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
-    </QuizCard>
+    </div>
   )
 }

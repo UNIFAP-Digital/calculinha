@@ -3,6 +3,7 @@ import './bootstrap'
 
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
+import QuizLayout from '@/components/layouts/QuizLayout'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
@@ -16,8 +17,8 @@ createInertiaApp({
       (module) => /* eslint-disable */ {
         // @ts-ignore
         if (name.startsWith('auth/')) module.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
-        else if (name.startsWith('quiz/')) {
-        }
+        // @ts-ignore
+        else if (name.startsWith('quiz/')) module.default.layout = (page) => <QuizLayout>{page}</QuizLayout>
         // @ts-ignore
         else module.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
         return module

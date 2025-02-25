@@ -1,29 +1,157 @@
 import { FlowActivity } from '@/models/flow-activity'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { atom, useAtom } from 'jotai'
+import { atomWithMachine } from 'jotai-xstate'
+import { createContext, ReactNode, useContext } from 'react'
+import { assign, setup } from 'xstate'
 
-interface QuizAnswer {
+export interface QuizAnswer {
   flowActivityId: number | string
   answer: string
 }
 
-interface QuizState {
+export const flowActivitiesAtom = atom<FlowActivity[]>([])
+
+const createQuizMachine = (flowActivities: FlowActivity[]) =>
+  setup({
+    types: {
+      context: {} as {
+        flowActivities: FlowActivity[]
+        selectedAnswer: string | null
+        score: number
+        totalActivities: number
+        currentActivityIndex: number
+        answers: QuizAnswer[]
+        gameState: 'start' | 'playing' | 'finished'
+      },
+      events: {} as { type: 'START_GAME' } | { type: 'SELECT_ANSWER'; answer: string } | { type: 'NEXT_ACTIVITY' } | { type: 'RESET_QUIZ' },
+    },
+  }).createMachine({
+    id: 'quiz',
+    initial: 'idle',
+    context: {
+      flowActivities,
+      selectedAnswer: null,
+      score: 0,
+      totalActivities: flowActivities.length,
+      currentActivityIndex: 0,
+      answers: [],
+      gameState: 'start',
+    },
+    states: {
+      idle: {
+        on: {
+          START_GAME: {
+            target: 'playing',
+            actions: assign({
+              currentActivityIndex: 0,
+              score: 0,
+              selectedAnswer: null,
+              answers: [],
+              gameState: 'playing',
+            }),
+          },
+        },
+      },
+      playing: {
+        on: {
+          SELECT_ANSWER: {
+            target: 'answered',
+            actions: [
+              assign({
+                selectedAnswer: ({ event }) => event.answer,
+              }),
+              assign({
+                score: ({ context, event }) => {
+                  const currentActivity = context.flowActivities[context.currentActivityIndex]
+                  return event.answer === currentActivity.activity?.correct_answer ? context.score + 1 : context.score
+                },
+                answers: ({ context, event }) => {
+                  const currentActivity = context.flowActivities[context.currentActivityIndex]
+                  const answerData: QuizAnswer = {
+                    flowActivityId: currentActivity.id,
+                    answer: event.answer,
+                  }
+                  return [...context.answers, answerData]
+                },
+              }),
+            ],
+          },
+          RESET_QUIZ: {
+            target: 'idle',
+            actions: assign({
+              currentActivityIndex: 0,
+              score: 0,
+              selectedAnswer: null,
+              answers: [],
+              gameState: 'start',
+            }),
+          },
+        },
+      },
+      answered: {
+        on: {
+          NEXT_ACTIVITY: [
+            {
+              target: 'playing',
+              guard: ({ context }) => context.currentActivityIndex < context.totalActivities - 1,
+              actions: assign({
+                currentActivityIndex: ({ context }) => context.currentActivityIndex + 1,
+                selectedAnswer: null,
+              }),
+            },
+            {
+              target: 'finished',
+              actions: assign({
+                gameState: 'finished',
+              }),
+            },
+          ],
+          RESET_QUIZ: {
+            target: 'idle',
+            actions: assign({
+              currentActivityIndex: 0,
+              score: 0,
+              selectedAnswer: null,
+              answers: [],
+              gameState: 'start',
+            }),
+          },
+        },
+      },
+      finished: {
+        on: {
+          RESET_QUIZ: {
+            target: 'idle',
+            actions: assign({
+              currentActivityIndex: 0,
+              score: 0,
+              selectedAnswer: null,
+              answers: [],
+              gameState: 'start',
+            }),
+          },
+        },
+      },
+    },
+  })
+
+export const quizMachineAtom = atomWithMachine((get) => createQuizMachine(get(flowActivitiesAtom)))
+
+interface QuizContextValue {
   gameState: 'start' | 'playing' | 'finished'
   currentActivityIndex: number
   selectedAnswer: string | null
   score: number
   answers: QuizAnswer[]
-  currentActivity: FlowActivity
+  currentActivity: FlowActivity | undefined
   totalActivities: number
-}
-
-interface QuizActions {
   startGame: () => void
   handleAnswerSelect: (answer: string) => void
   nextActivity: () => void
   resetQuiz: () => void
 }
 
-type QuizContextValue = QuizState & QuizActions
+const QuizContext = createContext<QuizContextValue | undefined>(undefined)
 
 interface QuizProviderProps {
   children: ReactNode
@@ -31,72 +159,43 @@ interface QuizProviderProps {
   onComplete?: (score: number, answers: QuizAnswer[]) => void
 }
 
-// Criando o contexto
-const QuizContext = createContext<QuizContextValue | undefined>(undefined)
-
-// Provedor do contexto
 export function QuizProvider({ children, flowActivities, onComplete }: QuizProviderProps) {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'finished'>('start')
-  const [currentActivityIndex, setCurrentActivityIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-  const [score, setScore] = useState(0)
-  const [answers, setAnswers] = useState<QuizAnswer[]>([])
+  const [, setFlowActivities] = useAtom(flowActivitiesAtom)
+  setFlowActivities(flowActivities)
 
-  const startGame = () => {
-    setGameState('playing')
-    setCurrentActivityIndex(0)
-    setScore(0)
-    setSelectedAnswer(null)
-    setAnswers([])
-  }
+  const [state, send] = useAtom(quizMachineAtom)
 
-  const resetQuiz = () => {
-    setGameState('start')
-    setCurrentActivityIndex(0)
-    setScore(0)
-    setSelectedAnswer(null)
-    setAnswers([])
-  }
+  const { gameState, currentActivityIndex, selectedAnswer, score, answers, totalActivities } = state.context
 
-  const handleAnswerSelect = (answer: string) => {
-    const currentFlowActivity = flowActivities[currentActivityIndex]
-    setSelectedAnswer(answer)
+  const currentActivity = flowActivities[currentActivityIndex]
 
-    if (answer === currentFlowActivity.activity!.correct_answer) {
-      setScore((prev) => prev + 1)
-    }
+  const startGame = () => send({ type: 'START_GAME' })
 
-    const answerData: QuizAnswer = {
-      flowActivityId: currentFlowActivity.id,
-      answer: answer,
-    }
-
-    setAnswers((prev) => [...prev, answerData])
-  }
+  const handleAnswerSelect = (answer: string) => send({ type: 'SELECT_ANSWER', answer })
 
   const nextActivity = () => {
-    if (currentActivityIndex < flowActivities.length - 1) {
-      setCurrentActivityIndex((prev) => prev + 1)
-      setSelectedAnswer(null)
-    } else {
-      setGameState('finished')
-      onComplete?.(score, answers)
+    if (currentActivityIndex === totalActivities - 1) {
+      if (onComplete) {
+        onComplete(score, answers)
+      }
     }
+    send({ type: 'NEXT_ACTIVITY' })
   }
 
-  // Valor do contexto
+  const resetQuiz = () => send({ type: 'RESET_QUIZ' })
+
   const contextValue: QuizContextValue = {
     gameState,
     currentActivityIndex,
     selectedAnswer,
     score,
     answers,
+    currentActivity,
+    totalActivities,
     startGame,
     handleAnswerSelect,
     nextActivity,
     resetQuiz,
-    currentActivity: flowActivities[currentActivityIndex],
-    totalActivities: flowActivities.length,
   }
 
   return <QuizContext.Provider value={contextValue}>{children}</QuizContext.Provider>
@@ -111,5 +210,3 @@ export function useQuiz() {
 
   return context
 }
-
-export type { QuizAnswer }

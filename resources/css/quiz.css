@@ -1,0 +1,25 @@
+
+:root {
+    --numberOfOptions: 4;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+#grid {
+    display: grid;
+    grid-template-rows: 60px 1fr 60px;
+    height: 100vh;
+    background-image: url("/quiz/bg-gradient.jpg");
+}
+
+
+@media screen and (min-width: 768px) {
+    .resizable-grid {
+        grid-template-columns: repeat(var(--numberOfOptions), 1fr);
+    }
+
+}
