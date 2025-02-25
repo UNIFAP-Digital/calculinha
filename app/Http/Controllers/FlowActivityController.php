@@ -28,10 +28,6 @@ class FlowActivityController extends Controller
     {
         Gate::authorize('update', $flowActivity);
         $flowActivity->moveUp();
-
-        if (FlowActivity::needsRebalancing($flowActivity))
-            $flowActivity->rebalancePositions();
-
         return redirect()->back();
     }
 
@@ -39,11 +35,6 @@ class FlowActivityController extends Controller
     {
         Gate::authorize('update', $flowActivity);
         $flowActivity->moveDown();
-
-        if (FlowActivity::needsRebalancing($flowActivity)) {
-            $flowActivity->rebalancePositions();
-        }
-
         return redirect()->back();
     }
 }

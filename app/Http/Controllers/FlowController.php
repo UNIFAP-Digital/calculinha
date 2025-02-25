@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FlowRequest;
 use App\Models\Flow;
+use App\Models\Room;
 use Illuminate\Support\Facades\Gate;
 
 class FlowController extends Controller
@@ -16,7 +17,7 @@ class FlowController extends Controller
         return redirect()->back();
     }
 
-    public function update(FlowRequest $request, Flow $flow)
+    public function update(FlowRequest $request, Room $room, Flow $flow)
     {
         $validated = $request->validated();
         $flow->update($validated);
@@ -34,10 +35,6 @@ class FlowController extends Controller
     {
         Gate::authorize('update', $flow->room);
         $flow->moveUp();
-
-        if ($this->needsRebalancing($flow))
-            $flow->rebalancePositions();
-
         return redirect()->back();
     }
 
@@ -45,25 +42,6 @@ class FlowController extends Controller
     {
         Gate::authorize('update', $flow->room);
         $flow->moveDown();
-
-        if ($this->needsRebalancing($flow)) {
-            $flow->rebalancePositions();
-        }
-
         return redirect()->back();
-    }
-
-    private function needsRebalancing(Flow $flow): bool
-    {
-        // Verifica se existem posições muito próximas
-        return Flow::where('room_id', $flow->room_id)
-            ->where(function ($query) use ($flow) {
-                $query->whereBetween('position', [
-                    $flow->position - Flow::POSITION_GAP / 4,
-                    $flow->position + Flow::POSITION_GAP / 4
-                ])
-                    ->where('id', '!=', $flow->id);
-            })
-            ->exists();
     }
 }
