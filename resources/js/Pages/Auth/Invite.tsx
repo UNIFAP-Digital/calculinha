@@ -15,7 +15,7 @@ import { ArrowRight } from 'lucide-react'
 export default function InvitePage() {
   const { data, setData, post, processing, errors } = useForm({
     name: '',
-    invite: '',
+    invite_code: '',
   })
 
   const submit: FormEventHandler = (e) => {
@@ -57,8 +57,8 @@ export default function InvitePage() {
                         <Label htmlFor="invite-code">Código de convite</Label>
                         <InputOTP
                           id="invite-code"
-                          value={data.invite}
-                          onChange={(value) => setData('invite', value)}
+                          value={data.invite_code}
+                          onChange={(value) => setData('invite_code', value)}
                           maxLength={4}
                           required
                           pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
@@ -76,7 +76,7 @@ export default function InvitePage() {
                         <ArrowRight />
                       </Button>
                     </div>
-                    <InputError message={errors.invite} />
+                    <InputError message={errors.invite_code} />
                   </div>
                 </div>
               </div>

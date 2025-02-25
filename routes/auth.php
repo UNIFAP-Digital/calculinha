@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('convite', [InviteController::class, 'create'])->name('invite');
+    Route::post('convite', [InviteController::class, 'store']);
 
     Route::get('cadastrar', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('cadastrar', [RegisteredUserController::class, 'store']);
