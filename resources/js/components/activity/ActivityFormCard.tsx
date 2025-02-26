@@ -91,7 +91,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                   }))
                 }}
               />
-              <InputError message={errors['wrong_answers.0']} />
+              <InputError message={errors['wrong_answers.0' as keyof typeof errors]} />
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                   }))
                 }}
               />
-              <InputError message={errors['wrong_answers.1']} />
+              <InputError message={errors['wrong_answers.1' as keyof typeof errors]} />
             </div>
           </div>
 
@@ -129,7 +129,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                   }))
                 }}
               />
-              <InputError message={errors['wrong_answers.2']} />
+              <InputError message={errors['wrong_answers.2' as keyof typeof errors]} />
             </div>
           </div>
         </div>
