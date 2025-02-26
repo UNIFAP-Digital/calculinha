@@ -1,8 +1,12 @@
-import GuestLayout from '@/components/layouts/GuestLayout'
-import PrimaryButton from '@/components/PrimaryButton'
-import TextInput from '@/components/TextInput'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import InputError from '@/components/ui/input-error'
+import { Label } from '@/components/ui/label'
+import { NavLink } from '@/components/ui/nav-link'
 import { Head, useForm } from '@inertiajs/react'
+import { MailOpenIcon } from 'lucide-react'
 import { FormEventHandler } from 'react'
 
 export default function ForgotPassword({ status }: { status?: string }) {
@@ -17,34 +21,58 @@ export default function ForgotPassword({ status }: { status?: string }) {
   }
 
   return (
-    <GuestLayout>
-      <Head title="Forgot Password" />
+    <>
+      <Head title="Recuperar Senha" />
+      <div className="flex flex-col gap-6">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Recuperação de Senha</CardTitle>
+            <CardDescription>Informe seu email e enviaremos um link para redefinir sua senha.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={submit}>
+              <div className="grid gap-6">
+                {status && (
+                  <Alert className="border-green-200 bg-green-50 text-green-700">
+                    <MailOpenIcon className="size-4" />
+                    <AlertTitle>Email enviado</AlertTitle>
+                    <AlertDescription>{status}</AlertDescription>
+                  </Alert>
+                )}
 
-      <div className="mb-4 text-sm text-gray-600">
-        Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new
-      </div>
+                <div className="grid gap-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      tabIndex={1}
+                      id="email"
+                      autoComplete="email"
+                      onChange={(e) => setData('email', e.target.value)}
+                      autoFocus={true}
+                      type="email"
+                      value={data.email}
+                      placeholder="calculinha@exemplo.com"
+                      required
+                    />
+                    <InputError message={errors.email} />
+                  </div>
 
-      {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
-
-      <form onSubmit={submit}>
-        <TextInput
-          id="email"
-          type="email"
-          name="email"
-          value={data.email}
-          className="mt-1 block w-full"
-          isFocused={true}
-          onChange={(e) => setData('email', e.target.value)}
-        />
-
-        <InputError message={errors.email} className="mt-2" />
-
-        <div className="mt-4 flex items-center justify-end">
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Email Password Reset Link
-          </PrimaryButton>
+                  <Button tabIndex={2} type="submit" className="w-full" disabled={processing}>
+                    Enviar Link de Recuperação
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+        <div className="text-center text-sm">
+          Lembrou sua senha?{' '}
+          <NavLink variant="underline" href={route('login')}>
+            Voltar para login
+          </NavLink>
+          .
         </div>
-      </form>
-    </GuestLayout>
+      </div>
+    </>
   )
 }
