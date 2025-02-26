@@ -1,60 +1,48 @@
 import { Link } from '@inertiajs/react'
 import confetti from 'canvas-confetti'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Award, BookOpen, Home, RotateCcw, Sparkles, Star, Trophy } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Award, BookOpen, Home, RotateCcw, Star, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
-// Background gradientes mais suaves e refinados
-const backgroundGradients = {
-  excellent: 'bg-gradient-to-br from-violet-600 via-indigo-700 to-blue-900',
-  good: 'bg-gradient-to-br from-blue-600 via-blue-800 to-indigo-900',
-  average: 'bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-900',
-  needsImprovement: 'bg-gradient-to-br from-amber-500 via-orange-500 to-amber-700',
+type Level = 'excellent' | 'good' | 'average' | 'needsImprovement'
+
+const THEMES = {
+  excellent: {
+    background: 'bg-gradient-to-br from-violet-600 via-indigo-700 to-blue-900',
+    card: 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-indigo-500/20',
+    button: 'bg-gradient-to-r from-pink-600 to-purple-700 hover:from-pink-500 hover:to-purple-600',
+    accent: 'text-pink-300',
+    progress: ['#e879f9', '#a855f7'],
+    icon: '#e879f9',
+  },
+  good: {
+    background: 'bg-gradient-to-br from-blue-600 via-blue-800 to-indigo-900',
+    card: 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-indigo-500/20',
+    button: 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600',
+    accent: 'text-cyan-300',
+    progress: ['#38bdf8', '#3b82f6'],
+    icon: '#38bdf8',
+  },
+  average: {
+    background: 'bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-900',
+    card: 'bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20',
+    button: 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600',
+    accent: 'text-emerald-300',
+    progress: ['#4ade80', '#10b981'],
+    icon: '#4ade80',
+  },
+  needsImprovement: {
+    background: 'bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900',
+    card: 'bg-gradient-to-r from-gray-500/20 via-gray-600/20 to-gray-700/20',
+    button: 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600',
+    accent: 'text-gray-300',
+    progress: ['#9ca3af', '#6b7280'],
+    icon: '#9ca3af',
+  },
 }
 
-// Card gradientes - cores complementares aos backgrounds
-const cardGradients = {
-  excellent: 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-indigo-500/20',
-  good: 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-indigo-500/20',
-  average: 'bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20',
-  needsImprovement: 'bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-orange-500/20',
-}
-
-// Gradientes para os botões, com cores complementares
-const buttonGradients = {
-  excellent: 'bg-gradient-to-r from-pink-600 to-purple-700 hover:from-pink-500 hover:to-purple-600 border border-white/20 shadow-md shadow-purple-900/30',
-  good: 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 border border-white/20 shadow-md shadow-blue-900/30',
-  average: 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 border border-white/20 shadow-md shadow-teal-900/30',
-  needsImprovement:
-    'bg-gradient-to-r from-yellow-600 to-amber-700 hover:from-yellow-500 hover:to-amber-600 border border-white/20 shadow-md shadow-amber-900/30',
-}
-
-// Gradientes para a barra de progresso
-const progressGradients = {
-  excellent: 'linear-gradient(90deg, rgba(232, 121, 249, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%)',
-  good: 'linear-gradient(90deg, rgba(56, 189, 248, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%)',
-  average: 'linear-gradient(90deg, rgba(74, 222, 128, 0.9) 0%, rgba(16, 185, 129, 0.9) 100%)',
-  needsImprovement: 'linear-gradient(90deg, rgba(250, 204, 21, 0.9) 0%, rgba(251, 146, 60, 0.9) 100%)', // Amarelo para laranja, sem vermelho
-}
-
-// Cores para os ícones - mais luminosas para contraste
-const iconColors = {
-  excellent: '#e879f9', // Rosa vibrante
-  good: '#38bdf8', // Azul céu vibrante
-  average: '#4ade80', // Verde vibrante
-  needsImprovement: '#fbbf24', // Amarelo vibrante
-}
-
-// Cores de destaque complementares para cada nível
-const accentColors = {
-  excellent: 'text-pink-300',
-  good: 'text-cyan-300',
-  average: 'text-emerald-300',
-  needsImprovement: 'text-yellow-300',
-}
-
-// Mensagens de feedback inspiradoras e encorajadoras
-const feedbackMessages = {
+// Simplified feedback messages
+const FEEDBACK_MESSAGES = {
   excellent: ['Incrível! Você é um verdadeiro gênio! 🌟', 'Uau! Você dominou este desafio! 🎯', 'Extraordinário! Seu esforço valeu a pena! 🏆'],
   good: ['Muito bom! Você está aprendendo rápido! ⭐', 'Parabéns! Continue praticando assim! 🎊', 'Ótimo trabalho! Você está no caminho certo! 🚀'],
   average: ['Bom trabalho! Continue se esforçando! 💫', 'Você está progredindo! Continue assim! 🌱', 'Cada tentativa te deixa mais forte! 🌈'],
@@ -65,139 +53,224 @@ const feedbackMessages = {
   ],
 }
 
-// Elementos flutuantes para o background - utilizando símbolos matemáticos e elementos decorativos
-const floatingElementsData = [
-  { content: '+', size: 'text-5xl', color: 'text-white/10' },
-  { content: '-', size: 'text-5xl', color: 'text-white/10' },
-  { content: '×', size: 'text-5xl', color: 'text-white/10' },
-  { content: '÷', size: 'text-5xl', color: 'text-white/10' },
-  { content: '=', size: 'text-5xl', color: 'text-white/10' },
-  { content: '123', size: 'text-4xl', color: 'text-white/10' },
-  { content: <BookOpen className="h-16 w-16" />, size: '', color: 'text-white/10' },
-  { content: <Star className="h-16 w-16" />, size: '', color: 'text-white/10' },
-  { content: <Sparkles className="h-16 w-16" />, size: '', color: 'text-white/10' },
-  { content: '?', size: 'text-5xl', color: 'text-white/10' },
-  { content: '!', size: 'text-5xl', color: 'text-white/10' },
-]
+// Simplified progress bar component
+const ProgressBar = ({ percentage, colors }: { percentage: number; colors: string[] }) => {
+  return (
+    <div className="w-full space-y-2">
+      <div className="flex items-center justify-between px-1">
+        <span className="text-sm font-medium text-white/80">Progresso</span>
+        <span className="text-sm font-bold text-white">{percentage.toFixed(0)}%</span>
+      </div>
+      <div className="relative h-7 w-full overflow-hidden rounded-full bg-white/20">
+        <motion.div
+          className="absolute h-full rounded-full border border-white/30"
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          style={{
+            background: `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`,
+            boxShadow: 'inset 0px 2px 4px rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          {/* Shine effect */}
+          <motion.div
+            className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.5,
+              ease: 'easeInOut',
+              repeatDelay: 0.5,
+            }}
+          />
+        </motion.div>
+      </div>
+    </div>
+  )
+}
 
-// Definindo variantes de animação para o Framer Motion
-const variants = {
-  fadeInUp: {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  },
-  fadeInScale: {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { type: 'spring', stiffness: 260, damping: 20 },
-    },
-  },
-  float: {
-    hidden: { y: 0 },
-    visible: {
-      y: [0, -10, 0],
-      transition: { duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' },
-    },
-  },
-  pulse: {
-    hidden: { scale: 1 },
-    visible: {
-      scale: [1, 1.05, 1],
-      transition: { duration: 2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' },
-    },
-  },
-  bounce: {
-    hidden: { y: 0 },
-    visible: {
-      y: [0, -10, 0],
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 10,
-        repeat: Infinity,
-        repeatDelay: 1,
+type ScoreCounterProps = {
+  score: number
+  onComplete: () => void
+  duration?: number
+}
+const ScoreCounter = ({ score, duration = 1.5, onComplete }: ScoreCounterProps) => {
+  const [displayScore, setDisplayScore] = useState(0)
+
+  useEffect(() => {
+    if (score === 0) {
+      if (onComplete) onComplete()
+      return
+    }
+
+    const interval = setInterval(
+      () => {
+        setDisplayScore((prev) => {
+          const next = prev + 1
+          if (next >= score) {
+            clearInterval(interval)
+            if (onComplete) onComplete()
+            return score
+          }
+          return next
+        })
       },
-    },
-  },
-  rotate: {
-    hidden: { rotate: 0 },
-    visible: {
-      rotate: [0, 5, 0, -5, 0],
-      transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-    },
-  },
-  shimmer: {
-    hidden: { opacity: 0.5, x: -100 },
-    visible: {
-      opacity: [0.5, 1, 0.5],
-      x: [100, -100],
-      transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-    },
-  },
-  staggerChildren: {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  },
-  scoreCounter: {
-    hidden: { scale: 1 },
-    visible: {
-      scale: [1, 1.15, 1],
-      filter: ['brightness(1)', 'brightness(1.3)', 'brightness(1)'],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        repeatDelay: 1,
-        ease: 'easeInOut',
-      },
-    },
-  },
-  progressBar: {
-    hidden: { width: '0%' },
-    visible: (custom) => ({
-      width: `${custom}%`,
-      transition: { duration: 1.5, ease: 'easeOut' },
-    }),
-  },
-  underline: {
-    hidden: { width: 0 },
-    visible: {
-      width: '100%',
-      transition: { duration: 0.8, delay: 0.4 },
-    },
-  },
+      (duration * 1000) / score,
+    )
+
+    return () => clearInterval(interval)
+  }, [score, duration, onComplete])
+
+  return (
+    <motion.span
+      className="text-7xl font-bold"
+      initial={{ scale: 0.9 }}
+      animate={{
+        scale: displayScore === score ? [1, 1.1, 1] : 1,
+        color: displayScore === score ? ['#f8fafc', '#fef08a'] : '#f8fafc',
+      }}
+      transition={{ duration: 0.3 }}
+    >
+      {displayScore}
+    </motion.span>
+  )
+}
+
+// Background elements simplified
+const BackgroundElements = () => {
+  const elements = ['+', '-', '×', '÷', '=', '123', '?', '!']
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {elements.map((el, index) => (
+        <motion.div
+          key={index}
+          className="absolute text-5xl text-white/10 select-none"
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0.1, 0.2, 0.1],
+            scale: [0.9, 1, 0.9],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 10 + Math.random() * 5,
+            ease: 'easeInOut',
+          }}
+          style={{
+            left: `${10 + Math.random() * 80}%`,
+            top: `${10 + Math.random() * 80}%`,
+          }}
+        >
+          {el}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+// Performance decorations - only for excellent and good
+const PerformanceDecorations = ({ level }: { level: Level }) => {
+  if (level !== 'excellent' && level !== 'good') return null
+
+  const count = level === 'excellent' ? 8 : 5
+  const color = level === 'excellent' ? 'fill-pink-300 text-pink-300' : 'fill-cyan-300 text-cyan-300'
+
+  return (
+    <motion.div className="pointer-events-none absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.5 }}>
+      {[...Array(count)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+          transition={{
+            delay: 1 + i * 0.1,
+            duration: 0.5,
+          }}
+          style={{
+            top: `${20 + Math.random() * 60}%`,
+            left: `${20 + Math.random() * 60}%`,
+          }}
+        >
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: 'reverse',
+            }}
+          >
+            <Star className={`h-6 w-6 ${color} drop-shadow-lg`} />
+          </motion.div>
+        </motion.div>
+      ))}
+    </motion.div>
+  )
+}
+
+// Result icon based on performance
+const ResultIcon = ({ level, iconColor }: { level: Level; iconColor: string }) => {
+  let Icon
+  let size
+
+  switch (level) {
+    case 'excellent':
+      Icon = Trophy
+      size = 'h-28 w-28'
+      break
+    case 'good':
+      Icon = Award
+      size = 'h-24 w-24'
+      break
+    case 'average':
+      Icon = Star
+      size = 'h-20 w-20'
+      break
+    default:
+      Icon = BookOpen
+      size = 'h-20 w-20'
+  }
+
+  return (
+    <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}>
+      <motion.div
+        animate={{ y: [0, -5, 0] }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          repeatType: 'reverse',
+        }}
+        style={{ color: iconColor }}
+        className={`${size} drop-shadow-lg`}
+      >
+        <Icon />
+      </motion.div>
+    </motion.div>
+  )
 }
 
 interface QuizResultProps {
-  primaryColor?: string
-  roomId?: number
+  roomId: number
   score: number
   totalActivities: number
   startGameAgain: () => void
 }
 
-export default function QuizResult({ primaryColor = '#6366f1', roomId = 1, score, totalActivities, startGameAgain }: QuizResultProps) {
-  const [countedScore, setCountedScore] = useState(0)
-  const [progress, setProgress] = useState(0)
-  const [animationComplete, setAnimationComplete] = useState(false)
+export default function QuizResult({ roomId, score, totalActivities, startGameAgain }: QuizResultProps) {
+  const [, setAnimationComplete] = useState(false)
 
-  // Calcular porcentagem de acerto com validação
+  // Calculate score percentage
   const percentageScore = useMemo(() => {
-    const validScore = Math.min(score, totalActivities)
-    return (validScore / Math.max(1, totalActivities)) * 100
+    const validScore = Math.max(0, Math.min(score, totalActivities))
+    return totalActivities > 0 ? (validScore / totalActivities) * 100 : 0
   }, [score, totalActivities])
 
-  // Determinar o nível de desempenho
+  // Determine performance level
   const performanceLevel = useMemo(() => {
     if (percentageScore >= 90) return 'excellent'
     if (percentageScore >= 70) return 'good'
@@ -205,398 +278,153 @@ export default function QuizResult({ primaryColor = '#6366f1', roomId = 1, score
     return 'needsImprovement'
   }, [percentageScore])
 
-  // Selecionar mensagem com base no desempenho
+  // Get theme for current performance level
+  const theme = THEMES[performanceLevel]
+
+  // Get random feedback message
   const feedbackMessage = useMemo(() => {
-    const messages = feedbackMessages[performanceLevel]
-    const randomIndex = Math.floor(Math.random() * messages.length)
-    return messages[randomIndex]
+    const messages = FEEDBACK_MESSAGES[performanceLevel]
+    return messages[Math.floor(Math.random() * messages.length)]
   }, [performanceLevel])
 
-  // Definir a classe de texto de destaque apropriada para o nível
-  const accentColorClass = accentColors[performanceLevel]
-
-  // Lançar confetti adaptado ao nível de desempenho
+  // Confetti effect - only for good and excellent
   const launchConfetti = () => {
-    // Cores variadas para o confetti
-    const colors = ['#f472b6', '#a855f7', '#38bdf8', '#4ade80', '#fbbf24']
+    if (performanceLevel === 'needsImprovement' || performanceLevel === 'average') return
 
-    // Configurações baseadas no nível de desempenho
-    const particleCount = {
-      excellent: 150,
-      good: 100,
-      average: 70,
-      needsImprovement: 40,
-    }[performanceLevel]
+    const colors = ['#f472b6', '#a855f7', '#38bdf8', '#4ade80']
+    const particleCount = performanceLevel === 'excellent' ? 120 : 80
 
-    // Lançar confetti principal
     confetti({
       particleCount,
-      spread: 100,
+      spread: 80,
       origin: { y: 0.5, x: 0.5 },
       colors,
-      startVelocity: 35,
+      startVelocity: 30,
       gravity: 0.7,
-      shapes: ['circle', 'square'],
       zIndex: 1000,
     })
 
-    // Para desempenhos excelentes e bons, adicionar efeitos extras
-    if (performanceLevel === 'excellent' || performanceLevel === 'good') {
+    if (performanceLevel === 'excellent') {
       setTimeout(() => {
-        // Confetti lateral esquerdo
         confetti({
-          particleCount: 40,
+          particleCount: 30,
           angle: 135,
-          spread: 60,
+          spread: 50,
           origin: { x: 0, y: 0.6 },
           colors,
-          zIndex: 1000,
         })
 
-        // Confetti lateral direito
         confetti({
-          particleCount: 40,
+          particleCount: 30,
           angle: 45,
-          spread: 60,
+          spread: 50,
           origin: { x: 1, y: 0.6 },
           colors,
-          zIndex: 1000,
         })
-      }, 800)
+      }, 700)
     }
-  }
-
-  // Animação da contagem do score
-  useEffect(() => {
-    const animateScore = () => {
-      // Garantir valores válidos
-      const validScore = Math.min(Math.max(0, score), totalActivities)
-
-      const duration = 2000
-      const framesPerSecond = 60
-      const totalFrames = (duration / 1000) * framesPerSecond
-      const increment = validScore / totalFrames
-
-      let currentCount = 0
-      let currentFrame = 0
-
-      const countInterval = setInterval(() => {
-        currentFrame++
-        currentCount = Math.min(currentCount + increment, validScore)
-        setCountedScore(Math.floor(currentCount))
-
-        // Atualizar a barra de progresso
-        const currentProgress = (currentCount / Math.max(1, totalActivities)) * 100
-        setProgress(Math.min(100, Math.max(0, currentProgress)))
-
-        if (currentFrame >= totalFrames) {
-          clearInterval(countInterval)
-          setCountedScore(validScore)
-          setProgress(Math.min(100, Math.max(0, percentageScore)))
-
-          // Lançar confetti após a contagem terminar
-          launchConfetti()
-          setAnimationComplete(true)
-        }
-      }, 1000 / framesPerSecond)
-
-      return () => clearInterval(countInterval)
-    }
-
-    animateScore()
-  }, [score, totalActivities, percentageScore])
-
-  // Componente para os elementos flutuantes no background
-  const FloatingElements = () => (
-    <>
-      {floatingElementsData.map((el, index) => (
-        <motion.div
-          key={index}
-          className={`absolute ${el.size} ${el.color} select-none`}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{
-            opacity: [0.1, 0.2, 0.1],
-            scale: [0.9, 1, 0.9],
-            x: [0, Math.random() * 40 - 20, 0],
-            y: [0, Math.random() * 40 - 20, 0],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 15 + Math.random() * 10,
-            ease: 'easeInOut',
-          }}
-          style={{
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 80}%`,
-            zIndex: 0,
-          }}
-        >
-          {el.content}
-        </motion.div>
-      ))}
-    </>
-  )
-
-  // Componente para decorações baseadas no nível de desempenho
-  const PerformanceDecorations = () => {
-    if (performanceLevel === 'excellent') {
-      return (
-        <motion.div className="pointer-events-none absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1 }}>
-          {[...Array(12)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                transition: {
-                  delay: 2.5 + i * 0.1,
-                  duration: 0.6,
-                },
-              }}
-              style={{
-                top: `${15 + Math.random() * 70}%`,
-                left: `${15 + Math.random() * 70}%`,
-                zIndex: 10,
-              }}
-            >
-              <motion.div variants={variants.pulse} initial="hidden" animate="visible">
-                <Star className="h-8 w-8 fill-pink-300 text-pink-300 drop-shadow-lg" />
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
-      )
-    } else if (performanceLevel === 'good') {
-      return (
-        <motion.div className="pointer-events-none absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1 }}>
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                transition: {
-                  delay: 2.5 + i * 0.1,
-                  duration: 0.6,
-                },
-              }}
-              style={{
-                top: `${20 + Math.random() * 60}%`,
-                left: `${20 + Math.random() * 60}%`,
-                zIndex: 10,
-              }}
-            >
-              <motion.div variants={variants.pulse} initial="hidden" animate="visible">
-                <Star className="h-6 w-6 fill-cyan-300 text-cyan-300 drop-shadow-lg" />
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
-      )
-    }
-
-    return null
-  }
-
-  // Componente para o ícone de recompensa
-  const RewardIcon = () => {
-    let icon
-    const iconColor = iconColors[performanceLevel]
-
-    if (performanceLevel === 'excellent') {
-      icon = <Trophy className="h-32 w-32 drop-shadow-lg" />
-    } else if (performanceLevel === 'good') {
-      icon = <Award className="h-28 w-28 drop-shadow-lg" />
-    } else if (performanceLevel === 'average') {
-      icon = <Star className="h-24 w-24 drop-shadow-lg" />
-    } else {
-      icon = <BookOpen className="h-24 w-24 drop-shadow-lg" />
-    }
-
-    return (
-      <motion.div
-        className="mb-10"
-        variants={variants.fadeInScale}
-        initial="hidden"
-        animate="visible"
-        transition={{
-          delay: 2.2,
-          type: 'spring',
-          stiffness: 300,
-          damping: 15,
-        }}
-      >
-        <motion.div style={{ color: iconColor }} className="relative">
-          {/* Ícone principal */}
-          <motion.div variants={variants.float} initial="hidden" animate="visible">
-            {icon}
-          </motion.div>
-
-          {/* Efeito de brilho para desempenhos excelentes */}
-          {(performanceLevel === 'excellent' || performanceLevel === 'good') && (
-            <motion.div
-              className="absolute inset-0 rounded-full bg-white"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: [0, 0.4, 0],
-                scale: [0.8, 1.3, 1.6],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatDelay: 1,
-              }}
-              style={{ filter: 'blur(15px)' }}
-            />
-          )}
-        </motion.div>
-      </motion.div>
-    )
   }
 
   return (
-    <AnimatePresence>
+    <div className={`fixed inset-0 ${theme.background} z-50 flex flex-col items-center justify-center overflow-hidden`}>
+      {/* Background elements */}
+      <BackgroundElements />
+
+      {/* Performance decorations */}
+      <PerformanceDecorations level={performanceLevel} />
+
+      {/* Main content container */}
       <motion.div
-        className={`fixed inset-0 ${backgroundGradients[performanceLevel]} z-50 flex flex-col items-center justify-center overflow-hidden`}
+        className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-6 py-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
       >
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <FloatingElements />
-        </div>
-
-        {/* Decorações baseadas no desempenho */}
-        <PerformanceDecorations />
-
-        {/* Conteúdo Principal */}
-        <motion.div
-          className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-6 py-8"
-          variants={variants.staggerChildren}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Título com sublinhado animado */}
-          <motion.div className="relative mb-10" variants={variants.fadeInUp}>
-            <h1 className="text-center text-5xl font-bold tracking-wide text-white drop-shadow-lg">Quiz Concluído!</h1>
-            <motion.div
-              className={`mx-auto mt-3 h-1.5 w-48 rounded-full ${accentColorClass}`}
-              variants={variants.underline}
-              initial="hidden"
-              animate="visible"
-            />
-          </motion.div>
-
-          {/* Ícone de recompensa */}
-          <RewardIcon />
-
-          {/* Mensagem de feedback */}
-          <motion.div className="mb-10 px-6" variants={variants.fadeInScale}>
-            <motion.h2
-              className={`text-center text-3xl font-semibold text-white drop-shadow-lg ${accentColorClass}`}
-              variants={animationComplete ? variants.pulse : {}}
-              initial="hidden"
-              animate={animationComplete ? 'visible' : 'hidden'}
-            >
-              {feedbackMessage}
-            </motion.h2>
-          </motion.div>
-
-          {/* Exibição da Pontuação */}
-          <motion.div
-            className={`mb-12 w-full max-w-2xl rounded-xl border border-white/20 ${cardGradients[performanceLevel]} px-8 py-6 shadow-lg backdrop-blur-lg`}
-            variants={variants.fadeInUp}
+        {/* Title with animated underline */}
+        <motion.div className="relative mb-8 text-center">
+          <motion.h1
+            className="text-4xl font-bold text-white drop-shadow-lg"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <div className="flex flex-col items-center">
-              <p className="mb-4 text-2xl font-medium text-white">Sua Pontuação:</p>
-              <div className="mb-8 flex items-center justify-center gap-3">
-                <motion.span
-                  className={`text-7xl font-bold ${accentColorClass}`}
-                  variants={variants.scoreCounter}
-                  initial="hidden"
-                  animate={animationComplete ? 'visible' : 'hidden'}
-                >
-                  {countedScore}
-                </motion.span>
-                <span className="text-4xl font-medium text-white/80">/</span>
-                <span className="text-4xl font-medium text-white/80">{totalActivities}</span>
-              </div>
+            Quiz Concluído!
+          </motion.h1>
+          <motion.div
+            className={`mx-auto mt-3 h-1 rounded-full ${theme.accent}`}
+            initial={{ width: 0 }}
+            animate={{ width: '12rem' }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          />
+        </motion.div>
 
-              <div className="relative mt-2 w-full px-2">
-                {/* Fundo da barra */}
-                <div className="h-6 w-full rounded-full bg-white/20 shadow-inner" />
+        {/* Result icon */}
+        <ResultIcon level={performanceLevel} iconColor={theme.icon} />
 
-                {/* Barra de progresso - animação mais rápida (0.3s) */}
-                <motion.div
-                  className="absolute top-0 left-0 h-6 rounded-full border border-white/30 shadow-md"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.3 }} // Reduzido de 0.5s para 0.3s
-                  style={{
-                    background: progressGradients[performanceLevel],
-                    boxShadow: 'inset 0px 2px 4px rgba(255, 255, 255, 0.3)',
-                  }}
-                />
+        {/* Feedback message */}
+        <motion.h2
+          className={`mb-8 text-center text-2xl font-semibold ${theme.accent} drop-shadow-lg`}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          {feedbackMessage}
+        </motion.h2>
 
-                {/* Efeito de brilho na barra de progresso */}
-                {animationComplete && (
-                  <motion.div
-                    className="absolute top-0 left-0 h-6 w-full rounded-full bg-white/40"
-                    variants={{
-                      hidden: { opacity: 0.5, x: -100 },
-                      visible: {
-                        opacity: [0.5, 1, 0.5],
-                        x: [100, -100],
-                        transition: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }, // Velocidade aumentada para 1.5s
-                      },
-                    }}
-                    initial="hidden"
-                    animate="visible"
-                    style={{ maskImage: 'linear-gradient(to right, transparent, white, transparent)' }}
-                  />
-                )}
-
-                {/* Texto de porcentagem de acerto */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-white drop-shadow-md">{Math.round(progress)}%</span>
-                </div>
-              </div>
+        {/* Score card */}
+        <motion.div
+          className={`mb-10 w-full max-w-2xl rounded-xl border border-white/20 ${theme.card} px-8 py-6 shadow-lg backdrop-blur-lg`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <div className="flex flex-col items-center">
+            <p className="mb-4 text-xl font-medium text-white">Sua Pontuação:</p>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <ScoreCounter
+                score={score}
+                onComplete={() => {
+                  setAnimationComplete(true)
+                  launchConfetti()
+                }}
+              />
+              <span className="text-4xl font-medium text-white/80">/</span>
+              <span className="text-4xl font-medium text-white/80">{totalActivities}</span>
             </div>
+
+            {/* Progress bar */}
+            <ProgressBar percentage={percentageScore} colors={theme.progress} />
+          </div>
+        </motion.div>
+
+        {/* Action buttons */}
+        <motion.div
+          className="grid w-full max-w-2xl grid-cols-2 gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <motion.div whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }}>
+            <button onClick={startGameAgain} className={`h-14 w-full rounded-xl border border-white/20 ${theme.button} font-semibold text-white shadow-md`}>
+              <div className="flex items-center justify-center gap-2">
+                <RotateCcw className="h-5 w-5" />
+                <span>Jogar Novamente</span>
+              </div>
+            </button>
           </motion.div>
 
-          {/* Botões de Ação */}
-          <motion.div className="grid w-full max-w-2xl grid-cols-2 gap-6" variants={variants.fadeInUp}>
-            <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
-              <button
-                onClick={startGameAgain}
-                className={`h-16 w-full rounded-xl text-lg font-semibold text-white ${buttonGradients[performanceLevel]} backdrop-blur-sm`}
-              >
-                <div className="flex items-center justify-center gap-3">
-                  <RotateCcw className="h-6 w-6" />
-                  <span>Jogar Novamente</span>
+          <motion.div whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }}>
+            <Link href={route('quiz.index', roomId)} className="block h-full">
+              <button className={`h-14 w-full rounded-xl border border-white/20 ${theme.button} font-semibold text-white shadow-md`}>
+                <div className="flex items-center justify-center gap-2">
+                  <Home className="h-5 w-5" />
+                  <span>Voltar à Sala</span>
                 </div>
               </button>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
-              <Link href={route('quiz.index', roomId)} className="block h-full">
-                <button className={`h-16 w-full rounded-xl text-lg font-semibold text-white ${buttonGradients[performanceLevel]} backdrop-blur-sm`}>
-                  <div className="flex items-center justify-center gap-3">
-                    <Home className="h-6 w-6" />
-                    <span>Voltar à Sala</span>
-                  </div>
-                </button>
-              </Link>
-            </motion.div>
+            </Link>
           </motion.div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </div>
   )
 }
