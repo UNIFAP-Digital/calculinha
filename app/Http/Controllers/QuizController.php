@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuizResultRequest;
 use App\Http\Resources\FlowResource;
+use App\Http\Resources\ParticipantResource;
 use App\Http\Resources\RoomResource;
 use App\Models\Flow;
 use App\Models\FlowActivity;
+use App\Models\Participant;
 use App\Models\Room;
 use Inertia\Inertia;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -21,20 +23,19 @@ class QuizController extends Controller
             'flows.flowActivities.activity'
         ]);
 
-        return Inertia::render('quiz/Intro', [
-            'room' => new RoomResource($room),
-        ]);
-    }
+        if (auth()->check()) {
+            $participant = null;
+            $completedFlows = [];
+        } else {
+            $participant = Participant::findOrFail(session('participant_id'));
+            $participant->load('flowActivities');
+            $completedFlows = $participant->flowActivities->pluck('flow_id')->unique()->values()->all();
+        }
 
-    public function game(Room $room, Flow $flow)
-    {
-        $flow->load([
-            'flowActivities' => fn($query) => $query->orderBy('position'),
-            'flowActivities.activity'
-        ]);
-
-        return Inertia::render('quiz/Game', [
-            'flow' => new FlowResource($flow),
+        return Inertia::render('GameManagement', [
+            'room'            => new RoomResource($room),
+            'participant'     => $participant !== null ? new ParticipantResource($participant) : null,
+            'completed_flows' => $completedFlows,
         ]);
     }
 

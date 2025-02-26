@@ -24,14 +24,12 @@ export default function QuizGame() {
     return { answers: allAnswers, correctIndex: randomIndex }
   }, [currentActivity?.activity])
 
-  if (gameState !== 'playing' || !currentActivity || !currentActivity.activity) {
-    return null
-  }
-
   const handleAnswerSelect = (answer: string) => {
     selectAnswer(answer)
 
-    const isCorrect = answer === currentActivity.activity!.correct_answer
+    if (!currentActivity?.activity) return
+
+    const isCorrect = answer === currentActivity.activity.correct_answer
     const message = isCorrect ? 'Resposta correta!' : 'Resposta incorreta!'
 
     if (isCorrect) {
@@ -48,6 +46,8 @@ export default function QuizGame() {
       },
     })
   }
+
+  if (gameState !== 'playing' || !currentActivity || !currentActivity.activity) return null
 
   return (
     <div id="grid" className="bg-blue-500 px-2 text-white sm:px-4">

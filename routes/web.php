@@ -11,7 +11,6 @@ Route::redirect('/', '/convite');
 
 Route::controller(QuizController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
     Route::get('/', 'index')->name('quiz.index');
-    Route::get('/{flow}', 'game')->name('quiz.game');
     Route::post('/result', 'result')->name('quiz.result');
 });
 
