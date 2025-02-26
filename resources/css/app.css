@@ -121,12 +121,3 @@
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
 }
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
-}

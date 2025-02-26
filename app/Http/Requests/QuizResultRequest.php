@@ -14,9 +14,8 @@ class QuizResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'attempts'                    => ['required', 'array', 'min:1'],
-            'attempts.*.flow_activity_id' => ['required', 'exists:flow_activities,id'],
-            'attempts.*.answer'           => ['required', 'string', 'max:255']
+            'flow_activity_id' => ['required', 'exists:flow_activities,id'],
+            'answer'           => ['required', 'string', 'max:255']
         ];
     }
 }

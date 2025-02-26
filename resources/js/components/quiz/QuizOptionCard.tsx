@@ -87,12 +87,6 @@ export function QuizOptionCard(props: OptionCardProps) {
     return gradientMap[index]
   }
 
-    const transition = {
-        duration: 0.8,
-        delay: 0.5,
-        ease: [0, 0.71, 0.2, 1.01],
-    }
-
   return (
     <MotionCard
       key={option.id}
@@ -100,7 +94,6 @@ export function QuizOptionCard(props: OptionCardProps) {
       animate={{
         opacity: shouldShow ? 1 : 0,
         y: 0,
-
         backgroundImage: getBackgroundStyle(),
         transition: {
           backgroundColor: { duration: 0.2 },

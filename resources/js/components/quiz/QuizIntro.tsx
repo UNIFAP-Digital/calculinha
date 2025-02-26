@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { GameFlow } from '@/pages/game/GameSelect'
 import { motion } from 'framer-motion'
 
 // Estilos de cores vibrantes baseados na referência
@@ -11,19 +12,17 @@ const gradientStyles = {
 
 interface QuizIntroProps {
   primaryColor?: string
+  flow: GameFlow
+  onStart: () => void
 }
 
-export default function QuizIntro({ primaryColor = '#6366f1' }: QuizIntroProps) {
+export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: QuizIntroProps) {
   const getGradientStyle = () => {
     if (primaryColor.includes('orange')) return gradientStyles.orange
     if (primaryColor.includes('teal')) return gradientStyles.teal
     if (primaryColor.includes('pink')) return gradientStyles.pink
 
     return gradientStyles.indigo
-  }
-
-  const handleStartClick = () => {
-    startGame()
   }
 
   // Elementos matemáticos flutuantes para o fundo
@@ -102,7 +101,7 @@ export default function QuizIntro({ primaryColor = '#6366f1' }: QuizIntroProps) 
             damping: 15,
           }}
         >
-          <h1 className="text-center text-5xl font-bold tracking-wide text-white drop-shadow-lg">{currentFlow.name || 'Calcuinha'}</h1>
+          <h1 className="text-center text-5xl font-bold tracking-wide text-white drop-shadow-lg">{flow.name || 'Calcuinha'}</h1>
         </motion.div>
 
         {/* Character/Icon */}
@@ -124,7 +123,7 @@ export default function QuizIntro({ primaryColor = '#6366f1' }: QuizIntroProps) 
         >
           <div className="flex h-40 w-40 items-center justify-center rounded-full border-4 border-white/30 bg-white shadow-xl">
             <span className="text-7xl" style={{ color: primaryColor }}>
-              {currentFlow.icon || '🧮'}
+              {flow.icon || '🧮'}
             </span>
           </div>
         </motion.div>
@@ -132,7 +131,7 @@ export default function QuizIntro({ primaryColor = '#6366f1' }: QuizIntroProps) 
         {/* Description */}
         <motion.div className="mb-10 px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
           <p className="text-center text-xl font-medium text-white drop-shadow md:text-2xl">
-            {currentFlow.description || 'Vamos praticar matemática de um jeito divertido!'}
+            {flow.description || 'Vamos praticar matemática de um jeito divertido!'}
           </p>
         </motion.div>
 
@@ -151,7 +150,7 @@ export default function QuizIntro({ primaryColor = '#6366f1' }: QuizIntroProps) 
           whileTap={{ scale: 0.95 }}
         >
           <Button
-            onClick={handleStartClick}
+            onClick={onStart}
             className="w-full rounded-full bg-white px-8 py-5 text-2xl font-bold tracking-wide shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-all duration-200 hover:translate-y-[-2px] hover:bg-white hover:shadow-[0_10px_0_0_rgba(0,0,0,0.2)] active:translate-y-[4px] active:shadow-[0_4px_0_0_rgba(0,0,0,0.2)]"
             style={{ color: primaryColor }}
           >

@@ -3,14 +3,15 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\FlowActivityController;
 use App\Http\Controllers\FlowController;
-use App\Http\Controllers\QuizController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/convite');
+Route::inertia('/', 'Welcome');
 
-Route::controller(QuizController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
+Route::controller(GameController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
     Route::get('/', 'index')->name('quiz.index');
+    Route::get('/{flow}', 'play')->name('quiz.game');
     Route::post('/result', 'result')->name('quiz.result');
 });
 

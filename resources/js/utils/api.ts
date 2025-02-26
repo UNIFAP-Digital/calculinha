@@ -42,5 +42,7 @@ export const httpPost = async <T, R = undefined>(url: string, data: R): Promise<
     )
   }
 
+  if (response.status === 204) return {} as T
+
   return response.json()
 }

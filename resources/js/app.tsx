@@ -15,10 +15,11 @@ createInertiaApp({
   resolve: (name) =>
     resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')).then(
       (module) => /* eslint-disable */ {
+        if (name === 'Welcome') {
+          // @ts-ignore
+        } else if (name.startsWith('auth/')) module.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
         // @ts-ignore
-        if (name.startsWith('auth/')) module.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
-        // @ts-ignore
-        else if (name.startsWith('quiz/')) module.default.layout = (page) => <QuizLayout>{page}</QuizLayout>
+        else if (name.startsWith('game/')) module.default.layout = (page) => <QuizLayout>{page}</QuizLayout>
         // @ts-ignore
         else module.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
         return module
