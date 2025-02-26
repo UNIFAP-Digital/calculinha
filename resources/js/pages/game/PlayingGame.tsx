@@ -57,7 +57,12 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
         />
       )}
       {state.matches('result') && (
-        <QuizResult score={state.context.score} totalActivities={state.context.totalActivities} startGameAgain={() => send({ type: 'reset' })} />
+        <QuizResult
+          roomId={response.id}
+          score={state.context.score}
+          totalActivities={state.context.totalActivities}
+          startGameAgain={() => send({ type: 'reset' })}
+        />
       )}
     </>
   )
