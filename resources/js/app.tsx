@@ -1,5 +1,4 @@
 import '../css/app.css'
-import './bootstrap'
 
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
