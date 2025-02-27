@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
-import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/utils/ui'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Link, router, usePage } from '@inertiajs/react'
 import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, XIcon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { PropsWithChildren } from 'react'
 
 const navigation = [
@@ -14,7 +14,13 @@ const navigation = [
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   const user = usePage().props.auth.user
-  const { theme, toggleTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+
+  const handleToggleTheme = () => {
+    if (theme === 'light') setTheme('dark')
+    else if (theme === 'dark') setTheme('system')
+    else setTheme('light')
+  }
 
   const handleLogout = () => {
     router.delete('/sair', {
@@ -59,7 +65,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                   <span className="text-muted-foreground text-sm font-medium">{user.email}</span>
                 </div>
 
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="mr-2">
+                <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="mr-2">
                   {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
                   <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
                 </Button>
@@ -72,7 +78,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
               {/* MOBILE MENU BUTTON */}
               <div className="flex items-center sm:hidden">
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="mr-2">
+                <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="mr-2">
                   {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
                   <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
                 </Button>
