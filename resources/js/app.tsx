@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
-import QuizLayout from '@/components/layouts/QuizLayout'
 import InertiaCustomApp from '@/lib/inertia'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
@@ -20,7 +19,6 @@ createInertiaApp({
         typedModule.default.theme = 'light'
       } else if (name.startsWith('auth/')) typedModule.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
       else if (name.startsWith('game/')) {
-        typedModule.default.layout = (page) => <QuizLayout>{page}</QuizLayout>
         typedModule.default.theme = 'light'
       } else typedModule.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
       return typedModule

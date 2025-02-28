@@ -1,3 +1,4 @@
+import QuizLayout from '@/components/layouts/QuizLayout'
 import { quizToast } from '@/components/quiz/QuizFeedback'
 import QuizGame from '@/components/quiz/QuizGame'
 import QuizIntro from '@/components/quiz/QuizIntro'
@@ -7,6 +8,7 @@ import { GameSelectPageProps } from '@/pages/game/GameSelect'
 import { httpPost } from '@/utils/api'
 import { Head, usePage } from '@inertiajs/react'
 import { useMachine } from '@xstate/react'
+import '../../../css/quiz.css'
 
 export default function PlayingGame({ response }: GameSelectPageProps) {
   const isAuthenticated = !!usePage().props.auth.user
@@ -42,7 +44,7 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
   }
 
   return (
-    <>
+    <QuizLayout>
       <Head title="Quiz" />
 
       {state.matches('intro') && <QuizIntro flow={state.context.flow} onStart={() => send({ type: 'start' })} />}
@@ -64,6 +66,6 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
           startGameAgain={() => send({ type: 'reset' })}
         />
       )}
-    </>
+    </QuizLayout>
   )
 }
