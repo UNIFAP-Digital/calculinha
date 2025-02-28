@@ -12,26 +12,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-{{--    <script>--}}
-{{--        function updateTheme() {--}}
-{{--            const theme = localStorage.getItem('theme')--}}
-{{--            if (theme === 'system' || !theme) {--}}
-{{--                if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark')--}}
-{{--                else document.documentElement.classList.remove('dark')--}}
-{{--            } else {--}}
-{{--                if (theme === 'dark') document.documentElement.classList.add('dark')--}}
-{{--                else document.documentElement.classList.remove('dark')--}}
-{{--            }--}}
-{{--        }--}}
-
-{{--        updateTheme()--}}
-
-{{--        window.matchMedia('(prefers-color-scheme: dark)')--}}
-{{--            .addEventListener('change', (e) => {--}}
-{{--                if (localStorage.getItem('theme') === 'system') updateTheme()--}}
-{{--            })--}}
-{{--    </script>--}}
-
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
