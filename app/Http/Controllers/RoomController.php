@@ -38,12 +38,9 @@ class RoomController extends Controller
     public function update(RoomRequest $request, Room $room)
     {
         Gate::authorize('update', [Room::class, $room]);
-
         $validated = $request->validated();
-
         $room->update($validated);
-
-        return to_route('rooms.index', $room);
+        return back();
     }
 
     public function store(RoomRequest $request)
@@ -53,9 +50,9 @@ class RoomController extends Controller
         $validated = $request->validated();
         $validated['invite_code'] = Room::generateValidInviteCode();
 
-        $request->user()->rooms()->create($validated);
+        $room = $request->user()->rooms()->create($validated);
 
-        return to_route('rooms.index');
+        return to_route('rooms.index', $room);
     }
 
     public function destroy(Room $room)
