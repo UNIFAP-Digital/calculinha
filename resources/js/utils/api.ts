@@ -1,11 +1,16 @@
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+
+const headers = {
+  'X-Requested-With': 'XMLHttpRequest',
+  'Content-Type': 'application/json',
+  Accept: 'application/json',
+  'X-CSRF-TOKEN': csrfToken,
+}
+
 export const httpGet = async <T>(url: string): Promise<T> => {
-  const response = await fetch(url, {
+  const response = await fetch('/api' + url, {
     method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      Accept: 'application/json',
-    },
-    credentials: 'include',
+    headers,
   })
 
   if (!response.ok) {
@@ -16,18 +21,9 @@ export const httpGet = async <T>(url: string): Promise<T> => {
 }
 
 export const httpPost = async <T, R = undefined>(url: string, data: R): Promise<T> => {
-  // Obter o token CSRF da meta tag para Laravel
-  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-
-  const response = await fetch(url, {
+  const response = await fetch('/api' + url, {
     method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'X-CSRF-TOKEN': csrfToken,
-    },
-    credentials: 'include',
+    headers,
     body: JSON.stringify(data ?? ''),
   })
 
