@@ -12,6 +12,11 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
     alert('Código copiado!')
   }
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(route('invite')).then()
+    alert('Link copiado!')
+  }
+
   return (
     <div className="bg-background rounded-lg p-8 shadow-xs">
       <div className="flex flex-col items-center justify-center text-center">
@@ -22,11 +27,17 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
         <p className="text-muted-foreground mb-6 max-w-sm text-sm">Para convidar participantes, compartilhe estas instruções:</p>
 
         <div className="bg-muted mb-6 w-full max-w-sm space-y-4 rounded-lg p-4 text-left">
-          <p className="text-foreground text-sm">
-            1. Acesse: <span className="bg-background mt-1 block rounded px-3 py-2 font-mono text-sm break-all">{route('invite')}</span>
-          </p>
+          <div className="text-foreground text-sm">
+            1. Acesse:
+            <div className="mt-1 flex items-center gap-2">
+              <span className="bg-background flex-1 rounded px-3 py-2 font-mono text-sm break-all">{route('invite')}</span>
+              <Button variant="outline" size="icon" className="shrink-0" onClick={handleCopyLink}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
-          <p className="text-foreground text-sm">
+          <div className="text-foreground text-sm">
             2. Insira o código:
             <div className="mt-1 flex items-center gap-2">
               <code className="bg-background flex-1 rounded px-3 py-2 font-mono text-sm">{room.invite_code}</code>
@@ -34,7 +45,7 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-          </p>
+          </div>
         </div>
 
         <div className="text-muted-foreground text-sm">
