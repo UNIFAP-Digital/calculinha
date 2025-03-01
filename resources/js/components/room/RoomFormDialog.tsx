@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 interface RoomDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  room?: Room
+  room?: Room | null
 }
 
 export default function RoomFormDialog({ open, onOpenChange, room }: RoomDialogProps) {
@@ -27,8 +27,10 @@ export default function RoomFormDialog({ open, onOpenChange, room }: RoomDialogP
     if (room) {
       setData('name', room.name)
       setData('is_active', room.is_active)
+    } else {
+      reset()
     }
-  }, [room, setData])
+  }, [reset, room, setData])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()

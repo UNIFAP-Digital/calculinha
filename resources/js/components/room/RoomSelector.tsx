@@ -10,7 +10,7 @@ import { Book, Plus } from 'lucide-react'
 interface RoomSelectorProps {
   rooms: Room[]
   selectedRoomId: number | null
-  onSelect: (roomId: number) => void
+  onSelect: (room: Room) => void
   onCreate: () => void
   className?: string
 }
@@ -23,7 +23,7 @@ export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate
         <Select
           onValueChange={(id) => {
             const room = rooms.find((r) => r.id === Number(id))
-            if (room) onSelect(room.id)
+            if (room) onSelect(room)
           }}
           value={selectedRoomId?.toString()}
         >
@@ -55,7 +55,7 @@ export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate
         <div className="space-y-3">
           <CreateRoomCard onClick={onCreate} />
           {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} isSelected={selectedRoomId === room.id} onClick={() => onSelect(room.id)} />
+            <RoomCard key={room.id} room={room} isSelected={selectedRoomId === room.id} onClick={() => onSelect(room)} />
           ))}
         </div>
       </div>

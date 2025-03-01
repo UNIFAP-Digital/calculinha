@@ -17,19 +17,25 @@ type RoomManagementProps = {
 
 export default function RoomManagementPage({ rooms, room }: RoomManagementProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingRoom, setEditingRoom] = useState<Room | null>(null)
   const { setActiveTab, activeTab } = useRoomTabs()
 
-  const handleSelect = (selectedRoomId: number) => {
-    if (selectedRoomId === room?.id) return
+  const handleEdit = (room: Room) => {
+    setEditingRoom(room)
+    setIsFormOpen(true)
+  }
 
-    router.visit(route('rooms.index', selectedRoomId) + `#${activeTab}`, {
+  const handleSelect = (selectedRoom: Room) => {
+    if (selectedRoom.id === room?.id) return
+
+    router.visit(route('rooms.index', selectedRoom.id) + `#${activeTab}`, {
       only: ['room'],
       preserveState: true,
     })
   }
 
-  const handleDelete = (roomId: number) => {
-    router.delete(route('rooms.destroy', roomId), {
+  const handleDelete = (room: Room) => {
+    router.delete(route('rooms.destroy', room.id), {
       preserveState: true,
       onSuccess() {
         toast('Sala apagada com sucesso.')
@@ -61,7 +67,7 @@ export default function RoomManagementPage({ rooms, room }: RoomManagementProps)
 
             <div className="ms-0 mt-4 flex-1 md:ms-4 md:mt-0">
               {room !== null ? (
-                <RoomContent room={room} setActiveTab={setActiveTab} activeTab={activeTab} onDelete={handleDelete} />
+                <RoomContent room={room} setActiveTab={setActiveTab} activeTab={activeTab} onDelete={handleDelete} onEdit={handleEdit} />
               ) : (
                 <div className="text-muted-foreground flex max-h-screen flex-col items-center justify-center">
                   <GroupIcon className="mb-4 size-12 opacity-75" />
@@ -73,7 +79,14 @@ export default function RoomManagementPage({ rooms, room }: RoomManagementProps)
           </div>
         )}
       </Container>
-      <RoomFormDialog open={isFormOpen} onOpenChange={setIsFormOpen} />
+      <RoomFormDialog
+        open={isFormOpen}
+        room={editingRoom}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setEditingRoom(null)
+          setIsFormOpen(isOpen)
+        }}
+      />
     </>
   )
 }
