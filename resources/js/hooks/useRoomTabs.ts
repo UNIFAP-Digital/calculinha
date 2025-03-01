@@ -10,7 +10,7 @@ interface UseRoomTabsReturn {
   setActiveTab: (tab: string) => void
 }
 
-export function useRoomTabs({ defaultTab = 'participants', validTabs = ['participants', 'flows', 'statistic'] }: UseRoomTabsProps = {}): UseRoomTabsReturn {
+export function useRoomTabs({ defaultTab = 'participants', validTabs = ['participants', 'flows'] }: UseRoomTabsProps = {}): UseRoomTabsReturn {
   const [activeTab, setActiveTab] = useState<string>(() => {
     const hash = window.location.hash.replace('#', '')
     return validTabs.includes(hash) ? hash : defaultTab

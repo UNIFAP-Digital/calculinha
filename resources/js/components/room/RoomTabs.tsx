@@ -1,9 +1,8 @@
 import FlowsTab from '@/components/room/tabs/flows/FlowsTab'
 import ParticipantsTab from '@/components/room/tabs/participants/ParticipantsTab'
-import StatisticsTab from '@/components/room/tabs/StatisticsTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Room from '@/models/room'
-import { ChartLine, Users, Workflow } from 'lucide-react'
+import { Users, Workflow } from 'lucide-react'
 
 interface RoomTabsProps {
   room: Room
@@ -24,11 +23,6 @@ export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProp
           <Workflow className="mr-2 h-4 w-4" />
           <span className="inline">Trilhas</span>
         </TabsTrigger>
-        <TabsTrigger value="statistic">
-          <ChartLine className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Estatísticas</span>
-          <span className="sm:hidden">Estatí.</span>
-        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="participants">
@@ -37,10 +31,6 @@ export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProp
 
       <TabsContent value="flows">
         <FlowsTab room={room} />
-      </TabsContent>
-
-      <TabsContent value="statistic">
-        <StatisticsTab />
       </TabsContent>
     </Tabs>
   )
