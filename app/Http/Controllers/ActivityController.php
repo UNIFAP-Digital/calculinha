@@ -13,19 +13,13 @@ class ActivityController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax() && $request->has('flow_id')) {
-            $flowId = $request->flow_id;
+        Gate::authorize('viewAny', Activity::class);
 
-            $activities = Activity::whereNotIn('id', function ($query) use ($flowId) {
-                $query->select('activity_id')
-                    ->from('flow_activities')
-                    ->where('flow_id', $flowId);
-            })->get();
-
-            return ActivityResource::collection($activities);
-        }
-
-        $activities = $request->user()->activities;
+        $activities = $request
+            ->user()
+            ->activities()
+            ->orderByDesc('created_at')
+            ->get();
 
         return Inertia::render('ActivityManagement', [
             'activities' => ActivityResource::collection($activities)
