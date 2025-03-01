@@ -8,7 +8,7 @@ const headers = {
 }
 
 export const httpGet = async <T>(url: string): Promise<T> => {
-  const response = await fetch('/api' + url, {
+  const response = await fetch(url, {
     method: 'GET',
     headers,
   })
@@ -21,7 +21,7 @@ export const httpGet = async <T>(url: string): Promise<T> => {
 }
 
 export const httpPost = async <T, R = undefined>(url: string, data: R): Promise<T> => {
-  const response = await fetch('/api' + url, {
+  const response = await fetch(url, {
     method: 'POST',
     headers,
     body: JSON.stringify(data ?? ''),
