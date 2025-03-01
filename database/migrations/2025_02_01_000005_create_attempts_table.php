@@ -11,13 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('attempts', function (Blueprint $table) {
-            $table->foreignId('flow_activity_id')->constrained()->onDelete('cascade');
             $table->foreignId('participant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_flow_id')->constrained()->onDelete('cascade');
+            $table->foreignId('flow_activity_id')->constrained()->onDelete('cascade');
             $table->string('answer');
             $table->boolean('is_correct');
             $table->timestamp('created_at');
 
-            $table->primary(['flow_activity_id', 'participant_id']);
+            $table->primary(['participant_id', 'room_flow_id', 'flow_activity_id']);
         });
     }
 

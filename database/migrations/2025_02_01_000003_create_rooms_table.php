@@ -10,24 +10,24 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('flows', function (Blueprint $table) {
+        Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
 
             $table->string('name');
-            $table->string('icon');
-            $table->string('description')->nullable();
-            $table->string('color');
-            $table->integer('position');
+            $table->string('invite_code')->unique();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
 
-        Schema::create('flow_activities', function (Blueprint $table) {
+        Schema::create('room_flows', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
 
             $table->integer('position');
+
+            $table->unique(['room_id', 'flow_id']);
         });
     }
 
@@ -36,7 +36,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('flows');
-        Schema::dropIfExists('flow_activities');
+        Schema::dropIfExists('rooms');
+        Schema::dropIfExists('room_flows');
     }
 };
