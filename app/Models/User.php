@@ -29,13 +29,18 @@ class User extends Authenticatable
         ];
     }
 
-    public function rooms(): HasMany
-    {
-        return $this->hasMany(Room::class, 'owner_id');
-    }
-
     public function activities(): HasMany
     {
         return $this->hasMany(Activity::class, 'owner_id');
+    }
+
+    public function flows(): HasMany
+    {
+        return $this->hasMany(Flow::class, 'owner_id');
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class, 'owner_id');
     }
 }

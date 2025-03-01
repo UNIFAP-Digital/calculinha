@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Random\RandomException;
 
 class Room extends Model
 {
@@ -19,6 +20,9 @@ class Room extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * @throws RandomException
+     */
     public static function generateValidInviteCode(): string
     {
         do {
@@ -29,14 +33,14 @@ class Room extends Model
         return $code;
     }
 
+    public function roomFlow(): HasMany
+    {
+        return $this->hasMany(RoomFlow::class);
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
-    }
-
-    public function flows(): HasMany
-    {
-        return $this->hasMany(Flow::class);
     }
 
     public function participants(): HasMany

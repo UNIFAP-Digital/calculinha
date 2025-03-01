@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Flow extends PositionableModel
+class Flow extends Model
 {
     protected $fillable = [
         'room_id',
@@ -16,18 +17,18 @@ class Flow extends PositionableModel
         'position'
     ];
 
-    public function room(): BelongsTo
-    {
-        return $this->belongsTo(Room::class);
-    }
-
     public function flowActivities(): HasMany
     {
         return $this->hasMany(FlowActivity::class);
     }
 
-    public function getPositionGroupColumn(): string
+    public function owner(): BelongsTo
     {
-        return 'room_id';
+        return $this->belongsTo(User::class);
+    }
+
+    public function roomFlows(): HasMany
+    {
+        return $this->hasMany(RoomFlow::class);
     }
 }
