@@ -3,45 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FlowRequest;
+use App\Http\Resources\FlowResource;
 use App\Models\Flow;
-use App\Models\Room;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class FlowController extends Controller
 {
+    public function index(Request $request)
+    {
+        Gate::authorize('viewAny', Flow::class);
+
+        $flows = $request
+            ->user()
+            ->flows()
+            ->with([
+                'flowActivities' => fn($query) => $query->orderBy('position'),
+                'flowActivities.activity'
+            ])
+            ->orderBy('name')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return Inertia::render('FlowManagement', [
+            'flows' => FlowResource::collection($flows)
+        ]);
+    }
+
     public function store(FlowRequest $request)
     {
         $validated = $request->validated();
-        $validated['position'] = Flow::getInitialPosition($validated['room_id']);
-        Flow::create($validated);
-        return redirect()->back();
+        $flow = Auth::user()->flows()->create($validated);
+        return to_route('flows.index', $flow);
     }
 
-    public function update(FlowRequest $request, Room $room, Flow $flow)
+    public function update(FlowRequest $request, Flow $flow)
     {
         $validated = $request->validated();
         $flow->update($validated);
-        return redirect()->back();
+        return back();
     }
 
-    public function destroy(Room $room, Flow $flow)
+    public function destroy(Flow $flow)
     {
         Gate::authorize('delete', $flow);
         $flow->delete();
-        return redirect()->back();
-    }
-
-    public function moveUp(Room $room, Flow $flow)
-    {
-        Gate::authorize('update', $flow->room);
-        $flow->moveUp();
-        return redirect()->back();
-    }
-
-    public function moveDown(Room $room, Flow $flow)
-    {
-        Gate::authorize('update', $flow->room);
-        $flow->moveDown();
-        return redirect()->back();
+        return to_route('flows.index');
     }
 }

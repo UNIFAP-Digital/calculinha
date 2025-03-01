@@ -3,38 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FlowActivityRequest;
+use App\Models\Flow;
 use App\Models\FlowActivity;
-use App\Models\Room;
 use Illuminate\Support\Facades\Gate;
 
 class FlowActivityController extends Controller
 {
-    public function store(FlowActivityRequest $request)
+    public function store(FlowActivityRequest $request, Flow $flow)
     {
         $validated = $request->validated();
-        $validated['position'] = FlowActivity::getInitialPosition($validated['flow_id']);
-        FlowActivity::create($validated);
-        return redirect()->back();
+        $validated['position'] = FlowActivity::getInitialPosition($flow->id);
+        $flow->flowActivities()->create($validated);
+        return back();
     }
 
-    public function destroy(Room $room, int $flow, FlowActivity $flowActivity)
+    public function destroy(Flow $flow, FlowActivity $flowActivity)
     {
         Gate::authorize('delete', $flowActivity);
         $flowActivity->delete();
-        return redirect()->back();
+        return back();
     }
 
-    public function moveUp(Room $room, int $flow, FlowActivity $flowActivity)
+    public function moveUp(Flow $flow, FlowActivity $flowActivity)
     {
         Gate::authorize('update', $flowActivity);
         $flowActivity->moveUp();
-        return redirect()->back();
+        return back();
     }
 
-    public function moveDown(Room $room, int $flow, FlowActivity $flowActivity)
+    public function moveDown(Flow $flow, FlowActivity $flowActivity)
     {
         Gate::authorize('update', $flowActivity);
         $flowActivity->moveDown();
-        return redirect()->back();
+        return back();
     }
 }
