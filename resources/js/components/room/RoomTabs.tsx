@@ -2,13 +2,16 @@ import FlowsTab from '@/components/room/tabs/flows/FlowsTab'
 import ParticipantsTab from '@/components/room/tabs/participants/ParticipantsTab'
 import StatisticsTab from '@/components/room/tabs/StatisticsTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useRoomTabs } from '@/hooks/useRoomTabs'
 import Room from '@/models/room'
 import { ChartLine, Users, Workflow } from 'lucide-react'
 
-export default function RoomTabs({ room }: { room: Room }) {
-  const { activeTab, setActiveTab } = useRoomTabs()
+interface RoomTabsProps {
+  room: Room
+  activeTab: string
+  setActiveTab: (tab: string) => void
+}
 
+export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="w-full justify-start overflow-auto">

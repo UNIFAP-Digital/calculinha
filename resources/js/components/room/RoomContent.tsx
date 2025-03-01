@@ -3,28 +3,23 @@ import RoomFormDialog from '@/components/room/RoomFormDialog'
 import RoomTabs from '@/components/room/RoomTabs'
 import { Badge } from '@/components/ui/badge'
 import Room from '@/models/room'
-import { Link, router } from '@inertiajs/react'
+import { Link } from '@inertiajs/react'
 import { Pencil, Play } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
 import { Button } from '../ui/button'
 
 interface RoomContentProps {
   room: Room
+  activeTab: string
+  setActiveTab: (tab: string) => void
+  onDelete: (roomId: number) => void
 }
 
-export default function RoomContent({ room }: RoomContentProps) {
+export default function RoomContent({ room, setActiveTab, activeTab, onDelete }: RoomContentProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
-
-  const handleDelete = () => {
-    router.delete(route('rooms.destroy', room.id))
-    toast('Sala apagada com sucesso.')
-  }
 
   return (
     <>
-      <RoomFormDialog open={isFormOpen} onOpenChange={(v) => setIsFormOpen(v)} room={room} />
-
       <div className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -51,14 +46,15 @@ export default function RoomContent({ room }: RoomContentProps) {
             <DeleteAlertDialog
               variant="outline"
               size="icon"
-              onConfirmDelete={handleDelete}
+              onConfirmDelete={() => onDelete(room.id)}
               description="Esta ação não pode ser desfeita. Isso irá apagar permanentemente a sala e todos os seus dados."
             />
           </div>
         </div>
 
-        <RoomTabs room={room} />
+        <RoomTabs room={room} setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>
+      <RoomFormDialog open={isFormOpen} onOpenChange={(v) => setIsFormOpen(v)} room={room} />
     </>
   )
 }

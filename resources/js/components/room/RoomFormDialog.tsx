@@ -5,8 +5,8 @@ import InputError from '@/components/ui/input-error'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import Room from '@/models/room'
-import { router, useForm } from '@inertiajs/react'
-import { FormEvent } from 'react'
+import { useForm } from '@inertiajs/react'
+import { FormEvent, useEffect } from 'react'
 import { toast } from 'sonner'
 
 interface RoomDialogProps {
@@ -19,26 +19,34 @@ export default function RoomFormDialog({ open, onOpenChange, room }: RoomDialogP
   const isEditing = !!room
 
   const { data, setData, post, put, processing, reset, errors } = useForm({
-    name: room?.name ?? '',
-    is_active: room?.is_active ?? true,
+    name: '',
+    is_active: true as boolean,
   })
+
+  useEffect(() => {
+    if (room) {
+      setData('name', room.name)
+      setData('is_active', room.is_active)
+    }
+  }, [room, setData])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
 
     if (isEditing) {
       put(route('rooms.update', room.id), {
+        preserveState: true,
+        preserveScroll: true,
+        preserveUrl: true,
         onSuccess: () => {
-          router.reload()
-          reset()
           onOpenChange(false)
           toast('A sala foi atualizada com sucesso.')
         },
       })
     } else {
       post(route('rooms.store'), {
+        preserveState: true,
         onSuccess: () => {
-          router.reload()
           reset()
           onOpenChange(false)
           toast('A sala foi criada com sucesso.')
@@ -48,13 +56,7 @@ export default function RoomFormDialog({ open, onOpenChange, room }: RoomDialogP
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) reset()
-        onOpenChange(isOpen)
-      }}
-    >
+    <Dialog open={open} onOpenChange={(isOpen) => onOpenChange(isOpen)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Editar Sala' : 'Adicionar Sala'}</DialogTitle>

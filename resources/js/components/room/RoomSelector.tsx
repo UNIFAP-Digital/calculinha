@@ -4,26 +4,28 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Room from '@/models/room'
+import { cn } from '@/utils/ui'
 import { Book, Plus } from 'lucide-react'
 
 interface RoomSelectorProps {
   rooms: Room[]
-  selectedRoom: Room | null
-  onSelect: (room: Room) => void
+  selectedRoomId: number | null
+  onSelect: (roomId: number) => void
   onCreate: () => void
+  className?: string
 }
 
-export default function RoomSelector({ rooms, selectedRoom, onSelect, onCreate }: RoomSelectorProps) {
+export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate, className }: RoomSelectorProps) {
   return (
-    <div className="md:w-80">
+    <div className={cn('md:w-80', className)}>
       {/* Mobile View */}
       <div className="flex flex-col gap-4 md:hidden">
         <Select
           onValueChange={(id) => {
             const room = rooms.find((r) => r.id === Number(id))
-            if (room) onSelect(room)
+            if (room) onSelect(room.id)
           }}
-          value={selectedRoom?.id?.toString()}
+          value={selectedRoomId?.toString()}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Selecione uma sala" />
@@ -53,7 +55,7 @@ export default function RoomSelector({ rooms, selectedRoom, onSelect, onCreate }
         <div className="space-y-3">
           <CreateRoomCard onClick={onCreate} />
           {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} isSelected={selectedRoom?.id === room.id} onClick={() => onSelect(room)} />
+            <RoomCard key={room.id} room={room} isSelected={selectedRoomId === room.id} onClick={() => onSelect(room.id)} />
           ))}
         </div>
       </div>
