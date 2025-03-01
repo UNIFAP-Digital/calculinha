@@ -1,10 +1,10 @@
 import ActivityDetailsDialog from '@/components/activity/ActivityDetailsDialog'
-import ActivityUnlinkAlertDialog from '@/components/room/tabs/flows/activity/ActivityUnlinkAlertDialog'
+import ActivityUnlinkAlertDialog from '@/components/flow-activity/ActivityUnlinkAlertDialog'
 import { Button } from '@/components/ui/button'
 import { Activity } from '@/models/activity'
 import { MoveDown, MoveUp } from 'lucide-react'
 
-interface ActivityActionsProps {
+interface FlowActivityActionsProps {
   activity: Activity
   isFirst: boolean
   isLast: boolean
@@ -13,7 +13,7 @@ interface ActivityActionsProps {
   onMoveDown: () => void
 }
 
-export default function ActivityActions({ activity, isFirst, isLast, onUnlink, onMoveUp, onMoveDown }: ActivityActionsProps) {
+export default function FlowActivityActions({ activity, isFirst, isLast, onUnlink, onMoveUp, onMoveDown }: FlowActivityActionsProps) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1 border-r pr-2">

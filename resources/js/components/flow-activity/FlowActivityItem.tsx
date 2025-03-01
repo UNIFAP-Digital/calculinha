@@ -1,10 +1,9 @@
-import ActivityActions from '@/components/room/tabs/flows/activity/ActivityActions'
+import FlowActivityActions from '@/components/flow-activity/FlowActivityActions'
 import { Badge } from '@/components/ui/badge'
-import { FlowActivity } from '@/models/flow-activity'
-import { useMemo } from 'react'
+import { Activity } from '@/models/activity'
 
-interface ActivityItemProps {
-  flowActivity: FlowActivity
+interface FlowActivityItemProps {
+  activity: Activity
   isFirst: boolean
   isLast: boolean
   onUnlink: () => void
@@ -12,9 +11,7 @@ interface ActivityItemProps {
   onMoveDown: () => void
 }
 
-export default function ActivityItem({ flowActivity, isFirst, isLast, onUnlink, onMoveUp, onMoveDown }: ActivityItemProps) {
-  const activity = useMemo(() => flowActivity.activity!, [flowActivity])
-
+export default function FlowActivityItem({ activity, isFirst, isLast, onUnlink, onMoveUp, onMoveDown }: FlowActivityItemProps) {
   return (
     <div className="border-border flex items-center justify-between border-b px-4 py-2">
       <div className="flex-1">
@@ -24,7 +21,7 @@ export default function ActivityItem({ flowActivity, isFirst, isLast, onUnlink, 
         <p className="text-muted-foreground mt-1 line-clamp-1 text-sm">{activity.question}</p>
       </div>
 
-      <ActivityActions activity={activity} isFirst={isFirst} isLast={isLast} onUnlink={onUnlink} onMoveUp={onMoveUp} onMoveDown={onMoveDown} />
+      <FlowActivityActions activity={activity} isFirst={isFirst} isLast={isLast} onUnlink={onUnlink} onMoveUp={onMoveUp} onMoveDown={onMoveDown} />
     </div>
   )
 }

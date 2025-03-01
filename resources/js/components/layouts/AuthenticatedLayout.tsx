@@ -3,12 +3,13 @@ import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/utils/ui'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Link, router, usePage } from '@inertiajs/react'
-import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, XIcon } from 'lucide-react'
+import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, WorkflowIcon, XIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { PropsWithChildren } from 'react'
 
 const navigation = [
   { name: 'Salas', route: 'rooms.index', icon: GroupIcon },
+  { name: 'Trilhas', route: 'flows.index', icon: WorkflowIcon },
   { name: 'Atividades', route: 'activities.index', icon: ShapesIcon },
 ]
 
