@@ -1,5 +1,5 @@
-import { Flow } from '@/models/flow'
-import Stats from '@/models/stats'
+import Flow from './flow'
+import Stats from './stats'
 
 export default interface Participant {
   id: number

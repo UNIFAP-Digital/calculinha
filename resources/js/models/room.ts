@@ -1,5 +1,5 @@
-import Flow from '@/models/flow'
-import Participant from '@/models/participant'
+import Flow from './flow'
+import Participant from './participant'
 
 export default interface Room {
   id: number

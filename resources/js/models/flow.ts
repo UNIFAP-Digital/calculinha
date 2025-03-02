@@ -1,5 +1,5 @@
-import { Activity } from '@/models/activity'
-import Stats from '@/models/stats'
+import Activity from './activity'
+import Stats from './stats'
 
 export default interface Flow {
   id: number
