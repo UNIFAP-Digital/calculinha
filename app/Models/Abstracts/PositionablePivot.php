@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 abstract class PositionablePivot extends Pivot implements Positionable
 {
-    public static int    $positionGap     = 1000;
-    protected static int $initialPosition = 10000;
+    public static int $positionGap     = 1000;
+    public static int $initialPosition = 10000;
 
     abstract public function getPositionGroupColumn(): string;
 
