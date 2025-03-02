@@ -32,10 +32,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/{flow}/move-down', 'moveDown')->name('flows.move-down');
 
         Route::controller(FlowActivityController::class)->prefix('/{flow}/activities')->group(function () {
-            Route::post('/', 'store')->name('flow-activities.store');
-            Route::delete('/{flowActivity}', 'destroy')->name('flow-activities.destroy');
-            Route::post('/{flowActivity}/move-up', 'moveUp')->name('flow-activities.move-up');
-            Route::post('/{flowActivity}/move-down', 'moveDown')->name('flow-activities.move-down');
+            Route::post('/', 'store')->name('flow.activities.store');
+            Route::delete('/{flowActivity}', 'destroy')->name('flow.activities.destroy');
+            Route::post('/{flowActivity}/move-up', 'moveUp')->name('flow.activities.move-up');
+            Route::post('/{flowActivity}/move-down', 'moveDown')->name('flow.activities.move-down');
         });
     });
 

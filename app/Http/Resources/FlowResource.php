@@ -12,15 +12,12 @@ class FlowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'                    => $this->id,
-            'name'                  => $this->name,
-            'icon'                  => $this->icon,
-            'description'           => $this->description,
-            'color'                 => $this->color,
-            'position'              => $this->position,
-            'flow_activities_count' => $this->whenCounted('flowActivities'),
-            'flow_activities'       => FlowActivityResource::collection($this->whenLoaded('flowActivities')),
-            'room_id'               => $this->room_id
+            'id'          => $this->id,
+            'name'        => $this->name,
+            'icon'        => $this->icon,
+            'description' => $this->description,
+            'color'       => $this->color,
+            'activities'  => FlowActivityResource::collection($this->whenLoaded('flowActivities')),
         ];
     }
 }

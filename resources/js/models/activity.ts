@@ -4,4 +4,6 @@ export interface Activity {
   correct_answer: string
   wrong_answers: string[]
   type: string
+
+  position?: number
 }

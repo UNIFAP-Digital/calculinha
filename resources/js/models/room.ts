@@ -1,4 +1,4 @@
-import { Flow } from '@/models/flow'
+import Flow from '@/models/flow'
 import Participant from '@/models/participant'
 
 export default interface Room {

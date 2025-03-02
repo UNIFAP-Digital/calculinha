@@ -1,23 +1,25 @@
+import SearchBar from '@/components/SearchBar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Activity } from '@/models/activity'
 import Flow from '@/models/flow'
 import { httpGet } from '@/utils/api'
-import { Link, Loader2, Search } from 'lucide-react'
+import { Link, Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 interface SelectActivityDialogProps {
   flow: Flow
-  onSelect: (activity: Activity) => void
+  onSelect: (flow: Flow, activities: Activity[]) => void
 }
 
 export default function SelectActivityDialog({ flow, onSelect }: SelectActivityDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [activities, setActivities] = useState<Activity[]>([])
+  const [selectedActivities, setSelectedActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,11 +35,14 @@ export default function SelectActivityDialog({ flow, onSelect }: SelectActivityD
     } finally {
       setIsLoading(false)
     }
-
   }, [flow.id])
 
   useEffect(() => {
-    if (isOpen) fetchActivities().then()
+    if (isOpen) {
+      fetchActivities().then()
+      // Limpa seleções anteriores quando o diálogo é aberto
+      setSelectedActivities([])
+    }
   }, [isOpen, flow, fetchActivities])
 
   const filteredActivities = activities.filter(
@@ -45,9 +50,25 @@ export default function SelectActivityDialog({ flow, onSelect }: SelectActivityD
       activity.question.toLowerCase().includes(searchTerm.toLowerCase()) || activity.correct_answer.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleSelectActivity = (activity: Activity) => {
-    onSelect(activity)
+  const handleToggleActivity = (activity: Activity) => {
+    setSelectedActivities((prev) => {
+      const isSelected = prev.some((item) => item.id === activity.id)
+
+      if (isSelected) {
+        return prev.filter((item) => item.id !== activity.id)
+      } else {
+        return [...prev, activity]
+      }
+    })
+  }
+
+  const handleSubmit = () => {
+    onSelect(flow, selectedActivities)
     setIsOpen(false)
+  }
+
+  const isActivitySelected = (activity: Activity) => {
+    return selectedActivities.some((item) => item.id === activity.id)
   }
 
   return (
@@ -55,19 +76,16 @@ export default function SelectActivityDialog({ flow, onSelect }: SelectActivityD
       <DialogTrigger asChild>
         <Button variant="ghost">
           <Link />
-          Vincular atividade
+          Vincular atividades
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Selecionar Atividade</DialogTitle>
-          <DialogDescription>Escolha uma atividade de múltipla escolha para vincular ao fluxo</DialogDescription>
+          <DialogTitle>Selecionar Atividades</DialogTitle>
+          <DialogDescription>Escolha uma ou mais atividades de múltipla escolha para vincular ao fluxo</DialogDescription>
         </DialogHeader>
 
-        <div className="relative mt-4">
-          <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
-          <Input placeholder="Buscar por questão ou resposta..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        </div>
+        <SearchBar className="mt-4" searchTerm={searchTerm} placeholder="Buscar por questão ou resposta..." onSearchChange={setSearchTerm} />
 
         <ScrollArea className="mt-4 max-h-[300px] pr-4">
           {isLoading ? (
@@ -86,16 +104,23 @@ export default function SelectActivityDialog({ flow, onSelect }: SelectActivityD
               {filteredActivities.map((activity) => (
                 <div
                   key={activity.id}
-                  className="group hover:bg-accent flex cursor-pointer flex-col gap-2 rounded-lg border p-4"
-                  onClick={() => handleSelectActivity(activity)}
+                  className={`group flex cursor-pointer flex-col gap-2 rounded-lg border p-4 ${isActivitySelected(activity) ? 'bg-accent' : 'hover:bg-accent/50'}`}
+                  onClick={() => handleToggleActivity(activity)}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="flex-1 text-sm font-medium">{activity.question}</p>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={isActivitySelected(activity)}
+                        onCheckedChange={() => handleToggleActivity(activity)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <p className="flex-1 text-sm font-medium">{activity.question}</p>
+                    </div>
                     <Badge variant="secondary" className="shrink-0">
                       Múltipla Escolha
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground ml-7 text-sm">
                     <span className="font-medium">Resposta:</span> {activity.correct_answer}
                   </p>
                 </div>
@@ -109,6 +134,20 @@ export default function SelectActivityDialog({ flow, onSelect }: SelectActivityD
             </div>
           )}
         </ScrollArea>
+
+        <DialogFooter className="mt-4 flex items-center justify-between">
+          <div className="text-muted-foreground text-sm">
+            {selectedActivities.length} {selectedActivities.length === 1 ? 'atividade selecionada' : 'atividades selecionadas'}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit} disabled={selectedActivities.length === 0}>
+              Vincular
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

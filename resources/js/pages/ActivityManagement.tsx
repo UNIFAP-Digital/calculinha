@@ -18,7 +18,7 @@ export default function ActivityManagementPage({ activities }: ActivityManagemen
   return (
     <>
       <Head title="Atividades" />
-      <Container>
+      <Container compact>
         <div className="my-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>

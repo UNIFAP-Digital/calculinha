@@ -29,12 +29,11 @@ class DatabaseSeeder extends Seeder
             'name'        => 'Turma 311',
         ]);
 
-        $flow = $room->flows()->create([
+        $flow = $user->flows()->create([
             'name'        => 'Adição',
             'icon'        => '➕',
             'description' => 'Aprendendo adição com dois números!',
-            'color'       => '#32a852',
-            'position'    => 10000,
+            'color'       => '#32a852'
         ]);
 
         Activity::all()->reduce(function (int $position, Activity $activity) use ($flow) {

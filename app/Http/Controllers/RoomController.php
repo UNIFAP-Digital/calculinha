@@ -18,9 +18,9 @@ class RoomController extends Controller
         $room?->load([
             'participants.flowActivities.activity',
             'participants.flowActivities.flow',
-            'flows'                => fn($query) => $query->withCount('flowActivities')->orderBy('position'),
-            'flows.flowActivities' => fn($query) => $query->orderBy('position'),
-            'flows.flowActivities.activity'
+            'roomFlow'                     => fn($query) => $query->orderBy('position'),
+            'roomFlow.flow.flowActivities' => fn($query) => $query->orderBy('position'),
+            'roomFlow.flow.flowActivities.activity'
         ]);
 
         $rooms = Auth::user()
@@ -31,7 +31,7 @@ class RoomController extends Controller
 
         return Inertia::render('RoomManagement', [
             'rooms' => fn() => RoomResource::collection($rooms->get()),
-            'room'  => $room ? new RoomResource($room) : null
+            'room'  => $room ? RoomResource::make($room) : null
         ]);
     }
 

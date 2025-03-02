@@ -1,17 +1,16 @@
-import FlowActivityActions from '@/components/flow-activity/FlowActivityActions'
+import FlowActivityActions from '@/components/flow/activity/FlowActivityActions'
 import { Badge } from '@/components/ui/badge'
 import { Activity } from '@/models/activity'
 
 interface FlowActivityItemProps {
   activity: Activity
-  isFirst: boolean
-  isLast: boolean
-  onUnlink: () => void
-  onMoveUp: () => void
-  onMoveDown: () => void
+  isFirst?: boolean
+  isLast?: boolean
+  onUnlink?: (activity: Activity) => void
+  onMove?: (activity: Activity, direction: 'up' | 'down') => void
 }
 
-export default function FlowActivityItem({ activity, isFirst, isLast, onUnlink, onMoveUp, onMoveDown }: FlowActivityItemProps) {
+export default function FlowActivityItem({ activity, isFirst, isLast, onUnlink, onMove }: FlowActivityItemProps) {
   return (
     <div className="border-border flex items-center justify-between border-b px-4 py-2">
       <div className="flex-1">
@@ -21,7 +20,7 @@ export default function FlowActivityItem({ activity, isFirst, isLast, onUnlink, 
         <p className="text-muted-foreground mt-1 line-clamp-1 text-sm">{activity.question}</p>
       </div>
 
-      <FlowActivityActions activity={activity} isFirst={isFirst} isLast={isLast} onUnlink={onUnlink} onMoveUp={onMoveUp} onMoveDown={onMoveDown} />
+      <FlowActivityActions activity={activity} isFirst={isFirst} isLast={isLast} onUnlink={onUnlink} onMove={onMove} />
     </div>
   )
 }

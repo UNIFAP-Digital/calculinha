@@ -1,8 +1,10 @@
 import Container from '@/components/Container'
+import FlowActivityList from '@/components/flow/activity/FlowActivityList'
 import FlowCard from '@/components/flow/FlowCard'
 import FlowFormDialog from '@/components/flow/FlowFormDialog'
 import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
+import { Activity } from '@/models/activity'
 import Flow from '@/models/flow'
 import { Head, router } from '@inertiajs/react'
 import { Plus } from 'lucide-react'
@@ -10,6 +12,12 @@ import { useMemo, useState } from 'react'
 
 interface FlowManagementPageProps {
   flows: Flow[]
+}
+
+const preserveAll = {
+  preserveScroll: true,
+  preserveState: true,
+  preserveUrl: true,
 }
 
 export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
@@ -29,7 +37,21 @@ export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
   }
 
   const handleDelete = (flow: Flow) => {
-    router.delete(route('flows.destroy', flow.id))
+    router.delete(route('flows.destroy', flow.id), {
+      preserveScroll: true,
+    })
+  }
+
+  const handleUnlink = (flow: Flow, activity: Activity) => {
+    router.delete(route('flow.activities.destroy', [flow.id, activity.id]), preserveAll)
+  }
+
+  const handleMove = (flow: Flow, activity: Activity, direction: 'up' | 'down') => {
+    router.post(route(`flow.activities.move-${direction}`, [flow.id, activity.id]), {}, preserveAll)
+  }
+
+  const handleLink = (flow: Flow, activities: Activity[]) => {
+    router.post(route('flow.activities.store', [flow.id]), { activity_ids: activities.map((activity) => activity.id) }, preserveAll)
   }
 
   return (
@@ -57,7 +79,9 @@ export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
 
         <div className="space-y-4">
           {filteredFlows.map((flow) => (
-            <FlowCard key={flow.id} flow={flow} onDelete={handleDelete} onEdit={handleEdit} />
+            <FlowCard key={flow.id} flow={flow} onDelete={handleDelete} onEdit={handleEdit}>
+              <FlowActivityList flow={flow} onMove={handleMove} onLink={(_, activities) => handleLink(flow, activities)} onUnlink={handleUnlink} />
+            </FlowCard>
           ))}
 
           {filteredFlows.length === 0 && (

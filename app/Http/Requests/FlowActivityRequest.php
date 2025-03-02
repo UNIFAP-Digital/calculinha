@@ -10,21 +10,26 @@ class FlowActivityRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if ($this->method() === 'PUT') {
-            /** @var FlowActivity $flowActivity */
-            $flowActivity = $this->route('flowActivity');
-            return $this->user()->can('update', $flowActivity);
+        $flow = $this->route('flow');
+        $activityIds = $this->input('activity_ids', []);
+        if (empty($activityIds)) return false;
+
+        $activities = Activity::findOrFail($activityIds);
+
+        foreach ($activities as $activity) {
+            if (!$this->user()->can('create', [FlowActivity::class, $flow, $activity])) {
+                return false;
+            }
         }
 
-        $flow = $this->route('flow');
-        $activity = Activity::findOrFail($this->input('activity_id'));
-        return $this->user()->can('create', [FlowActivity::class, $flow, $activity]);
+        return true;
     }
 
     public function rules(): array
     {
         return [
-            'activity_id' => 'required',
+            'activity_ids'   => 'required|array',
+            'activity_ids.*' => 'required|integer',
         ];
     }
 }

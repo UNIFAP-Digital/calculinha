@@ -1,15 +1,14 @@
-import { FlowActivity } from '@/models/flow-activity'
+import { Activity } from '@/models/activity'
 import Stats from '@/models/stats'
 
-export interface Flow {
+export default interface Flow {
   id: number
   name: string
-  position: number
   description: string | null
   color: string
   icon: string
-  room_id: number
-  flow_activities_count?: number
-  flow_activities?: FlowActivity[]
+
+  position?: number
+  activities?: Activity[]
   stats?: Stats
 }

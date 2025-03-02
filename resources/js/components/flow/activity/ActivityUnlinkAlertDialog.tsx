@@ -15,7 +15,7 @@ import { Unlink } from 'lucide-react'
 
 interface ActivityUnlinkAlertDialogProps {
   activity: Activity
-  onUnlink: () => void
+  onUnlink: (activity: Activity) => void
 }
 
 export default function ActivityUnlinkAlertDialog({ activity, onUnlink }: ActivityUnlinkAlertDialogProps) {
@@ -38,7 +38,7 @@ export default function ActivityUnlinkAlertDialog({ activity, onUnlink }: Activi
           <AlertDialogAction
             onClick={(e) => {
               e.stopPropagation()
-              onUnlink()
+              onUnlink(activity)
             }}
             className={buttonVariants({ variant: 'destructive' })}
           >

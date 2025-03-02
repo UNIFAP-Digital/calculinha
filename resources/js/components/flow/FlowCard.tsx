@@ -1,31 +1,38 @@
-import FlowActions from '@/components/flow/FlowActions'
-import FlowHeader from '@/components/flow/FlowHeader'
-import FlowActivityList from '@/components/flow-activity/FlowActivityList'
+import { FlowActions } from '@/components/flow/FlowActions'
+import { FlowHeader } from '@/components/flow/FlowHeader'
 import { Separator } from '@/components/ui/separator'
 import Flow from '@/models/flow'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 export interface FlowCardProps {
   flow: Flow
-  onDelete: (flow: Flow) => void
-  onEdit: (flow: Flow) => void
+  order?: number
+  isFirst?: boolean
+  isLast?: boolean
+  onEdit?: (flow: Flow) => void
+  onDelete?: (flow: Flow) => void
+  onMove?: (flow: Flow, direction: 'up' | 'down') => void
+  children: ReactNode
 }
 
-export default function FlowCard({ flow, onDelete, onEdit }: FlowCardProps) {
+export default function FlowCard({ flow, order, isFirst, isLast, onEdit, onDelete, onMove, children }: FlowCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <>
       <div className="bg-card rounded-lg border" style={{ borderColor: flow.color }}>
         <div className="flex items-center justify-between">
-          <FlowHeader flow={flow} onClick={() => setIsExpanded(!isExpanded)} />
+          <FlowHeader flow={flow} order={order} onClick={() => setIsExpanded(!isExpanded)} />
 
           <div className="px-4">
             <FlowActions
-              flowName={flow.name}
+              flow={flow}
+              isFirst={isFirst}
+              isLast={isLast}
               isExpanded={isExpanded}
-              onEdit={() => onEdit(flow)}
-              onDelete={() => onDelete(flow)}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onMove={onMove}
               onToggleExpand={() => setIsExpanded(!isExpanded)}
             />
           </div>
@@ -34,7 +41,7 @@ export default function FlowCard({ flow, onDelete, onEdit }: FlowCardProps) {
         {isExpanded && (
           <>
             <Separator />
-            <FlowActivityList flow={flow} flowActivities={flow.flow_activities ?? []} />
+            {children}
           </>
         )}
       </div>
