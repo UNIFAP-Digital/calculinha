@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('attempts', function (Blueprint $table) {
             $table->foreignId('participant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('room_flow_id')->constrained()->onDelete('cascade');
-            $table->foreignId('flow_activity_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->foreignId('activity_id')->constrained()->onDelete('cascade');
             $table->string('answer');
             $table->boolean('is_correct');
             $table->timestamp('created_at');

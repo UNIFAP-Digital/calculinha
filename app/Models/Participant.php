@@ -13,6 +13,15 @@ class Participant extends Model
         'room_id',
     ];
 
+//    public function attempts(): BelongsToMany
+//    {
+//        return $this
+//            ->belongsToMany(Activity::class)
+//            ->using(FlowActivity::class)
+//            ->withPivot('position')
+//            ->orderByPivot('position');
+//    }
+//
     public function flowActivities(): BelongsToMany
     {
         return $this->belongsToMany(FlowActivity::class, 'attempts')

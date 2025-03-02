@@ -1,13 +1,11 @@
 import Container from '@/components/Container'
 import RoomContent from '@/components/room/RoomContent'
-import RoomFormDialog from '@/components/room/RoomFormDialog'
 import RoomSelector from '@/components/room/RoomSelector'
 import { Button } from '@/components/ui/button'
 import { useRoomTabs } from '@/hooks/useRoomTabs'
 import Room from '@/models/room'
-import { Head, router } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import { GroupIcon, Plus } from 'lucide-react'
-import { useState } from 'react'
 import { toast } from 'sonner'
 
 type RoomManagementProps = {
@@ -16,13 +14,14 @@ type RoomManagementProps = {
 }
 
 export default function RoomManagementPage({ rooms, room }: RoomManagementProps) {
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingRoom, setEditingRoom] = useState<Room | null>(null)
   const { setActiveTab, activeTab } = useRoomTabs()
 
+  const handleCreate = () => {
+    router.visit(route('rooms.create'))
+  }
+
   const handleEdit = (room: Room) => {
-    setEditingRoom(room)
-    setIsFormOpen(true)
+    router.visit(route('rooms.edit', room.id))
   }
 
   const handleSelect = (selectedRoom: Room) => {
@@ -46,16 +45,18 @@ export default function RoomManagementPage({ rooms, room }: RoomManagementProps)
   return (
     <>
       <Head title="Salas" />
-      <Container className="py-8">
+      <Container>
         {rooms.length === 0 && (
           <>
             <div className="flex items-center justify-center">
               <div className="space-y-4 text-center">
                 <h3 className="text-2xl font-semibold">Você ainda não tem nenhuma sala criada</h3>
                 <p className="text-muted-foreground">Adicione sua primeira sala para começar</p>
-                <Button onClick={() => setIsFormOpen(true)} size="lg">
-                  <Plus className="mr-2 h-5 w-5" />
-                  Adicionar Sala
+                <Button asChild size="lg">
+                  <Link href={route('rooms.create')}>
+                    <Plus className="mr-2 h-5 w-5" />
+                    Adicionar Sala
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -63,7 +64,7 @@ export default function RoomManagementPage({ rooms, room }: RoomManagementProps)
         )}
         {rooms.length > 0 && (
           <div className="flex flex-col md:flex-row">
-            <RoomSelector rooms={rooms} selectedRoomId={room?.id ?? null} onSelect={handleSelect} onCreate={() => setIsFormOpen(true)} />
+            <RoomSelector rooms={rooms} selectedRoomId={room?.id ?? null} onSelect={handleSelect} onCreate={handleCreate} />
 
             <div className="ms-0 mt-4 flex-1 md:ms-4 md:mt-0">
               {room !== null ? (
@@ -79,14 +80,6 @@ export default function RoomManagementPage({ rooms, room }: RoomManagementProps)
           </div>
         )}
       </Container>
-      <RoomFormDialog
-        open={isFormOpen}
-        room={editingRoom}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setEditingRoom(null)
-          setIsFormOpen(isOpen)
-        }}
-      />
     </>
   )
 }

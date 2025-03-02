@@ -22,7 +22,6 @@ return new class extends Migration {
         });
 
         Schema::create('flow_activity', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
 

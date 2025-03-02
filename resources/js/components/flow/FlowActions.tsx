@@ -2,7 +2,7 @@ import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDia
 import { Button } from '@/components/ui/button'
 import Flow from '@/models/flow'
 import { cn } from '@/utils/ui'
-import { ChevronDown, MoveDown, MoveUp, Pencil, Unlink } from 'lucide-react'
+import { ChevronDown, MoveDown, MoveUp, Pencil } from 'lucide-react'
 
 interface FlowActionsProps {
   flow: Flow
@@ -10,13 +10,12 @@ interface FlowActionsProps {
   onEdit?: (flow: Flow) => void
   onDelete?: (flow: Flow) => void
   onMove?: (flow: Flow, direction: 'up' | 'down') => void
-  onUnlink?: (flow: Flow) => void
   isFirst?: boolean
   isLast?: boolean
   onToggleExpand: () => void
 }
 
-export function FlowActions({ flow, isLast, isFirst, isExpanded, onUnlink, onEdit, onDelete, onMove, onToggleExpand }: FlowActionsProps) {
+export function FlowActions({ flow, isLast, isFirst, isExpanded, onEdit, onDelete, onMove, onToggleExpand }: FlowActionsProps) {
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-1">
@@ -32,19 +31,6 @@ export function FlowActions({ flow, isLast, isFirst, isExpanded, onUnlink, onEdi
             variant="ghost"
             description={'Esta ação não pode ser desfeita. Isso irá apagar permanentemente a trilha ' + flow.name + ' e todas as suas atividades.'}
             onConfirm={() => onDelete(flow)}
-          />
-        )}
-
-        {onUnlink && (
-          <DestructiveActionAlertDialog
-            size="sm"
-            ButtonIcon={Unlink}
-            button="Desvincular"
-            variant="ghost"
-            description={
-              'Esta ação não pode ser desfeita. Isso irá desvincular permanentemente a trilha ' + flow.name + ' desta sala e apagará todas as respostas.'
-            }
-            onConfirm={() => onUnlink(flow)}
           />
         )}
 

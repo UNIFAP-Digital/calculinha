@@ -21,7 +21,6 @@ return new class extends Migration {
         });
 
         Schema::create('room_flow', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
 

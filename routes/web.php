@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
         ->prefix('/trilhas')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/adicionar', 'create')->name('create');
+            Route::get('/{flow}/editar', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
             Route::put('/{flow}', 'update')->name('update');
             Route::delete('/{flow}', 'destroy')->name('destroy');
@@ -39,8 +41,6 @@ Route::middleware('auth')->group(function () {
                 ->name('activities.')
                 ->prefix('/{flow}/atividades')
                 ->group(function () {
-                    Route::post('/', 'store')->name('store');
-                    Route::delete('/{activity}', 'destroy')->name('destroy');
                     Route::post('/{activity}/move-up', 'moveUp')->name('move-up');
                     Route::post('/{activity}/move-down', 'moveDown')->name('move-down');
                 });
@@ -51,7 +51,9 @@ Route::middleware('auth')->group(function () {
         ->name('rooms.')
         ->prefix('/salas')
         ->group(function () {
+            Route::get('/adicionar', 'create')->name('create');
             Route::get('/{room?}', 'index')->name('index');
+            Route::get('/{room}/editar', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
             Route::put('/{room}', 'update')->name('update');
             Route::delete('/{room}', 'destroy')->name('destroy');
@@ -61,8 +63,6 @@ Route::middleware('auth')->group(function () {
                 ->prefix('/{room}/trilhas')
                 ->name('flows.')
                 ->group(function () {
-                    Route::post('/', 'store')->name('store');
-                    Route::delete('/{flow}', 'destroy')->name('destroy');
                     Route::post('/{flow}/move-up', 'moveUp')->name('move-up');
                     Route::post('/{flow}/move-down', 'moveDown')->name('move-down');
                 });
