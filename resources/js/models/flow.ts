@@ -8,6 +8,8 @@ export default interface Flow {
   color: string
   icon: string
 
+  activities_count?: number
+
   position?: number
   activities?: Activity[]
   stats?: Stats

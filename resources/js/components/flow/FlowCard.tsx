@@ -10,12 +10,13 @@ export interface FlowCardProps {
   isFirst?: boolean
   isLast?: boolean
   onEdit?: (flow: Flow) => void
+  onUnlink?: (flow: Flow) => void
   onDelete?: (flow: Flow) => void
   onMove?: (flow: Flow, direction: 'up' | 'down') => void
   children: ReactNode
 }
 
-export default function FlowCard({ flow, order, isFirst, isLast, onEdit, onDelete, onMove, children }: FlowCardProps) {
+export default function FlowCard({ flow, order, isFirst, isLast, onUnlink, onEdit, onDelete, onMove, children }: FlowCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -29,6 +30,7 @@ export default function FlowCard({ flow, order, isFirst, isLast, onEdit, onDelet
               flow={flow}
               isFirst={isFirst}
               isLast={isLast}
+              onUnlink={onUnlink}
               isExpanded={isExpanded}
               onEdit={onEdit}
               onDelete={onDelete}

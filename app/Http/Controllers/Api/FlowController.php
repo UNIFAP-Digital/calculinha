@@ -17,10 +17,13 @@ class FlowController extends Controller
         $room = Room::find($validated['room_id']);
         Gate::authorize('viewAny', [Flow::class, $room]);
 
-        $flows = Flow::whereNotIn(
-            'id',
-            fn($query) => $query->select('flow_id')->from('room_flows')->where('room_id', $room->id)
-        )->get();
+        $flows = Flow
+            ::whereNotIn(
+                'id',
+                fn($query) => $query->select('flow_id')->from('room_flows')->where('room_id', $room->id)
+            )
+            ->withCount('flowActivities')
+            ->get();
 
         return FlowResource::collection($flows);
     }

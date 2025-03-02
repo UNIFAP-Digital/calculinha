@@ -10,22 +10,32 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
+import { LucideIcon, Trash2 } from 'lucide-react'
 
 interface DeleteAlertDialogProps {
   description: string
-  onConfirmDelete: () => void
+  button?: string
+  ButtonIcon?: LucideIcon
+  onConfirm: () => void
   size: 'sm' | 'icon'
   variant: 'outline' | 'ghost'
   className?: string
 }
 
-export default function DeleteAlertDialog({ variant, size, className, onConfirmDelete, description }: DeleteAlertDialogProps) {
+export default function DestructiveActionAlertDialog({
+  variant,
+  size,
+  button = 'Apagar',
+  ButtonIcon = Trash2,
+  className,
+  onConfirm,
+  description,
+}: DeleteAlertDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant={variant} className={className} size={size}>
-          <Trash2 className="text-destructive" />
+          <ButtonIcon className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -35,8 +45,8 @@ export default function DeleteAlertDialog({ variant, size, className, onConfirmD
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirmDelete} className={buttonVariants({ variant: 'destructive' })}>
-            Apagar
+          <AlertDialogAction onClick={onConfirm} className={buttonVariants({ variant: 'destructive' })}>
+            {button}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

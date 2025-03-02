@@ -29,7 +29,8 @@ export function FlowHeader({ flow, order, onClick }: FlowHeaderProps) {
       </div>
       <div className="self-center">
         <div className="bg-muted text-muted-foreground flex items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-          {flow.activities?.length ?? 0} {flow.activities?.length === 1 ? 'atividade' : 'atividades'}
+          {flow.activities_count ? flow.activities_count : (flow.activities?.length ?? 0)}{' '}
+          {(flow.activities_count ? flow.activities_count : flow.activities?.length === 1) ? 'atividade' : 'atividades'}
         </div>
       </div>
     </div>

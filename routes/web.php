@@ -5,6 +5,7 @@ use App\Http\Controllers\FlowActivityController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomFlowController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome');
@@ -44,6 +45,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/', 'store')->name('rooms.store');
         Route::put('/{room}', 'update')->name('rooms.update');
         Route::delete('/{room}', 'destroy')->name('rooms.destroy');
+
+        Route::controller(RoomFlowController::class)->prefix('/{room}/flows')->group(function () {
+            Route::post('/', 'store')->name('room.flows.store');
+            Route::delete('/{roomFlow}', 'destroy')->name('room.flows.destroy');
+            Route::post('/{roomFlow}/move-up', 'moveUp')->name('room.flows.move-up');
+            Route::post('/{roomFlow}/move-down', 'moveDown')->name('room.flows.move-down');
+        });
     });
 })->scopeBindings();
 

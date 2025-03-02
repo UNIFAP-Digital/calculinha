@@ -17,6 +17,7 @@ class FlowResource extends JsonResource
             'icon'        => $this->icon,
             'description' => $this->description,
             'color'       => $this->color,
+            'activities_count' => $this->whenCounted('flowActivities'),
             'activities'  => FlowActivityResource::collection($this->whenLoaded('flowActivities')),
         ];
     }

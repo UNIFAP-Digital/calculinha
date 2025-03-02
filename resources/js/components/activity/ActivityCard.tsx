@@ -1,5 +1,5 @@
 import ActivityDetailsDialog from '@/components/activity/ActivityDetailsDialog'
-import DeleteAlertDialog from '@/components/DeleteAlertDialog'
+import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -34,11 +34,11 @@ export default function ActivityCard({ activity, onEdit, onDelete }: ActivityCar
             <Button variant="ghost" size="icon" onClick={onEdit} title="Editar">
               <Edit />
             </Button>
-            <DeleteAlertDialog
+            <DestructiveActionAlertDialog
               variant="ghost"
               size="icon"
               description="Esta ação não pode ser desfeita. Isso irá apagar permanentemente a atividade e todos os seus dados."
-              onConfirmDelete={onDelete}
+              onConfirm={onDelete}
             />
           </div>
         </div>

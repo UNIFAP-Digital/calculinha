@@ -1,4 +1,4 @@
-import DeleteAlertDialog from '@/components/DeleteAlertDialog'
+import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDialog'
 import RoomTabs from '@/components/room/RoomTabs'
 import { Badge } from '@/components/ui/badge'
 import Room from '@/models/room'
@@ -39,10 +39,10 @@ export default function RoomContent({ room, setActiveTab, activeTab, onDelete, o
             <Pencil />
           </Button>
 
-          <DeleteAlertDialog
+          <DestructiveActionAlertDialog
             variant="outline"
             size="icon"
-            onConfirmDelete={() => onDelete(room)}
+            onConfirm={() => onDelete(room)}
             description="Esta ação não pode ser desfeita. Isso irá apagar permanentemente a sala e todos os seus dados."
           />
         </div>
