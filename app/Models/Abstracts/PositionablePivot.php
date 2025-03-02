@@ -2,11 +2,13 @@
 
 namespace App\Models\Abstracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Contracts\Positionable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-abstract class PositionableModel extends Model
+abstract class PositionablePivot extends Pivot implements Positionable
 {
-    protected static int $positionGap     = 1000;
+    public static int    $positionGap     = 1000;
     protected static int $initialPosition = 10000;
 
     abstract public function getPositionGroupColumn(): string;
@@ -28,10 +30,9 @@ abstract class PositionableModel extends Model
 
     public function moveUp(): void
     {
-        $column = $this->getPositionGroupColumn();
-        $groupValue = $this->getPositionGroupValue();
+        $query = $this->getPivotQuery();
 
-        $previous = static::where($column, $groupValue)
+        $previous = $query
             ->where('position', '<', $this->position)
             ->orderBy('position', 'desc')
             ->first();
@@ -49,10 +50,9 @@ abstract class PositionableModel extends Model
 
     public function moveDown(): void
     {
-        $column = $this->getPositionGroupColumn();
-        $groupValue = $this->getPositionGroupValue();
+        $query = $this->getPivotQuery();
 
-        $next = static::where($column, $groupValue)
+        $next = $query
             ->where('position', '>', $this->position)
             ->orderBy('position')
             ->first();
@@ -70,13 +70,8 @@ abstract class PositionableModel extends Model
 
     public function rebalancePositions(): void
     {
-        $column = $this->getPositionGroupColumn();
-        $groupValue = $this->getPositionGroupValue();
-
-        $items = static::where($column, $groupValue)
-            ->orderBy('position')
-            ->get();
-
+        $query = $this->getPivotQuery();
+        $items = $query->orderBy('position')->get();
         $position = static::$initialPosition;
 
         foreach ($items as $item) {
@@ -88,10 +83,9 @@ abstract class PositionableModel extends Model
 
     protected function needsRebalancing(): bool
     {
-        $column = $this->getPositionGroupColumn();
-        $groupValue = $this->getPositionGroupValue();
+        $query = $this->getPivotQuery();
 
-        return static::where($column, $groupValue)
+        return $query
             ->where(function ($query) {
                 $query->whereBetween('position', [
                     $this->position - static::$positionGap / 4,
@@ -100,5 +94,13 @@ abstract class PositionableModel extends Model
                     ->where('id', '!=', $this->id);
             })
             ->exists();
+    }
+
+    protected function getPivotQuery(): Builder
+    {
+        $column = $this->getPositionGroupColumn();
+        $groupValue = $this->getPositionGroupValue();
+
+        return static::where($column, $groupValue);
     }
 }
