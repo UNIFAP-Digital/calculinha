@@ -43,15 +43,15 @@ export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
   }
 
   const handleUnlink = (flow: Flow, activity: Activity) => {
-    router.delete(route('flow.activities.destroy', [flow.id, activity.id]), preserveAll)
+    router.delete(route('flows.activities.destroy', [flow.id, activity.id]), preserveAll)
   }
 
   const handleMove = (flow: Flow, activity: Activity, direction: 'up' | 'down') => {
-    router.post(route(`flow.activities.move-${direction}`, [flow.id, activity.id]), {}, preserveAll)
+    router.post(route(`flows.activities.move-${direction}`, [flow.id, activity.id]), {}, preserveAll)
   }
 
   const handleLink = (flow: Flow, activities: Activity[]) => {
-    router.post(route('flow.activities.store', [flow.id]), { activity_ids: activities.map((activity) => activity.id) }, preserveAll)
+    router.post(route('flows.activities.store', [flow.id]), { activity_ids: activities.map((activity) => activity.id) }, preserveAll)
   }
 
   return (

@@ -18,9 +18,7 @@ class RoomController extends Controller
         $room?->load([
             'participants.flowActivities.activity',
             'participants.flowActivities.flow',
-            'roomFlow'                     => fn($query) => $query->orderBy('position'),
-            'roomFlow.flow.flowActivities' => fn($query) => $query->orderBy('position'),
-            'roomFlow.flow.flowActivities.activity'
+            'flows.activities'
         ]);
 
         $rooms = Auth::user()

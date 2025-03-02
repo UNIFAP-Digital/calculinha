@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Abstracts\PositionableModel;
+use App\Models\Abstracts\PositionablePivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class FlowActivity extends PositionableModel
+class FlowActivity extends PositionablePivot
 {
-    public $timestamps = false;
+    public $incrementing = true;
+    public $timestamps   = false;
 
     protected $fillable = [
         'flow_id',

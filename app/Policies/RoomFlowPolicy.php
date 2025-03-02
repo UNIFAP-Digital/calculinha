@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Flow;
 use App\Models\Room;
-use App\Models\RoomFlow;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -24,13 +23,13 @@ class RoomFlowPolicy
         return $roomOwnedByUser && $flowOwnedByUser;
     }
 
-    public function update(User $user, RoomFlow $roomFlow): bool
+    public function update(User $user, Room $room, Flow $flow): bool
     {
-        return $roomFlow->room->owner_id === $user->id;
+        return $room->owner_id === $user->id && $room->flows()->find($flow);
     }
 
-    public function delete(User $user, RoomFlow $roomFlow): bool
+    public function delete(User $user, Room $room): bool
     {
-        return $roomFlow->room->owner_id === $user->id;
+        return $room->owner_id === $user->id;
     }
 }

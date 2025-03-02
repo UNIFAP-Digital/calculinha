@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('room_flows', function (Blueprint $table) {
+        Schema::create('room_flow', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
@@ -37,6 +37,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('rooms');
-        Schema::dropIfExists('room_flows');
+        Schema::dropIfExists('room_flow');
     }
 };

@@ -6,7 +6,7 @@ use App\Models\Flow;
 use App\Models\RoomFlow;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RoomFlowActivityRequest extends FormRequest
+class RoomFlowRequest extends FormRequest
 {
     public function authorize(): bool
     {

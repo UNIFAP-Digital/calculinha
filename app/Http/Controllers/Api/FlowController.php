@@ -13,16 +13,16 @@ class FlowController extends Controller
 {
     public function index(Request $request)
     {
-        $validated = $request->validate(['room_id' => 'required|integer|exists:rooms,id',]);
+        $validated = $request->validate(['room_id' => 'required|integer|exists:rooms,id']);
         $room = Room::find($validated['room_id']);
         Gate::authorize('viewAny', [Flow::class, $room]);
 
         $flows = Flow
             ::whereNotIn(
                 'id',
-                fn($query) => $query->select('flow_id')->from('room_flows')->where('room_id', $room->id)
+                fn($query) => $query->select('flow_id')->from('room_flow')->where('room_id', $room->id)
             )
-            ->withCount('flowActivities')
+            ->withCount('activities')
             ->get();
 
         return FlowResource::collection($flows);

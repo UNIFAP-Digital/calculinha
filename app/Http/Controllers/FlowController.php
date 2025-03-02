@@ -19,10 +19,7 @@ class FlowController extends Controller
         $flows = $request
             ->user()
             ->flows()
-            ->with([
-                'flowActivities' => fn($query) => $query->orderBy('position'),
-                'flowActivities.activity'
-            ])
+            ->with('activities')
             ->orderBy('name')
             ->orderByDesc('created_at')
             ->get();

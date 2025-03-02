@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Activity;
 use App\Models\Flow;
-use App\Models\FlowActivity;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -24,13 +23,13 @@ class FlowActivityPolicy
         return $flowOwnedByUser && $activityOwnedByUser;
     }
 
-    public function update(User $user, FlowActivity $flowActivity): bool
+    public function update(User $user, Flow $flow, Activity $activity): bool
     {
-        return $flowActivity->flow->owner_id === $user->id;
+        return $flow->owner_id === $user->id && $flow->activities()->find($activity);
     }
 
-    public function delete(User $user, FlowActivity $flowActivity): bool
+    public function delete(User $user, Flow $flow): bool
     {
-        return $flowActivity->flow->owner_id === $user->id;
+        return $flow->owner_id === $user->id;
     }
 }

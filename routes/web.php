@@ -24,35 +24,49 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{activity}', 'destroy')->name('activities.destroy');
     });
 
-    Route::controller(FlowController::class)->prefix('/trilhas')->group(function () {
-        Route::get('/', 'index')->name('flows.index');
-        Route::post('/', 'store')->name('flows.store');
-        Route::put('/{flow}', 'update')->name('flows.update');
-        Route::delete('/{flow}', 'destroy')->name('flows.destroy');
-        Route::post('/{flow}/move-up', 'moveUp')->name('flows.move-up');
-        Route::post('/{flow}/move-down', 'moveDown')->name('flows.move-down');
+    Route
+        ::controller(FlowController::class)
+        ->name('flows.')
+        ->prefix('/trilhas')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{flow}', 'update')->name('update');
+            Route::delete('/{flow}', 'destroy')->name('destroy');
 
-        Route::controller(FlowActivityController::class)->prefix('/{flow}/activities')->group(function () {
-            Route::post('/', 'store')->name('flow.activities.store');
-            Route::delete('/{flowActivity}', 'destroy')->name('flow.activities.destroy');
-            Route::post('/{flowActivity}/move-up', 'moveUp')->name('flow.activities.move-up');
-            Route::post('/{flowActivity}/move-down', 'moveDown')->name('flow.activities.move-down');
+            Route
+                ::controller(FlowActivityController::class)
+                ->name('activities.')
+                ->prefix('/{flow}/atividades')
+                ->group(function () {
+                    Route::post('/', 'store')->name('store');
+                    Route::delete('/{activity}', 'destroy')->name('destroy');
+                    Route::post('/{activity}/move-up', 'moveUp')->name('move-up');
+                    Route::post('/{activity}/move-down', 'moveDown')->name('move-down');
+                });
         });
-    });
 
-    Route::controller(RoomController::class)->prefix('/salas')->group(function () {
-        Route::get('/{room?}', 'index')->name('rooms.index');
-        Route::post('/', 'store')->name('rooms.store');
-        Route::put('/{room}', 'update')->name('rooms.update');
-        Route::delete('/{room}', 'destroy')->name('rooms.destroy');
+    Route
+        ::controller(RoomController::class)
+        ->name('rooms.')
+        ->prefix('/salas')
+        ->group(function () {
+            Route::get('/{room?}', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{room}', 'update')->name('update');
+            Route::delete('/{room}', 'destroy')->name('destroy');
 
-        Route::controller(RoomFlowController::class)->prefix('/{room}/flows')->group(function () {
-            Route::post('/', 'store')->name('room.flows.store');
-            Route::delete('/{roomFlow}', 'destroy')->name('room.flows.destroy');
-            Route::post('/{roomFlow}/move-up', 'moveUp')->name('room.flows.move-up');
-            Route::post('/{roomFlow}/move-down', 'moveDown')->name('room.flows.move-down');
+            Route
+                ::controller(RoomFlowController::class)
+                ->prefix('/{room}/trilhas')
+                ->name('flows.')
+                ->group(function () {
+                    Route::post('/', 'store')->name('store');
+                    Route::delete('/{flow}', 'destroy')->name('destroy');
+                    Route::post('/{flow}/move-up', 'moveUp')->name('move-up');
+                    Route::post('/{flow}/move-down', 'moveDown')->name('move-down');
+                });
         });
-    });
 })->scopeBindings();
 
 require __DIR__ . '/auth.php';

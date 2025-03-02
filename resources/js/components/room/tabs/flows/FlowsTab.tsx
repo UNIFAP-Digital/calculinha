@@ -21,18 +21,18 @@ export default function FlowsTab({ room }: FlowsTabProps) {
   const flows = useMemo(() => room.flows ?? [], [room])
 
   const handleMove = (flow: Flow, direction: 'up' | 'down') => {
-    router.post(route(`room.flows.move-${direction}`, [room.id, flow.id]), {
+    router.post(route(`rooms.flows.move-${direction}`, [room.id, flow.id]), {
       preserveScroll: true,
       preserveState: true,
     })
   }
 
   const handleLink = (flows: Flow[]) => {
-    router.post(route('room.flows.store', room.id), { flow_ids: flows.map((flow) => flow.id) }, preserveAll)
+    router.post(route('rooms.flows.store', room.id), { flow_ids: flows.map((flow) => flow.id) }, preserveAll)
   }
 
   const handleUnlink = (flow: Flow) => {
-    router.delete(route('room.flows.destroy', [room.id, flow.id]), preserveAll)
+    router.delete(route('rooms.flows.destroy', [room.id, flow.id]), preserveAll)
   }
 
   return (

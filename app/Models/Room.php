@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Random\RandomException;
 
@@ -33,11 +34,15 @@ class Room extends Model
         return $code;
     }
 
-    public function roomFlow(): HasMany
+    public function flows(): BelongsToMany
     {
-        return $this->hasMany(RoomFlow::class);
+        return $this
+            ->belongsToMany(Flow::class, 'room_flow')
+            ->using(RoomFlow::class)
+            ->withPivot('position')
+            ->orderByPivot('position');
     }
-
+    
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');

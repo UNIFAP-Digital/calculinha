@@ -2,28 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Abstracts\PositionableModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Abstracts\PositionablePivot;
 
-class RoomFlow extends PositionableModel
+class RoomFlow extends PositionablePivot
 {
-    public $timestamps = false;
-
-    protected $fillable = [
-        'room_id',
-        'flow_id',
-        'position',
-    ];
-
-    public function flow(): BelongsTo
-    {
-        return $this->belongsTo(Flow::class);
-    }
-
-    public function room(): BelongsTo
-    {
-        return $this->belongsTo(Room::class);
-    }
+    public $incrementing = true;
+    public $timestamps   = false;
 
     public function getPositionGroupColumn(): string
     {

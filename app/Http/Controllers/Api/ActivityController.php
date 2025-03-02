@@ -20,7 +20,7 @@ class ActivityController extends Controller
         $activities = Activity
             ::whereNotIn(
                 'id',
-                fn($query) => $query->select('activity_id')->from('flow_activities')->where('flow_id', $flow->id)
+                fn($query) => $query->select('activity_id')->from('flow_activity')->where('flow_id', $flow->id)
             )
             ->orderBy('created_at')
             ->get();

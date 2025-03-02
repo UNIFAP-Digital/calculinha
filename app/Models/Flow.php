@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Flow extends Model
 {
@@ -17,18 +17,17 @@ class Flow extends Model
         'position'
     ];
 
-    public function flowActivities(): HasMany
+    public function activities(): BelongsToMany
     {
-        return $this->hasMany(FlowActivity::class);
+        return $this
+            ->belongsToMany(Activity::class, 'flow_activity')
+            ->using(FlowActivity::class)
+            ->withPivot('position')
+            ->orderByPivot('position');
     }
 
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function roomFlows(): HasMany
-    {
-        return $this->hasMany(RoomFlow::class);
     }
 }
