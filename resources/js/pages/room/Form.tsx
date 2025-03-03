@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import InputError from '@/components/ui/input-error'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import Flow from '@/models/flow'
+import Module from '@/models/module'
 import Room from '@/models/room'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft } from 'lucide-react'
@@ -17,18 +17,18 @@ import { toast } from 'sonner'
 
 interface RoomFormPageProps {
   room?: Room
-  flows: Flow[]
+  modules: Module[]
 }
 
-export default function RoomFormPage({ room, flows }: RoomFormPageProps) {
+export default function RoomFormPage({ room, modules }: RoomFormPageProps) {
   const isEditing = !!room
-  const requiredFlows = 4
+  const requiredModules = 4
   const title = isEditing ? 'Editar Sala' : 'Adicionar Sala'
 
   const { data, setData, errors, post, put, processing, reset } = useForm({
     name: '',
     is_active: true as boolean,
-    flow_ids: [] as number[],
+    module_ids: [] as number[],
   })
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function RoomFormPage({ room, flows }: RoomFormPageProps) {
       setData({
         name: room?.name ?? '',
         is_active: room?.is_active ?? true,
-        flow_ids: room?.flows?.map((flow) => flow.id) ?? [],
+        module_ids: room?.modules?.map((module) => module.id) ?? [],
       })
     } else {
       reset()
@@ -62,14 +62,14 @@ export default function RoomFormPage({ room, flows }: RoomFormPageProps) {
     }
   }
 
-  const toggleFlow = (flowId: number) => {
-    if (data.flow_ids.includes(flowId)) {
+  const toggleModule = (moduleId: number) => {
+    if (data.module_ids.includes(moduleId)) {
       setData(
-        'flow_ids',
-        data.flow_ids.filter((id) => id !== flowId),
+        'module_ids',
+        data.module_ids.filter((id) => id !== moduleId),
       )
     } else {
-      setData('flow_ids', [...data.flow_ids, flowId])
+      setData('module_ids', [...data.module_ids, moduleId])
     }
   }
 
@@ -116,7 +116,7 @@ export default function RoomFormPage({ room, flows }: RoomFormPageProps) {
                   )}
 
                   <div className="pt-4">
-                    <Button type="submit" className="w-full" disabled={processing || data.flow_ids.length !== requiredFlows}>
+                    <Button type="submit" className="w-full" disabled={processing || data.module_ids.length !== requiredModules}>
                       {isEditing ? 'Salvar Alterações' : 'Adicionar Sala'}
                     </Button>
                   </div>
@@ -130,37 +130,37 @@ export default function RoomFormPage({ room, flows }: RoomFormPageProps) {
                   <CardTitle>
                     <div className="flex items-center justify-between">
                       <h1>Selecione as Trilhas</h1>
-                      <span className={`text-sm font-medium ${data.flow_ids.length === requiredFlows ? 'text-green-600' : 'text-red-600'}`}>
-                        {data.flow_ids.length} de {requiredFlows} selecionadas
+                      <span className={`text-sm font-medium ${data.module_ids.length === requiredModules ? 'text-green-600' : 'text-red-600'}`}>
+                        {data.module_ids.length} de {requiredModules} selecionadas
                       </span>
                     </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {data.flow_ids.length !== requiredFlows && (
+                  {data.module_ids.length !== requiredModules && (
                     <Alert className="mb-4">
-                      <AlertDescription>Você precisa selecionar exatamente {requiredFlows} trilhas para continuar.</AlertDescription>
+                      <AlertDescription>Você precisa selecionar exatamente {requiredModules} trilhas para continuar.</AlertDescription>
                     </Alert>
                   )}
 
-                  <div className="max-h-[600px] space-y-3 overflow-y-auto pr-2">
-                    {flows.map((flow) => (
-                      <Card key={flow.id} className={`transition-all duration-200 ${data.flow_ids.includes(flow.id) ? 'border-primary border-2' : ''}`}>
+                  <div className="max-h-[600px] space-y-3 overmodule-y-auto pr-2">
+                    {modules.map((module) => (
+                      <Card key={module.id} className={`transition-all duration-200 ${data.module_ids.includes(module.id) ? 'border-primary border-2' : ''}`}>
                         <CardContent className="flex items-center justify-between p-4">
                           <div className="flex items-center space-x-3">
-                            <Checkbox id={`flow-${flow.id}`} checked={data.flow_ids.includes(flow.id)} onCheckedChange={() => toggleFlow(flow.id)} />
-                            <Label htmlFor={`flow-${flow.id}`} className="cursor-pointer font-medium">
-                              <span className="mr-2">{flow.icon}</span>
-                              {flow.name}
+                            <Checkbox id={`module-${module.id}`} checked={data.module_ids.includes(module.id)} onCheckedChange={() => toggleModule(module.id)} />
+                            <Label htmlFor={`module-${module.id}`} className="cursor-pointer font-medium">
+                              <span className="mr-2">{module.icon}</span>
+                              {module.name}
                             </Label>
                           </div>
-                          <div className="h-4 w-4 rounded-full" style={{ backgroundColor: flow.color }}></div>
+                          <div className="h-4 w-4 rounded-full" style={{ backgroundColor: module.color }}></div>
                         </CardContent>
                       </Card>
                     ))}
                   </div>
 
-                  {flows.length === 0 && <div className="text-muted-foreground py-8 text-center">Nenhuma trilha disponível para seleção.</div>}
+                  {modules.length === 0 && <div className="text-muted-foreground py-8 text-center">Nenhuma trilha disponível para seleção.</div>}
                 </CardContent>
               </Card>
             </div>

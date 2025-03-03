@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Activity;
+use App\Models\ModuleActivity;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -29,21 +30,18 @@ class DatabaseSeeder extends Seeder
             'name'        => 'Turma 311',
         ]);
 
-        $flow = $user->flows()->create([
+        $module = $user->modules()->create([
             'name'        => 'Adição',
             'icon'        => '➕',
             'description' => 'Aprendendo adição com dois números!',
             'color'       => '#32a852'
         ]);
 
-        Activity::all()->reduce(function (int $position, Activity $activity) use ($flow) {
-            $flow->flowActivities()->create([
-                'activity_id' => $activity->id,
-                'position'    => $position,
-            ]);
+        Activity::all()->reduce(function (int $position, Activity $activity) use ($module) {
+            $module->activities()->attach($activity->id, ['position' => $position]);
 
-            return $position + 1000;
-        }, 10000);
+            return $position + ModuleActivity::$positionGap;
+        }, ModuleActivity::$initialPosition);
     }
 
     public function createSystemActivities(): void

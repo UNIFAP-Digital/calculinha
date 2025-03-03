@@ -10,12 +10,12 @@ type RankingProps = {
 }
 
 export function ParticipantRanking({ participant, position }: RankingProps) {
-  const [openFlows, setOpenFlows] = useState<{ [key: string]: boolean }>({})
+  const [openModules, setOpenModules] = useState<{ [key: string]: boolean }>({})
 
-  const toggleFlow = (flowId: string) => {
-    setOpenFlows((prev) => ({
+  const toggleModule = (moduleId: string) => {
+    setOpenModules((prev) => ({
       ...prev,
-      [flowId]: !prev[flowId],
+      [moduleId]: !prev[moduleId],
     }))
   }
 
@@ -46,7 +46,7 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
   }
 
   return (
-    <Collapsible className="overflow-hidden rounded-lg border shadow-xs">
+    <Collapsible className="overmodule-hidden rounded-lg border shadow-xs">
       <CollapsibleTrigger className="w-full" disabled={participant.stats?.total == 0}>
         <div className={cn('flex w-full items-center gap-4 p-4 transition-all', getRankingStyles(position))}>
           <div className="flex h-8 w-8 items-center justify-center">{getRankingIcon(position)}</div>
@@ -77,21 +77,21 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
       <CollapsibleContent>
         <div className="bg-background border-t">
           <div className="divide-y">
-            {participant.flows!.map((flow) => (
-              <Collapsible key={flow.id} onOpenChange={() => toggleFlow(flow.id.toString())} open={openFlows[flow.id.toString()]}>
+            {participant.modules!.map((module) => (
+              <Collapsible key={module.id} onOpenChange={() => toggleModule(module.id.toString())} open={openModules[module.id.toString()]}>
                 <CollapsibleTrigger className="w-full">
                   <div className="flex w-full items-center gap-3 px-5 py-3">
                     <div className="flex h-8 w-8 items-center justify-center">
                       <div className="flex h-7 w-7 items-center justify-center rounded-full">
-                        <span className="text-sm text-white">{flow.icon || <Workflow className="h-4 w-4 text-white" />}</span>
+                        <span className="text-sm text-white">{module.icon || <Workflow className="h-4 w-4 text-white" />}</span>
                       </div>
                     </div>
 
                     <div className="flex flex-1 items-center justify-between">
                       <div className="text-start">
-                        <h4 className="font-medium">{flow.name}</h4>
+                        <h4 className="font-medium">{module.name}</h4>
                         <p className="text-muted-foreground text-xs">
-                          {`${flow.stats?.correct}/${flow.stats?.total} atividades corretas (${flow.stats?.percentage}%)`}
+                          {`${module.stats?.correct}/${module.stats?.total} atividades corretas (${module.stats?.percentage}%)`}
                         </p>
                       </div>
 
@@ -102,11 +102,11 @@ export function ParticipantRanking({ participant, position }: RankingProps) {
                   </div>
                 </CollapsibleTrigger>
 
-                {/* Atividades do Flow */}
+                {/* Atividades do Module */}
                 <CollapsibleContent>
                   <div className="border-t pl-12">
                     <div className="divide-y">
-                      {flow.flow_activities!.map((activity) => (
+                      {module.module_activities!.map((activity) => (
                         <div key={activity.id} className="flex items-center gap-3 px-4 py-2">
                           <div className="flex h-6 w-6 items-center justify-center">
                             <FileText className="text-muted-foreground h-4 w-4" />

@@ -20,10 +20,10 @@ export default function Welcome() {
         {/* Container principal dos cards */}
         <div className="my-8 flex w-full max-w-5xl flex-col justify-center gap-10 md:flex-row md:gap-10">
           {/* Card "Sou Aluno" */}
-          <div className="card-profile animate-fade-in flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800">
+          <div className="card-profile animate-fade-in flex w-full max-w-md flex-col overmodule-hidden rounded-xl bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800">
             <div className="relative">
               {/* Imagem de fundo do card de aluno */}
-              <div className="h-52 overflow-hidden bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500">
+              <div className="h-52 overmodule-hidden bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500">
                 {/* Elementos matemáticos decorativos */}
                 <div className="absolute h-full w-full">
                   <span className="animate-wiggle absolute top-8 left-6 text-4xl font-bold text-white/30">+</span>
@@ -67,10 +67,10 @@ export default function Welcome() {
           </div>
 
           {/* Card "Sou Professor" */}
-          <div className="card-profile animate-fade-in-delay flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800">
+          <div className="card-profile animate-fade-in-delay flex w-full max-w-md flex-col overmodule-hidden rounded-xl bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800">
             <div className="relative">
               {/* Imagem de fundo do card de professor */}
-              <div className="h-52 overflow-hidden bg-gradient-to-r from-blue-700 to-indigo-800">
+              <div className="h-52 overmodule-hidden bg-gradient-to-r from-blue-700 to-indigo-800">
                 <div className="absolute h-full w-full">
                   {/* Grade sutil de fundo */}
                   <div className="bg-grid-pattern absolute inset-0 opacity-10"></div>

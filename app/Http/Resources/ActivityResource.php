@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Activity;
-use App\Models\FlowActivity;
+use App\Models\ModuleActivity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +18,7 @@ class ActivityResource extends JsonResource
             'question'       => $this->content['question'],
             'correct_answer' => $this->content['correct_answer'],
             'wrong_answers'  => $this->content['wrong_answers'],
-            'position'       => $this->whenPivotLoaded(new FlowActivity, fn() => $this->pivot->position),
+            'position'       => $this->whenPivotLoaded(new ModuleActivity, fn() => $this->pivot->position),
         ];
     }
 }

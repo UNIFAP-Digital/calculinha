@@ -10,21 +10,21 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 import { Activity } from '@/models/activity'
-import Flow from '@/models/flow'
+import Module from '@/models/module'
 import { Head, useForm } from '@inertiajs/react'
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
 import { ArrowLeft } from 'lucide-react'
 import { FormEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-interface FlowFormPageProps {
-  flow?: Flow
+interface ModuleFormPageProps {
+  module?: Module
   activities: Activity[]
 }
 
-export default function FlowFormPage({ flow, activities }: FlowFormPageProps) {
+export default function ModuleFormPage({ module, activities }: ModuleFormPageProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const isEditing = !!flow
+  const isEditing = !!module
   const requiredActivities = 10
   const title = isEditing ? 'Editar Trilha' : 'Adicionar Trilha'
 
@@ -37,30 +37,30 @@ export default function FlowFormPage({ flow, activities }: FlowFormPageProps) {
   })
 
   useEffect(() => {
-    if (flow) {
+    if (module) {
       setData({
-        name: flow?.name ?? '',
-        description: flow?.description ?? '',
-        color: flow?.color ?? '#4F46E5',
-        icon: flow?.icon ?? '🎮',
-        activity_ids: flow?.activities?.map((activity) => activity.id) ?? [],
+        name: module?.name ?? '',
+        description: module?.description ?? '',
+        color: module?.color ?? '#4F46E5',
+        icon: module?.icon ?? '🎮',
+        activity_ids: module?.activities?.map((activity) => activity.id) ?? [],
       })
     } else {
       reset()
     }
-  }, [flow, reset, setData])
+  }, [module, reset, setData])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
 
     if (isEditing) {
-      put(route('flows.update', flow.id), {
+      put(route('modules.update', module.id), {
         onSuccess: () => {
           toast.success('A trilha foi atualizada com sucesso.')
         },
       })
     } else {
-      post(route('flows.store'), {
+      post(route('modules.store'), {
         onSuccess: () => {
           reset()
           toast.success('A trilha foi criada com sucesso.')
@@ -181,7 +181,7 @@ export default function FlowFormPage({ flow, activities }: FlowFormPageProps) {
                     </Alert>
                   )}
 
-                  <div className="max-h-[600px] space-y-3 overflow-y-auto pr-2">
+                  <div className="max-h-[600px] space-y-3 overmodule-y-auto pr-2">
                     {activities.map((activity) => (
                       <Card
                         key={activity.id}

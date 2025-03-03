@@ -14,7 +14,7 @@ class QuizResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'flow_activity_id' => ['required', 'exists:flow_activities,id'],
+            'module_activity_id' => ['required', 'exists:module_activities,id'],
             'answer'           => ['required', 'string', 'max:255']
         ];
     }

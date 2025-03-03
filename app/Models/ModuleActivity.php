@@ -6,13 +6,13 @@ use App\Models\Abstracts\PositionablePivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class FlowActivity extends PositionablePivot
+class ModuleActivity extends PositionablePivot
 {
     public $incrementing = true;
     public $timestamps   = false;
 
     protected $fillable = [
-        'flow_id',
+        'module_id',
         'activity_id',
         'position',
     ];
@@ -26,9 +26,9 @@ class FlowActivity extends PositionablePivot
         return $this->belongsTo(Activity::class);
     }
 
-    public function flow(): BelongsTo
+    public function module(): BelongsTo
     {
-        return $this->belongsTo(Flow::class);
+        return $this->belongsTo(Module::class);
     }
 
     public function participants(): BelongsToMany
@@ -39,6 +39,6 @@ class FlowActivity extends PositionablePivot
 
     public function getPositionGroupColumn(): string
     {
-        return 'flow_id';
+        return 'module_id';
     }
 }

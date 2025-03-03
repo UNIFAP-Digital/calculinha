@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\QuizResultRequest;
-use App\Http\Resources\FlowResource;
+use App\Http\Resources\ModuleResource;
 use App\Http\Resources\ParticipantResource;
 use App\Http\Resources\RoomResource;
-use App\Models\Flow;
-use App\Models\FlowActivity;
+use App\Models\Module;
+use App\Models\ModuleActivity;
 use App\Models\Participant;
 use App\Models\Room;
 use Inertia\Inertia;
@@ -18,37 +18,37 @@ class GameController extends Controller
     public function index(Room $room)
     {
         $room->load([
-            'flows'                => fn($query) => $query->withCount('flowActivities')->orderBy('position'),
-            'flows.flowActivities' => fn($query) => $query->orderBy('position'),
-            'flows.flowActivities.activity'
+            'modules'                => fn($query) => $query->withCount('moduleActivities')->orderBy('position'),
+            'modules.moduleActivities' => fn($query) => $query->orderBy('position'),
+            'modules.moduleActivities.activity'
         ]);
 
         if (auth()->check()) {
             $participant = null;
         } else {
             $participant = Participant::findOrFail(session('participant_id'));
-            $participant->load('flowActivities');
+            $participant->load('moduleActivities');
         }
 
         $response = [
             'id'    => $room->id,
             'name'  => $room->name,
-            'flows' => []
+            'modules' => []
         ];
 
-        foreach ($room->flows as $i => $flow) {
-            $response['flows'][] = [
-                'id'          => $flow->id,
-                'name'        => $flow->name,
-                'description' => $flow->description,
-                'icon'        => $flow->icon,
-                'color'       => $flow->color,
+        foreach ($room->modules as $i => $module) {
+            $response['modules'][] = [
+                'id'          => $module->id,
+                'name'        => $module->name,
+                'description' => $module->description,
+                'icon'        => $module->icon,
+                'color'       => $module->color,
                 'order'       => $i + 1,
                 'stats'       => [
-                    'is_completed' => $participant !== null ? $flow->flow_activities_count === $participant->flowActivities->count() : null,
+                    'is_completed' => $participant !== null ? $module->module_activities_count === $participant->moduleActivities->count() : null,
                 ],
-                'activities'  => $flow->flowActivities->map(function ($flowActivity, $j) use ($participant) {
-                    $attempt = $participant?->flowActivities->firstWhere('id', $flowActivity->id) ?? null;
+                'activities'  => $module->moduleActivities->map(function ($moduleActivity, $j) use ($participant) {
+                    $attempt = $participant?->moduleActivities->firstWhere('id', $moduleActivity->id) ?? null;
 
                     if ($attempt !== null) {
                         $attempt = [
@@ -58,12 +58,12 @@ class GameController extends Controller
                     }
 
                     return [
-                        'id'             => $flowActivity->id,
-                        'type'           => $flowActivity->activity->content['type'],
+                        'id'             => $moduleActivity->id,
+                        'type'           => $moduleActivity->activity->content['type'],
                         'order'          => $j + 1,
-                        'question'       => $flowActivity->activity->content['question'],
-                        'correct_answer' => $flowActivity->activity->content['correct_answer'],
-                        'wrong_answers'  => $flowActivity->activity->content['wrong_answers'],
+                        'question'       => $moduleActivity->activity->content['question'],
+                        'correct_answer' => $moduleActivity->activity->content['correct_answer'],
+                        'wrong_answers'  => $moduleActivity->activity->content['wrong_answers'],
                         'attempt'        => $attempt,
                     ];
                 }),
@@ -75,43 +75,43 @@ class GameController extends Controller
         ]);
     }
 
-    public function play(Room $room, Flow $flow)
+    public function play(Room $room, Module $module)
     {
         $room->load([
-            'flows'                => fn($query) => $query->withCount('flowActivities')->orderBy('position'),
-            'flows.flowActivities' => fn($query) => $query->orderBy('position'),
-            'flows.flowActivities.activity'
+            'modules'                => fn($query) => $query->withCount('moduleActivities')->orderBy('position'),
+            'modules.moduleActivities' => fn($query) => $query->orderBy('position'),
+            'modules.moduleActivities.activity'
         ]);
 
         if (auth()->check()) {
             $participant = null;
         } else {
             $participant = Participant::findOrFail(session('participant_id'));
-            $participant->load('flowActivities');
+            $participant->load('moduleActivities');
         }
 
         $response = [
             'id'    => $room->id,
             'name'  => $room->name,
-            'flows' => []
+            'modules' => []
         ];
 
-        foreach ($room->flows as $i => $flow2) {
-            if ($flow2->id !== $flow->id) continue;
+        foreach ($room->modules as $i => $module2) {
+            if ($module2->id !== $module->id) continue;
 
-            $response['flows'][] = [
-                'id'          => $flow2->id,
-                'room_id'     => $flow2->room_id,
-                'name'        => $flow2->name,
-                'description' => $flow2->description,
-                'icon'        => $flow2->icon,
-                'color'       => $flow2->color,
+            $response['modules'][] = [
+                'id'          => $module2->id,
+                'room_id'     => $module2->room_id,
+                'name'        => $module2->name,
+                'description' => $module2->description,
+                'icon'        => $module2->icon,
+                'color'       => $module2->color,
                 'order'       => $i + 1,
                 'stats'       => [
-                    'is_completed' => $participant !== null ? $flow->flow_activities_count === $participant->flowActivities->count() : null,
+                    'is_completed' => $participant !== null ? $module->module_activities_count === $participant->moduleActivities->count() : null,
                 ],
-                'activities'  => $flow2->flowActivities->map(function ($flowActivity, $j) use ($participant) {
-                    $attempt = $participant?->flowActivities->firstWhere('id', $flowActivity->id) ?? null;
+                'activities'  => $module2->moduleActivities->map(function ($moduleActivity, $j) use ($participant) {
+                    $attempt = $participant?->moduleActivities->firstWhere('id', $moduleActivity->id) ?? null;
 
                     if ($attempt !== null) {
                         $attempt = [
@@ -121,18 +121,18 @@ class GameController extends Controller
                     }
 
                     return [
-                        'id'             => $flowActivity->id,
-                        'type'           => $flowActivity->activity->content['type'],
+                        'id'             => $moduleActivity->id,
+                        'type'           => $moduleActivity->activity->content['type'],
                         'order'          => $j + 1,
-                        'question'       => $flowActivity->activity->content['question'],
-                        'correct_answer' => $flowActivity->activity->content['correct_answer'],
-                        'wrong_answers'  => $flowActivity->activity->content['wrong_answers'],
+                        'question'       => $moduleActivity->activity->content['question'],
+                        'correct_answer' => $moduleActivity->activity->content['correct_answer'],
+                        'wrong_answers'  => $moduleActivity->activity->content['wrong_answers'],
                         'attempt'        => $attempt,
                     ];
                 }),
             ];
 
-            if ($flow2->id === $flow->id) break;
+            if ($module2->id === $module->id) break;
         }
 
         return Inertia::render('game/PlayingGame', [
@@ -148,14 +148,14 @@ class GameController extends Controller
 
         $validated = $request->validated();
 
-        $flowActivityId = $validated['flow_activity_id'];
+        $moduleActivityId = $validated['module_activity_id'];
         $answer = $validated['answer'];
 
-        $flowActivity = FlowActivity::findOrFail($flowActivityId);
-        $correctAnswer = $flowActivity->activity->content['correct_answer'] ?? null;
+        $moduleActivity = ModuleActivity::findOrFail($moduleActivityId);
+        $correctAnswer = $moduleActivity->activity->content['correct_answer'] ?? null;
         $isCorrect = $correctAnswer !== null && $answer === $correctAnswer;
 
-        $flowActivity->participants()->syncWithoutDetaching([
+        $moduleActivity->participants()->syncWithoutDetaching([
             $participantId => [
                 'answer'     => $answer,
                 'is_correct' => $isCorrect

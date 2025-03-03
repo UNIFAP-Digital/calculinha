@@ -9,7 +9,7 @@ import { PropsWithChildren } from 'react'
 
 const navigation = [
   { name: 'Salas', route: 'rooms.index', icon: GroupIcon },
-  { name: 'Trilhas', route: 'flows.index', icon: WorkflowIcon },
+  { name: 'Trilhas', route: 'modules.index', icon: WorkflowIcon },
   { name: 'Atividades', route: 'activities.index', icon: ShapesIcon },
 ]
 

@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button'
 import { Activity } from '@/models/activity'
 import { MoveDown, MoveUp } from 'lucide-react'
 
-interface FlowActivityActionsProps {
+interface ModuleActivityActionsProps {
   activity: Activity
   isFirst?: boolean
   isLast?: boolean
   onMove?: (activity: Activity, direction: 'up' | 'down') => void
 }
 
-export default function FlowActivityActions({ activity, isFirst, isLast, onMove }: FlowActivityActionsProps) {
+export default function ModuleActivityActions({ activity, isFirst, isLast, onMove }: ModuleActivityActionsProps) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1">

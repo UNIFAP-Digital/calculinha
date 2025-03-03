@@ -1,41 +1,41 @@
 import Container from '@/components/Container'
-import FlowActivityList from '@/components/flow/activity/FlowActivityList'
-import FlowCard from '@/components/flow/FlowCard'
+import ModuleActivityList from '@/components/module/activity/ModuleActivityList'
+import ModuleCard from '@/components/module/ModuleCard'
 import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Activity } from '@/models/activity'
-import Flow from '@/models/flow'
+import Module from '@/models/module'
 import { Head, Link, router } from '@inertiajs/react'
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-interface FlowManagementPageProps {
-  flows: Flow[]
+interface ModuleManagementPageProps {
+  modules: Module[]
 }
 
-export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
+export default function ModuleManagementPage({ modules }: ModuleManagementPageProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredFlows = useMemo(() => {
-    return flows.filter(
-      (flow) => flow.name.toLowerCase().includes(searchTerm.toLowerCase()) || flow.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredModules = useMemo(() => {
+    return modules.filter(
+      (module) => module.name.toLowerCase().includes(searchTerm.toLowerCase()) || module.description?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-  }, [flows, searchTerm])
+  }, [modules, searchTerm])
 
-  const handleEdit = (flow: Flow) => {
-    router.visit(route('flows.edit', flow.id))
+  const handleEdit = (module: Module) => {
+    router.visit(route('modules.edit', module.id))
   }
 
-  const handleDelete = (flow: Flow) => {
-    router.delete(route('flows.destroy', flow.id), {
+  const handleDelete = (module: Module) => {
+    router.delete(route('modules.destroy', module.id), {
       preserveScroll: true,
       preserveState: true,
     })
   }
 
-  const handleMove = (flow: Flow, activity: Activity, direction: 'up' | 'down') => {
+  const handleMove = (module: Module, activity: Activity, direction: 'up' | 'down') => {
     router.post(
-      route(`flows.activities.move-${direction}`, [flow.id, activity.id]),
+      route(`modules.activities.move-${direction}`, [module.id, activity.id]),
       {},
       {
         preserveScroll: true,
@@ -60,7 +60,7 @@ export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
               <SearchBar searchTerm={searchTerm} placeholder="Buscar trilhas..." onSearchChange={setSearchTerm} />
 
               <Button asChild>
-                <Link href={route('flows.create')}>
+                <Link href={route('modules.create')}>
                   <Plus className="mr-1 h-4 w-4" />
                   Adicionar
                 </Link>
@@ -70,15 +70,15 @@ export default function FlowManagementPage({ flows }: FlowManagementPageProps) {
         </div>
 
         <div className="space-y-4">
-          {filteredFlows.map((flow) => (
-            <FlowCard key={flow.id} flow={flow} onDelete={handleDelete} onEdit={handleEdit}>
-              <FlowActivityList flow={flow} onMove={handleMove} />
-            </FlowCard>
+          {filteredModules.map((module) => (
+            <ModuleCard key={module.id} module={module} onDelete={handleDelete} onEdit={handleEdit}>
+              <ModuleActivityList module={module} onMove={handleMove} />
+            </ModuleCard>
           ))}
 
-          {filteredFlows.length === 0 && (
+          {filteredModules.length === 0 && (
             <div className="text-muted-foreground py-8 text-center">
-              {flows.length === 0 ? 'Nenhuma trilha disponível.' : `Nenhuma trilha encontrada para "${searchTerm}".`}
+              {modules.length === 0 ? 'Nenhuma trilha disponível.' : `Nenhuma trilha encontrada para "${searchTerm}".`}
             </div>
           )}
         </div>

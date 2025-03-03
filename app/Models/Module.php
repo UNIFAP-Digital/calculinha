@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Flow extends Model
+class Module extends Model
 {
     protected $fillable = [
         'room_id',
@@ -20,8 +20,8 @@ class Flow extends Model
     public function activities(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Activity::class, 'flow_activity')
-            ->using(FlowActivity::class)
+            ->belongsToMany(Activity::class, 'module_activity')
+            ->using(ModuleActivity::class)
             ->withPivot('position')
             ->orderByPivot('position');
     }

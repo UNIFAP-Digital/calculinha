@@ -34,15 +34,15 @@ class Room extends Model
         return $code;
     }
 
-    public function flows(): BelongsToMany
+    public function modules(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Flow::class, 'room_flow')
-            ->using(RoomFlow::class)
+            ->belongsToMany(Module::class, 'room_module')
+            ->using(RoomModule::class)
             ->withPivot('position')
             ->orderByPivot('position');
     }
-    
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');

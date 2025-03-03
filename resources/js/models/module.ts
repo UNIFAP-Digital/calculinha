@@ -1,7 +1,7 @@
 import Activity from './activity'
 import Stats from './stats'
 
-export default interface Flow {
+export default interface Module {
   id: number
   name: string
   description: string | null

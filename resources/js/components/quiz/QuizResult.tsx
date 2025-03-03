@@ -61,7 +61,7 @@ const ProgressBar = ({ percentage, colors }: { percentage: number; colors: strin
         <span className="text-sm font-medium text-white/80">Progresso</span>
         <span className="text-sm font-bold text-white">{percentage.toFixed(0)}%</span>
       </div>
-      <div className="relative h-7 w-full overflow-hidden rounded-full bg-white/20">
+      <div className="relative h-7 w-full overmodule-hidden rounded-full bg-white/20">
         <motion.div
           className="absolute h-full rounded-full border border-white/30"
           initial={{ width: 0 }}
@@ -141,7 +141,7 @@ const BackgroundElements = () => {
   const elements = ['+', '-', '×', '÷', '=', '123', '?', '!']
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overmodule-hidden">
       {elements.map((el, index) => (
         <motion.div
           key={index}
@@ -326,7 +326,7 @@ export default function QuizResult({ roomId, score, totalActivities, startGameAg
   }
 
   return (
-    <div className={`fixed inset-0 ${theme.background} z-50 flex flex-col items-center justify-center overflow-hidden`}>
+    <div className={`fixed inset-0 ${theme.background} z-50 flex flex-col items-center justify-center overmodule-hidden`}>
       {/* Background elements */}
       <BackgroundElements />
 

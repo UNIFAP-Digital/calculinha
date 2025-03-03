@@ -12,14 +12,14 @@ import '../../../css/quiz.css'
 
 export default function PlayingGame({ response }: GameSelectPageProps) {
   const isAuthenticated = !!usePage().props.auth.user
-  const [state, send] = useMachine(gameMachine, { input: { flow: response.flows[0] } })
-  const { selectedAnswer, flow, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+  const [state, send] = useMachine(gameMachine, { input: { module: response.modules[0] } })
+  const { selectedAnswer, module, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
 
-  const handleSaveAnswer = async (flowActivityId: number, answer: string) => {
+  const handleSaveAnswer = async (moduleActivityId: number, answer: string) => {
     if (isAuthenticated) return
 
     await httpPost(route('quiz.result', response.id), {
-      flow_activity_id: flowActivityId,
+      module_activity_id: moduleActivityId,
       answer,
     })
   }
@@ -35,7 +35,7 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
       type: isCorrect ? 'correct' : 'incorrect',
       button: {
         onClick: () => {
-          handleSaveAnswer(flow.activities[currentActivityIndex].id, answer).finally(() => {
+          handleSaveAnswer(module.activities[currentActivityIndex].id, answer).finally(() => {
             send({ type: 'next-activity' })
           })
         },
@@ -47,11 +47,11 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
     <QuizLayout>
       <Head title="Quiz" />
 
-      {state.matches('intro') && <QuizIntro flow={state.context.flow} onStart={() => send({ type: 'start' })} />}
+      {state.matches('intro') && <QuizIntro module={state.context.module} onStart={() => send({ type: 'start' })} />}
       {(state.matches('answering') || state.matches('answered')) && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
-          activity={flow.activities[currentActivityIndex]}
+          activity={module.activities[currentActivityIndex]}
           selectedAnswer={selectedAnswer}
           onSelectAnswer={handleAnswerSelect}
           hits={hits}

@@ -30,12 +30,12 @@ class RoomRequest extends FormRequest
 
         $rules = [
             'name'       => ['required', 'string', 'min:3', 'max:50'],
-            'flow_ids'   => ['required', 'array', 'size:4'],
-            'flow_ids.*' => [
+            'module_ids'   => ['required', 'array', 'size:4'],
+            'module_ids.*' => [
                 'required',
                 'integer',
                 Rule
-                    ::exists('flows', 'id')
+                    ::exists('modules', 'id')
                     ->where(fn(Builder $query) => $query
                         ->where('owner_id', $ownerId)
                         ->orWhereNull('owner_id')

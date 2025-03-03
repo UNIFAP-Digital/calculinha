@@ -1,6 +1,6 @@
 export * from './activity'
 export * from './attempt'
-export * from './flow'
+export * from './module'
 export * from './participant'
 export * from './room'
 export * from './stats'

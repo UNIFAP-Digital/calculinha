@@ -1,4 +1,4 @@
-import FlowsTab from '@/components/room/tabs/flows/FlowsTab'
+import ModulesTab from '@/components/room/tabs/modules/ModulesTab'
 import ParticipantsTab from '@/components/room/tabs/participants/ParticipantsTab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Room from '@/models/room'
@@ -13,13 +13,13 @@ interface RoomTabsProps {
 export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="w-full justify-start overflow-auto">
+      <TabsList className="w-full justify-start overmodule-auto">
         <TabsTrigger value="participants">
           <Users className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Participantes</span>
           <span className="sm:hidden">Partic.</span>
         </TabsTrigger>
-        <TabsTrigger value="flows">
+        <TabsTrigger value="modules">
           <Workflow className="mr-2 h-4 w-4" />
           <span className="inline">Trilhas</span>
         </TabsTrigger>
@@ -29,8 +29,8 @@ export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProp
         <ParticipantsTab room={room} />
       </TabsContent>
 
-      <TabsContent value="flows">
-        <FlowsTab room={room} />
+      <TabsContent value="modules">
+        <ModulesTab room={room} />
       </TabsContent>
     </Tabs>
   )

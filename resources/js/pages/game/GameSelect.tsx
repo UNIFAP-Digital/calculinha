@@ -21,7 +21,7 @@ export interface GameStats {
   is_completed: boolean
 }
 
-export interface GameFlow {
+export interface GameModule {
   id: number
   name: string
   description: string
@@ -35,7 +35,7 @@ export interface GameFlow {
 export interface Game {
   id: number
   name: string
-  flows: Array<GameFlow>
+  modules: Array<GameModule>
 }
 
 export interface GameSelectPageProps {
@@ -43,19 +43,19 @@ export interface GameSelectPageProps {
 }
 
 export default function GameSelect({ response }: GameSelectPageProps) {
-  const flowsWithStyles = useMemo(() => {
-    return response.flows.map((flow) => {
-      const isLight = isLightColor(flow.color)
+  const modulesWithStyles = useMemo(() => {
+    return response.modules.map((module) => {
+      const isLight = isLightColor(module.color)
       return {
-        ...flow,
+        ...module,
         textColor: isLight ? '#000000' : '#FFFFFF',
-        gradientStart: flow.color,
-        gradientEnd: isLight ? darkenColor(flow.color, 0.2) : lightenColor(flow.color, 0.2),
+        gradientStart: module.color,
+        gradientEnd: isLight ? darkenColor(module.color, 0.2) : lightenColor(module.color, 0.2),
       }
     })
-  }, [response.flows])
+  }, [response.modules])
 
-  if (response.flows.length === 0) {
+  if (response.modules.length === 0) {
     return (
       <>
         <Head title="Jogar" />
@@ -81,41 +81,41 @@ export default function GameSelect({ response }: GameSelectPageProps) {
           </header>
 
           <div className="flex flex-col space-y-4 pb-16">
-            {flowsWithStyles.map((flow, index) => {
-              const totalFlows = response.flows.length
-              const progressPercentage = ((index + 1) / totalFlows) * 100
+            {modulesWithStyles.map((module, index) => {
+              const totalModules = response.modules.length
+              const progressPercentage = ((index + 1) / totalModules) * 100
 
               return (
-                <div key={flow.id} className="grid">
+                <div key={module.id} className="grid">
                   <div className="grid grid-cols-8 items-center">
                     <div className="justify-self-center">
                       <span
                         className="flex h-10 w-10 items-center justify-center rounded-full font-bold"
-                        style={{ backgroundColor: flow.color, color: flow.textColor }}
+                        style={{ backgroundColor: module.color, color: module.textColor }}
                       >
                         {index + 1}
                       </span>
                     </div>
                     <div className="col-span-7 flex w-full flex-col">
                       <Link
-                        href={route('quiz.game', [response.id, flow.id])}
+                        href={route('quiz.game', [response.id, module.id])}
                         className="w-full rounded-xl p-4 shadow-md"
                         style={{
-                          background: `linear-gradient(135deg, ${flow.gradientStart}, ${flow.gradientEnd})`,
+                          background: `linear-gradient(135deg, ${module.gradientStart}, ${module.gradientEnd})`,
                         }}
                       >
                         <div className="flex items-center">
                           <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-lg">
-                            <span className="text-2xl">{flow.icon}</span>
+                            <span className="text-2xl">{module.icon}</span>
                           </div>
 
                           <div className="text-left">
-                            <h2 className="text-lg font-bold" style={{ color: flow.textColor }}>
-                              {flow.name}
+                            <h2 className="text-lg font-bold" style={{ color: module.textColor }}>
+                              {module.name}
                             </h2>
-                            {flow.description && (
-                              <p className="text-sm opacity-90" style={{ color: flow.textColor }}>
-                                {flow.description}
+                            {module.description && (
+                              <p className="text-sm opacity-90" style={{ color: module.textColor }}>
+                                {module.description}
                               </p>
                             )}
                           </div>
@@ -128,18 +128,18 @@ export default function GameSelect({ response }: GameSelectPageProps) {
                     <div></div>
                     <div className="col-span-7">
                       <div className="mt-2 flex items-center gap-2">
-                        <div className="bg-border h-2 grow overflow-hidden rounded-full">
+                        <div className="bg-border h-2 grow overmodule-hidden rounded-full">
                           <div
                             className="h-full rounded-full"
                             style={{
                               width: `${progressPercentage}%`,
-                              backgroundColor: flow.color,
+                              backgroundColor: module.color,
                             }}
                           ></div>
                         </div>
 
-                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow-sm" style={{ color: flow.textColor, backgroundColor: flow.color }}>
-                          {index + 1} de {totalFlows}
+                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow-sm" style={{ color: module.textColor, backgroundColor: module.color }}>
+                          {index + 1} de {totalModules}
                         </div>
                       </div>
                     </div>

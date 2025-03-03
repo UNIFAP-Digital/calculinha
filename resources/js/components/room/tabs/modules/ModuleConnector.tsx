@@ -1,8 +1,8 @@
-interface FlowConnectorProps {
+interface ModuleConnectorProps {
   color?: string
 }
 
-export function FlowConnector({ color }: FlowConnectorProps) {
+export function ModuleConnector({ color }: ModuleConnectorProps) {
   const separator = color ? <div className="h-6 w-0.5" style={{ backgroundColor: color }} /> : <div className="bg-muted-foreground h-6 w-0.5" />
 
   return (

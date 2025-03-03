@@ -20,13 +20,13 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('room_flow', function (Blueprint $table) {
+        Schema::create('room_module', function (Blueprint $table) {
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
 
             $table->integer('position');
 
-            $table->unique(['room_id', 'flow_id']);
+            $table->unique(['room_id', 'module_id']);
         });
     }
 
@@ -36,6 +36,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('rooms');
-        Schema::dropIfExists('room_flow');
+        Schema::dropIfExists('room_module');
     }
 };

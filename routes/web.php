@@ -1,18 +1,18 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\FlowActivityController;
-use App\Http\Controllers\FlowController;
+use App\Http\Controllers\ModuleActivityController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
-use App\Http\Controllers\RoomFlowController;
+use App\Http\Controllers\RoomModuleController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome');
 
 Route::controller(GameController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
     Route::get('/', 'index')->name('quiz.index');
-    Route::get('/{flow}', 'play')->name('quiz.game');
+    Route::get('/{module}', 'play')->name('quiz.game');
     Route::post('/result', 'result')->name('quiz.result');
 });
 
@@ -25,21 +25,21 @@ Route::middleware('auth')->group(function () {
     });
 
     Route
-        ::controller(FlowController::class)
-        ->name('flows.')
+        ::controller(ModuleController::class)
+        ->name('modules.')
         ->prefix('/trilhas')
         ->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/adicionar', 'create')->name('create');
-            Route::get('/{flow}/editar', 'edit')->name('edit');
+            Route::get('/{module}/editar', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
-            Route::put('/{flow}', 'update')->name('update');
-            Route::delete('/{flow}', 'destroy')->name('destroy');
+            Route::put('/{module}', 'update')->name('update');
+            Route::delete('/{module}', 'destroy')->name('destroy');
 
             Route
-                ::controller(FlowActivityController::class)
+                ::controller(ModuleActivityController::class)
                 ->name('activities.')
-                ->prefix('/{flow}/atividades')
+                ->prefix('/{module}/atividades')
                 ->group(function () {
                     Route::post('/{activity}/move-up', 'moveUp')->name('move-up');
                     Route::post('/{activity}/move-down', 'moveDown')->name('move-down');
@@ -59,12 +59,12 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{room}', 'destroy')->name('destroy');
 
             Route
-                ::controller(RoomFlowController::class)
+                ::controller(RoomModuleController::class)
                 ->prefix('/{room}/trilhas')
-                ->name('flows.')
+                ->name('modules.')
                 ->group(function () {
-                    Route::post('/{flow}/move-up', 'moveUp')->name('move-up');
-                    Route::post('/{flow}/move-down', 'moveDown')->name('move-down');
+                    Route::post('/{module}/move-up', 'moveUp')->name('move-up');
+                    Route::post('/{module}/move-down', 'moveDown')->name('move-down');
                 });
         });
 })->scopeBindings();

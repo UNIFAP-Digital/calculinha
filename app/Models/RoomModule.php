@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\Abstracts\PositionablePivot;
 
-class RoomFlow extends PositionablePivot
+class RoomModule extends PositionablePivot
 {
     public $incrementing = true;
     public $timestamps   = false;

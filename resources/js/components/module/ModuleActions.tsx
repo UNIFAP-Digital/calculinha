@@ -1,26 +1,26 @@
 import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDialog'
 import { Button } from '@/components/ui/button'
-import Flow from '@/models/flow'
+import Module from '@/models/module'
 import { cn } from '@/utils/ui'
 import { ChevronDown, MoveDown, MoveUp, Pencil } from 'lucide-react'
 
-interface FlowActionsProps {
-  flow: Flow
+interface ModuleActionsProps {
+  module: Module
   isExpanded: boolean
-  onEdit?: (flow: Flow) => void
-  onDelete?: (flow: Flow) => void
-  onMove?: (flow: Flow, direction: 'up' | 'down') => void
+  onEdit?: (module: Module) => void
+  onDelete?: (module: Module) => void
+  onMove?: (module: Module, direction: 'up' | 'down') => void
   isFirst?: boolean
   isLast?: boolean
   onToggleExpand: () => void
 }
 
-export function FlowActions({ flow, isLast, isFirst, isExpanded, onEdit, onDelete, onMove, onToggleExpand }: FlowActionsProps) {
+export function ModuleActions({ module, isLast, isFirst, isExpanded, onEdit, onDelete, onMove, onToggleExpand }: ModuleActionsProps) {
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-1">
         {onEdit && (
-          <Button variant="ghost" size="sm" onClick={() => onEdit(flow)}>
+          <Button variant="ghost" size="sm" onClick={() => onEdit(module)}>
             <Pencil />
           </Button>
         )}
@@ -29,8 +29,8 @@ export function FlowActions({ flow, isLast, isFirst, isExpanded, onEdit, onDelet
           <DestructiveActionAlertDialog
             size="sm"
             variant="ghost"
-            description={'Esta ação não pode ser desfeita. Isso irá apagar permanentemente a trilha ' + flow.name + ' e todas as suas atividades.'}
-            onConfirm={() => onDelete(flow)}
+            description={'Esta ação não pode ser desfeita. Isso irá apagar permanentemente a trilha ' + module.name + ' e todas as suas atividades.'}
+            onConfirm={() => onDelete(module)}
           />
         )}
 
@@ -41,10 +41,10 @@ export function FlowActions({ flow, isLast, isFirst, isExpanded, onEdit, onDelet
 
       {onMove && isFirst !== undefined && isLast !== undefined && (
         <div className="flex flex-col border-s ps-4">
-          <Button variant="ghost" size="sm" disabled={isFirst} onClick={() => onMove(flow, 'up')}>
+          <Button variant="ghost" size="sm" disabled={isFirst} onClick={() => onMove(module, 'up')}>
             <MoveUp />
           </Button>
-          <Button variant="ghost" size="sm" disabled={isLast} onClick={() => onMove(flow, 'down')}>
+          <Button variant="ghost" size="sm" disabled={isLast} onClick={() => onMove(module, 'down')}>
             <MoveDown />
           </Button>
         </div>

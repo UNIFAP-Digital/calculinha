@@ -34,9 +34,9 @@ class User extends Authenticatable
         return $this->hasMany(Activity::class, 'owner_id');
     }
 
-    public function flows(): HasMany
+    public function modules(): HasMany
     {
-        return $this->hasMany(Flow::class, 'owner_id');
+        return $this->hasMany(Module::class, 'owner_id');
     }
 
     public function rooms(): HasMany

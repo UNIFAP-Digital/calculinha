@@ -18,9 +18,9 @@ class Activity extends Model
         'is_active' => 'boolean'
     ];
 
-    public function flowActivity(): HasMany
+    public function moduleActivity(): HasMany
     {
-        return $this->hasMany(FlowActivity::class);
+        return $this->hasMany(ModuleActivity::class);
     }
 
     public function owner(): BelongsTo

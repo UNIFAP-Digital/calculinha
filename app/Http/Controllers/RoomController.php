@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomRequest;
-use App\Http\Resources\FlowResource;
+use App\Http\Resources\ModuleResource;
 use App\Http\Resources\RoomResource;
-use App\Models\Flow;
+use App\Models\Module;
 use App\Models\Room;
-use App\Models\RoomFlow;
+use App\Models\RoomModule;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +23,9 @@ class RoomController extends Controller
         if ($room) Gate::authorize('view', [Room::class, $room]);
 
         $room?->load([
-            'participants.flowActivities.activity',
-            'participants.flowActivities.flow',
-            'flows.activities'
+            'participants.moduleActivities.activity',
+            'participants.moduleActivities.module',
+            'modules.activities'
         ]);
 
         $rooms = Auth::user()
@@ -42,30 +42,30 @@ class RoomController extends Controller
 
     public function create(): Response
     {
-        $flows = Auth
+        $modules = Auth
             ::user()
-            ->flows()
-            ->union(Flow::whereNull('owner_id'))
+            ->modules()
+            ->union(Module::whereNull('owner_id'))
             ->get();
 
         return Inertia::render('room/Form', [
-            'flows' => FlowResource::collection($flows)
+            'modules' => ModuleResource::collection($modules)
         ]);
     }
 
     public function edit(Room $room)
     {
-        $room->load('flows');
+        $room->load('modules');
 
-        $flows = Auth
+        $modules = Auth
             ::user()
-            ->flows()
-            ->union(Flow::whereNull('owner_id'))
+            ->modules()
+            ->union(Module::whereNull('owner_id'))
             ->get();
 
         return Inertia::render('room/Form', [
             'room'  => new RoomResource($room),
-            'flows' => FlowResource::collection($flows)
+            'modules' => ModuleResource::collection($modules)
         ]);
     }
 
@@ -75,13 +75,13 @@ class RoomController extends Controller
     public function update(RoomRequest $request, Room $room)
     {
         $validated = $request->validated();
-        $flowIds = $validated['flow_ids'];
-        unset($validated['flow_ids']);
+        $moduleIds = $validated['module_ids'];
+        unset($validated['module_ids']);
 
-        DB::transaction(function () use ($flowIds, $room, $validated) {
-            $room->flows()->sync(
-                Arr::mapWithKeys($flowIds, fn($flowId, $index) => [
-                    $flowId => ['position' => RoomFlow::$initialPosition + (RoomFlow::$positionGap * ($index + 1))]
+        DB::transaction(function () use ($moduleIds, $room, $validated) {
+            $room->modules()->sync(
+                Arr::mapWithKeys($moduleIds, fn($moduleId, $index) => [
+                    $moduleId => ['position' => RoomModule::$initialPosition + (RoomModule::$positionGap * ($index + 1))]
                 ])
             );
         });
@@ -95,15 +95,15 @@ class RoomController extends Controller
     public function store(RoomRequest $request)
     {
         $validated = $request->validated();
-        $flowIds = $validated['flow_ids'];
-        unset($validated['flow_ids']);
+        $moduleIds = $validated['module_ids'];
+        unset($validated['module_ids']);
 
-        $room = DB::transaction(function () use ($flowIds, $validated) {
+        $room = DB::transaction(function () use ($moduleIds, $validated) {
             $room = Auth::user()->rooms()->create($validated);
 
-            $room->flows()->sync(
-                Arr::mapWithKeys($flowIds, fn($flowId, $index) => [
-                    $flowId => ['position' => RoomFlow::$initialPosition + (RoomFlow::$positionGap * ($index + 1))]
+            $room->modules()->sync(
+                Arr::mapWithKeys($moduleIds, fn($moduleId, $index) => [
+                    $moduleId => ['position' => RoomModule::$initialPosition + (RoomModule::$positionGap * ($index + 1))]
                 ])
             );
 

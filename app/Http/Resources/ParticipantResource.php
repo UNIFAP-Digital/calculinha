@@ -13,10 +13,10 @@ class ParticipantResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $flowsWithActivities = $this->flowsWithActivities();
+        $modulesWithActivities = $this->modulesWithActivities();
         $stats = [
-            'total'   => $flowsWithActivities->sum('stats.total'),
-            'correct' => $flowsWithActivities->sum('stats.correct'),
+            'total'   => $modulesWithActivities->sum('stats.total'),
+            'correct' => $modulesWithActivities->sum('stats.correct'),
         ];
 
         $stats['percentage'] = $stats['total'] > 0 ? round(($stats['correct'] / $stats['total']) * 100, 2) : 0;
@@ -26,7 +26,7 @@ class ParticipantResource extends JsonResource
             'id'         => $this->id,
             'name'       => $this->name,
             'created_at' => $this->created_at,
-            'flows'      => $flowsWithActivities,
+            'modules'      => $modulesWithActivities,
             'stats'      => $stats
         ];
     }

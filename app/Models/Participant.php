@@ -17,53 +17,53 @@ class Participant extends Model
 //    {
 //        return $this
 //            ->belongsToMany(Activity::class)
-//            ->using(FlowActivity::class)
+//            ->using(ModuleActivity::class)
 //            ->withPivot('position')
 //            ->orderByPivot('position');
 //    }
 //
-    public function flowActivities(): BelongsToMany
+    public function moduleActivities(): BelongsToMany
     {
-        return $this->belongsToMany(FlowActivity::class, 'attempts')
+        return $this->belongsToMany(ModuleActivity::class, 'attempts')
             ->withPivot(['is_correct', 'answer', 'created_at']);
     }
 
-    public function flowsWithActivities(): Collection
+    public function modulesWithActivities(): Collection
     {
-        $flowsMap = collect();
+        $modulesMap = collect();
 
-        if ($this->flowActivities) {
-            $groupedFlowActivities = $this->flowActivities->groupBy('flow_id');
+        if ($this->moduleActivities) {
+            $groupedModuleActivities = $this->moduleActivities->groupBy('module_id');
 
-            foreach ($groupedFlowActivities as $flowId => $flowActivities) {
-                $flowData = $flowActivities->first()->flow;
+            foreach ($groupedModuleActivities as $moduleId => $moduleActivities) {
+                $moduleData = $moduleActivities->first()->module;
 
-                $flowsMap->push([
-                    'id'              => $flowData->id,
-                    'name'            => $flowData->name,
-                    'icon'            => $flowData->icon,
-                    'color'           => $flowData->color,
-                    'position'        => $flowData->position,
-                    'flow_activities' => $flowActivities->map(function ($flowActivity) {
+                $modulesMap->push([
+                    'id'              => $moduleData->id,
+                    'name'            => $moduleData->name,
+                    'icon'            => $moduleData->icon,
+                    'color'           => $moduleData->color,
+                    'position'        => $moduleData->position,
+                    'module_activities' => $moduleActivities->map(function ($moduleActivity) {
                         return [
-                            'id'          => $flowActivity->id,
-                            'flow_id'     => $flowActivity->flow_id,
-                            'activity_id' => $flowActivity->activity_id,
-                            'position'    => $flowActivity->position,
+                            'id'          => $moduleActivity->id,
+                            'module_id'     => $moduleActivity->module_id,
+                            'activity_id' => $moduleActivity->activity_id,
+                            'position'    => $moduleActivity->position,
                             'activity'    => [
-                                'id'       => $flowActivity->activity->id,
-                                'question' => $flowActivity->activity->content['question']
+                                'id'       => $moduleActivity->activity->id,
+                                'question' => $moduleActivity->activity->content['question']
                             ],
 
                             'attempt' => [
-                                'answer'     => $flowActivity->pivot->answer,
-                                'is_correct' => $flowActivity->pivot->is_correct,
-                                'created_at' => $flowActivity->pivot->created_at,
+                                'answer'     => $moduleActivity->pivot->answer,
+                                'is_correct' => $moduleActivity->pivot->is_correct,
+                                'created_at' => $moduleActivity->pivot->created_at,
                             ]
                         ];
                     })->sortBy('position')->values(),
 
-                    'stats' => $flowActivities
+                    'stats' => $moduleActivities
                         ->pipe(function ($attempts) {
                             $total = $attempts->count();
                             $correct = $attempts->where('pivot.is_correct', true)->count();
@@ -79,6 +79,6 @@ class Participant extends Model
             }
         }
 
-        return $flowsMap->sortBy('position')->values();
+        return $modulesMap->sortBy('position')->values();
     }
 }

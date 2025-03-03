@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('flows', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('owner_id')->nullable()->constrained('users')->cascadeOnDelete();
 
@@ -21,13 +21,13 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('flow_activity', function (Blueprint $table) {
-            $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
+        Schema::create('module_activity', function (Blueprint $table) {
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
 
             $table->integer('position');
 
-            $table->unique(['flow_id', 'activity_id']);
+            $table->unique(['module_id', 'activity_id']);
         });
     }
 
@@ -36,7 +36,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('flows');
-        Schema::dropIfExists('flow_activity');
+        Schema::dropIfExists('modules');
+        Schema::dropIfExists('module_activity');
     }
 };

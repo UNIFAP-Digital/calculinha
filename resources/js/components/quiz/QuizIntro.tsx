@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { GameFlow } from '@/pages/game/GameSelect'
+import { GameModule } from '@/pages/game/GameSelect'
 import { motion } from 'framer-motion'
 
 // Estilos de cores vibrantes baseados na referência
@@ -12,11 +12,11 @@ const gradientStyles = {
 
 interface QuizIntroProps {
   primaryColor?: string
-  flow: GameFlow
+  module: GameModule
   onStart: () => void
 }
 
-export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: QuizIntroProps) {
+export default function QuizIntro({ primaryColor = '#6366f1', module, onStart }: QuizIntroProps) {
   const getGradientStyle = () => {
     if (primaryColor.includes('orange')) return gradientStyles.orange
     if (primaryColor.includes('teal')) return gradientStyles.teal
@@ -77,13 +77,13 @@ export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: Q
 
   return (
     <motion.div
-      className={`fixed inset-0 ${getGradientStyle()} flex flex-col items-center justify-center overflow-hidden`}
+      className={`fixed inset-0 ${getGradientStyle()} flex flex-col items-center justify-center overmodule-hidden`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
       {/* Background Math Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overmodule-hidden">
         <MathElements />
       </div>
 
@@ -101,7 +101,7 @@ export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: Q
             damping: 15,
           }}
         >
-          <h1 className="text-center text-5xl font-bold tracking-wide text-white drop-shadow-lg">{flow.name || 'Calcuinha'}</h1>
+          <h1 className="text-center text-5xl font-bold tracking-wide text-white drop-shadow-lg">{module.name || 'Calcuinha'}</h1>
         </motion.div>
 
         {/* Character/Icon */}
@@ -123,7 +123,7 @@ export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: Q
         >
           <div className="flex h-40 w-40 items-center justify-center rounded-full border-4 border-white/30 bg-white shadow-xl">
             <span className="text-7xl" style={{ color: primaryColor }}>
-              {flow.icon || '🧮'}
+              {module.icon || '🧮'}
             </span>
           </div>
         </motion.div>
@@ -131,7 +131,7 @@ export default function QuizIntro({ primaryColor = '#6366f1', flow, onStart }: Q
         {/* Description */}
         <motion.div className="mb-10 px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
           <p className="text-center text-xl font-medium text-white drop-shadow md:text-2xl">
-            {flow.description || 'Vamos praticar matemática de um jeito divertido!'}
+            {module.description || 'Vamos praticar matemática de um jeito divertido!'}
           </p>
         </motion.div>
 

@@ -18,7 +18,7 @@ class RoomResource extends JsonResource
             'name'               => $this->name,
             'participants_count' => $this->whenCounted('participants'),
             'participants'       => ParticipantResource::collection($this->whenLoaded('participants')),
-            'flows'              => FlowResource::collection($this->whenLoaded('flows')),
+            'modules'              => ModuleResource::collection($this->whenLoaded('modules')),
             'invite_code'        => $this->invite_code,
             'is_active'          => $this->is_active,
             'created_at'         => $this->created_at

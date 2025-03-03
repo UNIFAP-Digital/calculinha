@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->boolean('is_correct');
             $table->timestamp('created_at');
 
-            $table->primary(['participant_id', 'room_flow_id', 'flow_activity_id']);
+            $table->primary(['participant_id', 'room_id', 'activity_id']);
         });
     }
 

@@ -1,4 +1,4 @@
-import Flow from './flow'
+import Module from './module'
 import Participant from './participant'
 
 export default interface Room {
@@ -7,6 +7,6 @@ export default interface Room {
   is_active: boolean
   participants_count?: number
   participants?: Participant[]
-  flows?: Flow[]
+  modules?: Module[]
   invite_code: string
 }

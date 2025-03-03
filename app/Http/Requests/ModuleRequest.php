@@ -2,31 +2,31 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Flow;
+use App\Models\Module;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class FlowRequest extends FormRequest
+class ModuleRequest extends FormRequest
 {
     public function authorize(): bool
     {
         if ($this->method() === 'PUT') {
-            /** @var Flow $flow */
-            $flow = $this->route('flow');
-            return $this->user()->can('update', $flow);
+            /** @var Module $module */
+            $module = $this->route('module');
+            return $this->user()->can('update', $module);
         }
 
-        return $this->user()->can('create', Flow::class);
+        return $this->user()->can('create', Module::class);
     }
 
     public function rules(): array
     {
         $isUpdate = $this->method() === 'PUT';
-        $flow = $this->route('flow');
+        $module = $this->route('module');
         $ownerId = Auth::user()->id;
-        $uniqueRule = Rule::unique('flows', 'name')->where('owner_id', $ownerId);
+        $uniqueRule = Rule::unique('modules', 'name')->where('owner_id', $ownerId);
 
         $rules = [
             'name'           => ['required', 'string', 'min:4', 'max:50'],
@@ -45,7 +45,7 @@ class FlowRequest extends FormRequest
                     )],
         ];
 
-        if ($isUpdate) $rules['name'][] = $uniqueRule->ignore($flow);
+        if ($isUpdate) $rules['name'][] = $uniqueRule->ignore($module);
         else $rules['name'][] = $uniqueRule;
 
         return $rules;
