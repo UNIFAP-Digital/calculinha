@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->foreignId('owner_id')->nullable()->constrained('users')->cascadeOnDelete();
 
             $table->string('name');
-            $table->string('icon');
             $table->string('description')->nullable();
-            $table->string('color');
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
+
             $table->timestamps();
         });
 

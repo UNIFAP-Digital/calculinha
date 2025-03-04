@@ -16,17 +16,18 @@ class ModuleResource extends JsonResource
         $data = [
             'id'               => $this->id,
             'name'             => $this->name,
-            'icon'             => $this->icon,
             'description'      => $this->description,
-            'color'            => $this->color,
+            'operation'        => $this->operation,
             'activities_count' => $this->whenCounted('activities'),
             'activities'       => ActivityResource::collection($this->whenLoaded('activities')),
             'created_at'       => $this->created_at->toIso8601ZuluString(),
             'updated_at'       => $this->updated_at->toIso8601ZuluString()
         ];
 
+        if ($this->hasAttribute('status'))
+            $data['status'] = $this->status;
+
         if ($this->resource instanceof AttemptModule) {
-            $data['is_completed'] = $this->is_completed;
             $data['order'] = $this->order;
 
             if ($this->relationLoaded('activities')) {

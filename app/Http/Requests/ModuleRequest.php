@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Operation;
 use App\Models\Module;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,6 +32,7 @@ class ModuleRequest extends FormRequest
         $rules = [
             'name'           => ['required', 'string', 'min:4', 'max:50'],
             'description'    => ['nullable', 'string', 'max:160'],
+            'operation'      => ['required', Rule::enum(Operation::class)],
             'icon'           => ['required', 'string', 'max:8'],
             'color'          => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6})$/'],
             'activity_ids'   => ['required', 'array', 'size:10'],
@@ -39,6 +41,7 @@ class ModuleRequest extends FormRequest
                 'integer',
                 Rule
                     ::exists('activities', 'id')
+                    ->where('operation', $this->input('operation'))
                     ->where(fn(Builder $query) => $query
                         ->where('owner_id', $ownerId)
                         ->orWhereNull('owner_id')

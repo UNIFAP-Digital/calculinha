@@ -17,7 +17,8 @@ class ActivityResource extends JsonResource
     {
         $data = [
             'id'             => $this->id,
-            'type'           => $this->content['type'],
+            'type'           => $this->type,
+            'operation'      => $this->operation,
             'question'       => $this->content['question'],
             'correct_answer' => $this->content['correct_answer'],
             'wrong_answers'  => $this->content['wrong_answers'],

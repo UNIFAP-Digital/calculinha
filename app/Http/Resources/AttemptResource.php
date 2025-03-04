@@ -14,10 +14,10 @@ class AttemptResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data = [
-            'id'           => $this->id,
-            'is_completed' => $this->is_completed,
-            'created_at'   => $this->created_at->toIso8601ZuluString(),
-            'updated_at'   => $this->updated_at->toIso8601ZuluString(),
+            'id'         => $this->id,
+            'status'     => $this->status,
+            'created_at' => $this->created_at->toIso8601ZuluString(),
+            'updated_at' => $this->updated_at->toIso8601ZuluString(),
         ];
 
         if ($this->relationLoaded('modules')) {

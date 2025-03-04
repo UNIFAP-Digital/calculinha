@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Operation;
 use App\Models\Module;
 use App\Models\ModuleActivity;
 use Illuminate\Database\Seeder;
@@ -26,9 +27,8 @@ class ModuleSeeder extends Seeder
         Module
             ::create([
                 'name'        => 'Adição',
-                'icon'        => '➕',
                 'description' => 'Aprenda adição de forma simples com objetos e números!',
-                'color'       => '#D81E5B'
+                'operation'   => Operation::Addition
             ])
             ->activities()
             ->attach($activities);
@@ -39,9 +39,8 @@ class ModuleSeeder extends Seeder
         );
         Module::create([
             'name'        => 'Subtração',
-            'icon'        => '➖',
             'description' => 'Aprenda subtração de forma simples com objetos e números!',
-            'color'       => '#7DCFB6'
+            'operation'   => Operation::Subtraction
         ])
             ->activities()
             ->attach($activities);
@@ -52,9 +51,8 @@ class ModuleSeeder extends Seeder
         );
         Module::create([
             'name'        => 'Multiplicação',
-            'icon'        => '✖️',
             'description' => 'Aprenda multiplicação de forma simples com objetos e números!',
-            'color'       => '#3423A6'
+            'operation'   => Operation::Multiplication
         ])
             ->activities()
             ->attach($activities);
@@ -65,9 +63,8 @@ class ModuleSeeder extends Seeder
         );
         Module::create([
             'name'        => 'Divisão',
-            'icon'        => '➗',
             'description' => 'Aprenda divisão de forma simples com objetos e números!',
-            'color'       => '#9B59B6'
+            'operation'   => Operation::Division
         ])
             ->activities()
             ->attach($activities);

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Operation;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +17,13 @@ class AttemptModule extends Model
         'icon',
         'color',
         'order',
-        'is_completed'
+        'status',
+        'operation'
+    ];
+
+    protected $casts = [
+        'status' => Status::class,
+        'operation' => Operation::class,
     ];
 
     public function attempt(): BelongsTo
@@ -28,5 +36,19 @@ class AttemptModule extends Model
         return $this
             ->hasMany(AttemptModuleActivity::class)
             ->orderBy('order');
+    }
+
+    public function nextModule(): ?AttemptModule
+    {
+        return $this
+            ->attempt
+            ->modules()
+            ->where('order', '>', $this->order)
+            ->first();
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->activities()->whereNull('is_correct')->exists();
     }
 }
