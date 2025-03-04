@@ -8,11 +8,11 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModuleController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome');
+Route::inertia('/', 'Welcome')->name('index');
 
 Route
     ::controller(AttemptController::class)
-    ->middleware('room.access')
+    ->middleware('auth:web,student')
     ->name('quiz.')
     ->prefix('/salas/{room}/quiz')
     ->group(function () {
@@ -21,12 +21,16 @@ Route
     });
 
 Route::middleware('auth')->group(function () {
-    Route::controller(ActivityController::class)->prefix('/atividades')->group(function () {
-        Route::get('/', 'index')->name('activities.index');
-        Route::post('/', 'store')->name('activities.store');
-        Route::put('/{activity}', 'update')->name('activities.update');
-        Route::delete('/{activity}', 'destroy')->name('activities.destroy');
-    });
+    Route
+        ::controller(ActivityController::class)
+        ->name('activities.')
+        ->prefix('/atividades')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{activity}', 'update')->name('update');
+            Route::delete('/{activity}', 'destroy')->name('destroy');
+        });
 
     Route
         ::controller(ModuleController::class)

@@ -8,10 +8,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
-    Route::get('convite', [InviteController::class, 'create'])->name('invite');
-    Route::post('convite', [InviteController::class, 'store']);
+Route::get('convite', [InviteController::class, 'create'])->name('invite');
+Route::post('convite', [InviteController::class, 'store']);
 
+Route::middleware('guest:web')->group(function () {
     Route::get('cadastrar', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('cadastrar', [RegisteredUserController::class, 'store']);
     Route::get('entrar', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -22,7 +22,5 @@ Route::middleware('guest')->group(function () {
     Route::post('redefinir-a-senha', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::put('senha', [PasswordController::class, 'update'])->name('password.update');
-    Route::delete('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-});
+Route::middleware('auth:web')->put('senha', [PasswordController::class, 'update'])->name('password.update');
+Route::middleware('auth')->delete('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

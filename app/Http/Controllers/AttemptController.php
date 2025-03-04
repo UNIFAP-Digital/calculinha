@@ -11,54 +11,50 @@ use App\Models\AttemptModule;
 use App\Models\Module;
 use App\Models\Room;
 use App\Models\Student;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class AttemptController extends Controller
 {
     public function index(Room $room)
     {
-        if (auth()->check()) {
-            $student = null;
-            $attempt = Attempt::fake($room);
-        } else {
-            $student = Student::findOrFail(session('student_id'));
+        Gate::authorize('create', [Attempt::class, $room]);
+        $user = Auth::user();
 
-//            Gate::authorize('createY', [Attempt::class, $student, $room]);
-
-            $attempt = Attempt::current($room, $student);
+        if ($user instanceof Student) {
+            $attempt = Attempt::current($room, $user);
             $attempt->load('modules.activities');
+        } else {
+            $attempt = Attempt::fake($room);
         }
 
         return Inertia::render('quiz/Index', [
             'attempt' => AttemptResource::make($attempt),
             'room'    => RoomResource::make($room),
-            'student' => $student ? StudentResource::make($student) : null,
+            'student' => $user instanceof Student ? StudentResource::make($user) : null,
         ]);
     }
 
     public function show(Room $room, int $moduleId)
     {
-        if (auth()->check()) {
-            $module = Module::findOrFail($moduleId);
-            $module->load('activities');
+        Gate::authorize('view', [Attempt::class, $room]);
+        $user = Auth::user();
 
-            $student = null;
-        } else {
+        if ($user instanceof Student) {
             $module = AttemptModule::findOrFail($moduleId);
-            $student = Student::findOrFail(session('student_id'));
-
-//            Gate::authorize('view', [Attempt::class, $student, $room]);
-
-            $attempt = Attempt::current($room, $student);
-            $module = $attempt->modules()->findOrFail($moduleId);
-
-            $module->load('activities');
+            $attempt = Attempt::current($room, $user);
+            $attempt->modules()->findOrFail($module->id);
+        } else {
+            $module = Module::findOrFail($moduleId);
         }
+
+        $module->load('activities');
 
         return Inertia::render('quiz/Show', [
             'room'    => RoomResource::make($room),
             'module'  => ModuleResource::make($module),
-            'student' => $student ? StudentResource::make($student) : null,
+            'student' => $user instanceof Student ? StudentResource::make($user) : null
         ]);
     }
 }

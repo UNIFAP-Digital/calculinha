@@ -14,15 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
-        $middleware->redirectUsersTo('/salas');
+        $middleware->redirectGuestsTo('/');
+        $middleware->redirectUsersTo(fn() => auth()->guard('student')->check() ? '/convite' : '/salas');
 
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-        ]);
-
-        $middleware->alias([
-            'room.access' => \App\Http\Middleware\AuthorizeRoomAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

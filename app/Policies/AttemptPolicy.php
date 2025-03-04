@@ -11,13 +11,13 @@ class AttemptPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Student $student, Room $room): bool
+    public function view(User|Student $user, Room $room): bool
     {
-        return $this->create($user, $student, $room);
+        return $this->create($user, $room);
     }
 
-    public function createY(User $user, Student $student, Room $room): bool
+    public function create(User|Student $user, Room $room): bool
     {
-        return $student->rooms()->find($room);
+        return !!$user->rooms()->find($room);
     }
 }

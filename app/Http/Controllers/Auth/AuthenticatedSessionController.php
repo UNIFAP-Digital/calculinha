@@ -20,8 +20,6 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
-        $request->session()->forget('student_id');
         $request->session()->regenerate();
 
         return redirect()->intended(route('rooms.index', absolute: false));

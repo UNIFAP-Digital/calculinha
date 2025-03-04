@@ -16,12 +16,12 @@ interface QuizShowPageProps {
 }
 
 export default function QuizShowPage({ room, module }: QuizShowPageProps) {
-  const isAuthenticated = !!usePage().props.auth.user
+  const isStudent = usePage().props.auth.user?.type === 'student'
   const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
   const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
 
   const handleSaveAnswer = async (activityId: number, answer: string) => {
-    if (isAuthenticated) return
+    if (!isStudent) return
 
     await httpPost(route('api.quiz.store'), {
       activity_id: activityId,

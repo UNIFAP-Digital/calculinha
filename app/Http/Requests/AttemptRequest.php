@@ -3,14 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Models\AttemptModuleActivity;
-use App\Models\Student;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AttemptRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $student = Student::findOrFail(session('student_id'));
+        $student = Auth::guard('student')->user();
         $activity = AttemptModuleActivity::findOrFail($this->input('activity_id'));
 
         return $activity->module->attempt->student_id === $student->id;
