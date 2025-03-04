@@ -15,6 +15,7 @@ import { ArrowRight } from 'lucide-react'
 export default function InvitePage() {
   const { data, setData, post, processing, errors } = useForm({
     name: '',
+    enrollment_id: '',
     invite_code: '',
   })
 
@@ -49,6 +50,18 @@ export default function InvitePage() {
                       required
                     />
                     <InputError message={errors.name} />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="enrollment_id">Núm. Matrícula</Label>
+                    <Input
+                      id="enrollment_id"
+                      onChange={(e) => setData('enrollment_id', e.target.value)}
+                      value={data.enrollment_id}
+                      placeholder="Você pode encontrar no seu boletim"
+                      required
+                    />
+                    <InputError message={errors.enrollment_id} />
                   </div>
 
                   <div className="grid gap-2">
