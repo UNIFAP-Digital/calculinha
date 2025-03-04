@@ -14,9 +14,9 @@ import { ArrowRight } from 'lucide-react'
 
 export default function InvitePage() {
   const { data, setData, post, processing, errors } = useForm({
-    name: '',
-    enrollment_id: '',
-    invite_code: '',
+    name: 'Calculinha',
+    enrollment_id: '11111111',
+    invite_code: '0311',
   })
 
   const submit: FormEventHandler = (e) => {

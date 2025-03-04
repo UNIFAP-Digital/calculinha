@@ -4,7 +4,6 @@ import ModuleCard from '@/components/module/ModuleCard'
 import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Module } from '@/models'
-import { Activity } from '@/models/activity'
 import { Head, Link, router } from '@inertiajs/react'
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -31,17 +30,6 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
       preserveScroll: true,
       preserveState: true,
     })
-  }
-
-  const handleMove = (module: Module, activity: Activity, direction: 'up' | 'down') => {
-    router.post(
-      route(`modules.activities.move-${direction}`, [module.id, activity.id]),
-      {},
-      {
-        preserveScroll: true,
-        preserveState: true,
-      },
-    )
   }
 
   return (
@@ -72,7 +60,7 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
         <div className="space-y-4">
           {filteredModules.map((module) => (
             <ModuleCard key={module.id} module={module} onDelete={handleDelete} onEdit={handleEdit}>
-              <ModuleActivityList module={module} onMove={handleMove} />
+              <ModuleActivityList module={module} activities={module.activities ?? []} />
             </ModuleCard>
           ))}
 
