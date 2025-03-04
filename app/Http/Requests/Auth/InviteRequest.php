@@ -37,7 +37,7 @@ class InviteRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (Auth::guard('student')->validate($this->only('enrollment_id'))) {
-            $student = Student::find($this->input('enrollment_id'));
+            $student = Student::firstWhere('enrollment_id', $this->input('enrollment_id'));
             $student->name = $this->input('name');
             $student->save();
         } else {
