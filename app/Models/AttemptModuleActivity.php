@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AttemptModuleActivity extends Model
 {
@@ -20,4 +21,9 @@ class AttemptModuleActivity extends Model
         'content'    => 'array',
         'created_at' => 'datetime',
     ];
+
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(AttemptModule::class, 'attempt_module_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttemptModule extends Model
@@ -16,6 +17,11 @@ class AttemptModule extends Model
         'order',
         'is_completed'
     ];
+
+    public function attempt(): BelongsTo
+    {
+        return $this->belongsTo(Attempt::class);
+    }
 
     public function activities(): HasMany
     {

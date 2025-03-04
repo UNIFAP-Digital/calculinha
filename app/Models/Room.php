@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Random\RandomException;
 
@@ -33,6 +34,11 @@ class Room extends Model
         } while ($exists);
 
         return $code;
+    }
+
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(Attempt::class);
     }
 
     public function modules(): BelongsToMany
