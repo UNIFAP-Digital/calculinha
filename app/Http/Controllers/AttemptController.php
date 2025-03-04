@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\QuizResultRequest;
 use App\Http\Resources\AttemptResource;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\RoomResource;
@@ -10,11 +9,9 @@ use App\Http\Resources\StudentResource;
 use App\Models\Attempt;
 use App\Models\AttemptModule;
 use App\Models\Module;
-use App\Models\ModuleActivity;
 use App\Models\Room;
 use App\Models\Student;
 use Inertia\Inertia;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AttemptController extends Controller
 {
@@ -53,7 +50,8 @@ class AttemptController extends Controller
 //            Gate::authorize('view', [Attempt::class, $student, $room]);
 
             $attempt = Attempt::current($room, $student);
-            $module = $attempt->modules()->findOrFail($module);
+            $module = $attempt->modules()->findOrFail($moduleId);
+
             $module->load('activities');
         }
 
@@ -62,30 +60,5 @@ class AttemptController extends Controller
             'module'  => ModuleResource::make($module),
             'student' => $student ? StudentResource::make($student) : null,
         ]);
-    }
-
-    public function store(QuizResultRequest $request)
-    {
-        if (!$request->ajax()) throw new BadRequestHttpException();
-
-        $participantId = session('student_id');
-
-        $validated = $request->validated();
-
-        $moduleActivityId = $validated['module_activity_id'];
-        $answer = $validated['answer'];
-
-        $moduleActivity = ModuleActivity::findOrFail($moduleActivityId);
-        $correctAnswer = $moduleActivity->activity->content['correct_answer'] ?? null;
-        $isCorrect = $correctAnswer !== null && $answer === $correctAnswer;
-
-        $moduleActivity->participants()->syncWithoutDetaching([
-            $participantId => [
-                'answer'     => $answer,
-                'is_correct' => $isCorrect
-            ]
-        ]);
-
-        return response()->noContent();
     }
 }

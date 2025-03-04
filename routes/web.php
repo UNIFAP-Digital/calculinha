@@ -18,7 +18,6 @@ Route
     ->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{module}', 'show')->name('show');
-        Route::post('/result', 'result')->name('result');
     });
 
 Route::middleware('auth')->group(function () {
