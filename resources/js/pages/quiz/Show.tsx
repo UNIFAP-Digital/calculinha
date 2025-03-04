@@ -3,23 +3,28 @@ import { quizToast } from '@/components/quiz/QuizFeedback'
 import QuizGame from '@/components/quiz/QuizGame'
 import QuizIntro from '@/components/quiz/QuizIntro'
 import QuizResult from '@/components/quiz/QuizResult'
-import { gameMachine } from '@/machines/gameMachine'
-import { GameSelectPageProps } from '@/pages/game/GameSelect'
+import gameMachine from '@/machines/gameMachine'
+import { Module, Room } from '@/models'
 import { httpPost } from '@/utils/api'
 import { Head, usePage } from '@inertiajs/react'
 import { useMachine } from '@xstate/react'
 import '../../../css/quiz.css'
 
-export default function PlayingGame({ response }: GameSelectPageProps) {
-  const isAuthenticated = !!usePage().props.auth.user
-  const [state, send] = useMachine(gameMachine, { input: { module: response.modules[0] } })
-  const { selectedAnswer, module, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+interface QuizShowPageProps {
+  room: Room
+  module: Module
+}
 
-  const handleSaveAnswer = async (moduleActivityId: number, answer: string) => {
+export default function QuizShowPage({ room, module }: QuizShowPageProps) {
+  const isAuthenticated = !!usePage().props.auth.user
+  const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
+  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+
+  const handleSaveAnswer = async (activityId: number, answer: string) => {
     if (isAuthenticated) return
 
-    await httpPost(route('quiz.result', response.id), {
-      module_activity_id: moduleActivityId,
+    await httpPost(route('api.quiz.store'), {
+      activity_id: activityId,
       answer,
     })
   }
@@ -35,7 +40,7 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
       type: isCorrect ? 'correct' : 'incorrect',
       button: {
         onClick: () => {
-          handleSaveAnswer(module.activities[currentActivityIndex].id, answer).finally(() => {
+          handleSaveAnswer(gameModule.activities[currentActivityIndex].id, answer).finally(() => {
             send({ type: 'next-activity' })
           })
         },
@@ -51,7 +56,7 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
       {(state.matches('answering') || state.matches('answered')) && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
-          activity={module.activities[currentActivityIndex]}
+          activity={gameModule.activities[currentActivityIndex]}
           selectedAnswer={selectedAnswer}
           onSelectAnswer={handleAnswerSelect}
           hits={hits}
@@ -60,8 +65,8 @@ export default function PlayingGame({ response }: GameSelectPageProps) {
       )}
       {state.matches('result') && (
         <QuizResult
-          roomId={response.id}
-          score={state.context.score}
+          roomId={room.id}
+          score={state.context.hits}
           totalActivities={state.context.totalActivities}
           startGameAgain={() => send({ type: 'reset' })}
         />

@@ -1,61 +1,37 @@
+import { Attempt, Room, Student } from '@/models'
 import { darkenColor, isLightColor, lightenColor } from '@/utils/color'
 import { Head, Link } from '@inertiajs/react'
 import { useMemo } from 'react'
 
-export interface GameAttempt {
-  answer: string
-  is_correct: boolean
-}
-
-export interface GameActivity {
-  id: number
-  type: 'multiple_choice'
-  order: number
-  question: string
-  correct_answer: string
-  wrong_answers: Array<string>
-  attempt: GameAttempt | null
-}
-
-export interface GameStats {
-  is_completed: boolean
-}
-
-export interface GameModule {
-  id: number
-  name: string
-  description: string
-  color: string
-  icon: string
-  order: number
-  stats: GameStats
-  activities: Array<GameActivity>
-}
-
-export interface Game {
-  id: number
-  name: string
-  modules: Array<GameModule>
-}
-
 export interface GameSelectPageProps {
-  response: Game
+  room: Room
+  student: Student
+  attempt: Attempt
 }
 
-export default function GameSelect({ response }: GameSelectPageProps) {
+export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   const modulesWithStyles = useMemo(() => {
-    return response.modules.map((module) => {
-      const isLight = isLightColor(module.color)
+    return attempt.modules.map((module) => {
+      if (module.color) {
+        const isLight = isLightColor(module.color)
+        return {
+          ...module,
+          textColor: isLight ? '#000000' : '#FFFFFF',
+          gradientStart: module.color,
+          gradientEnd: isLight ? darkenColor(module.color, 0.2) : lightenColor(module.color, 0.2),
+        }
+      }
+
       return {
         ...module,
-        textColor: isLight ? '#000000' : '#FFFFFF',
-        gradientStart: module.color,
-        gradientEnd: isLight ? darkenColor(module.color, 0.2) : lightenColor(module.color, 0.2),
+        textColor: '#000000',
+        gradientStart: '#FFFFFF',
+        gradientEnd: '#FFFFFF',
       }
     })
-  }, [response.modules])
+  }, [attempt.modules])
 
-  if (response.modules.length === 0) {
+  if (attempt.modules.length === 0) {
     return (
       <>
         <Head title="Jogar" />
@@ -82,8 +58,7 @@ export default function GameSelect({ response }: GameSelectPageProps) {
 
           <div className="flex flex-col space-y-4 pb-16">
             {modulesWithStyles.map((module, index) => {
-              const totalModules = response.modules.length
-              const progressPercentage = ((index + 1) / totalModules) * 100
+              const progressPercentage = (1 / (module.activities?.length ?? 1)) * 100
 
               return (
                 <div key={module.id} className="grid">
@@ -91,14 +66,14 @@ export default function GameSelect({ response }: GameSelectPageProps) {
                     <div className="justify-self-center">
                       <span
                         className="flex h-10 w-10 items-center justify-center rounded-full font-bold"
-                        style={{ backgroundColor: module.color, color: module.textColor }}
+                        style={{ backgroundColor: module.color!, color: module.textColor }}
                       >
                         {index + 1}
                       </span>
                     </div>
                     <div className="col-span-7 flex w-full flex-col">
                       <Link
-                        href={route('quiz.game', [response.id, module.id])}
+                        href={route('quiz.show', [room.id, module.id])}
                         className="w-full rounded-xl p-4 shadow-md"
                         style={{
                           background: `linear-gradient(135deg, ${module.gradientStart}, ${module.gradientEnd})`,
@@ -128,18 +103,18 @@ export default function GameSelect({ response }: GameSelectPageProps) {
                     <div></div>
                     <div className="col-span-7">
                       <div className="mt-2 flex items-center gap-2">
-                        <div className="bg-border h-2 grow overmodule-hidden rounded-full">
+                        <div className="bg-border overmodule-hidden h-2 grow rounded-full">
                           <div
                             className="h-full rounded-full"
                             style={{
                               width: `${progressPercentage}%`,
-                              backgroundColor: module.color,
+                              backgroundColor: module.color!,
                             }}
                           ></div>
                         </div>
 
-                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow-sm" style={{ color: module.textColor, backgroundColor: module.color }}>
-                          {index + 1} de {totalModules}
+                        <div className="rounded-full px-2 py-1 text-xs font-bold shadow-sm" style={{ color: module.textColor, backgroundColor: module.color! }}>
+                          1 de {module.activities?.length}
                         </div>
                       </div>
                     </div>
