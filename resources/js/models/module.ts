@@ -1,16 +1,18 @@
-import Activity from './activity'
-import Stats from './stats'
+import type { Activity } from './activity'
+import type { Stats } from './stats'
 
-export default interface Module {
+export interface Module {
   id: number
-  name: string
+  name: string | null
   description: string | null
-  color: string
-  icon: string
+  color: string | null
+  icon: string | null
+  created_at: string
+  updated_at: string
 
   activities_count?: number
-
-  position?: number
+  is_completed?: boolean
+  order?: number
   activities?: Activity[]
   stats?: Stats
 }

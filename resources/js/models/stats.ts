@@ -1,6 +1,6 @@
-export default interface Stats {
+export interface Stats {
+  hits: number
+  mistakes: number
   total: number
-  correct: number
-  percentage: number
-  ratio: string
+  hit_rate?: number
 }

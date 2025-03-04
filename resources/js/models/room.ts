@@ -1,12 +1,12 @@
-import Module from './module'
-import Participant from './participant'
+import type { Module } from './module'
+import type { Student } from './student'
 
-export default interface Room {
+export interface Room {
   id: number
   name: string
   is_active: boolean
-  participants_count?: number
-  participants?: Participant[]
+  students_count?: number
+  students?: Student[]
   modules?: Module[]
   invite_code: string
 }
