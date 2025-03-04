@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->foreignId('module_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
 
-            $table->integer('position');
+            $table->float('position');
 
             $table->unique(['module_id', 'activity_id']);
         });
