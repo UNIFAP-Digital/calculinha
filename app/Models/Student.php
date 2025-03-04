@@ -8,8 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Student extends Authenticatable
 {
-    protected $primaryKey = 'enrollment_id';
-
     protected $fillable = [
         'name',
         'enrollment_id',
