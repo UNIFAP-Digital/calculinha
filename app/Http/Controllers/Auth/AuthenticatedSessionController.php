@@ -21,7 +21,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->forget('participant_id');
+        $request->session()->forget('student_id');
         $request->session()->regenerate();
 
         return redirect()->intended(route('rooms.index', absolute: false));

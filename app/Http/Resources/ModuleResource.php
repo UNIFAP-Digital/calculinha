@@ -2,25 +2,44 @@
 
 namespace App\Http\Resources;
 
+use App\Models\AttemptModule;
 use App\Models\Module;
 use App\Models\RoomModule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin Module */
+/** @mixin Module | AttemptModule */
 class ModuleResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id'               => $this->id,
             'name'             => $this->name,
             'icon'             => $this->icon,
             'description'      => $this->description,
             'color'            => $this->color,
-            'position'         => $this->whenPivotLoaded(new RoomModule, fn() => $this->pivot->position),
             'activities_count' => $this->whenCounted('activities'),
             'activities'       => ActivityResource::collection($this->whenLoaded('activities')),
+            'created_at'       => $this->created_at->toIso8601ZuluString(),
+            'updated_at'       => $this->updated_at->toIso8601ZuluString()
         ];
+
+        if ($this->resource instanceof AttemptModule) {
+            $data['is_completed'] = $this->is_completed;
+            $data['order'] = $this->order;
+
+            if ($this->relationLoaded('activities')) {
+                $data['stats'] = [
+                    'hits'     => $this->activities->where('is_correct', true)->whereNotNull('is_correct')->count(),
+                    'mistakes' => $this->activities->where('is_correct', false)->whereNotNull('is_correct')->count(),
+                    'total'    => $this->activities->count(),
+                ];
+            }
+        } else {
+            $data['order'] = $this->whenPivotLoaded(new RoomModule, fn() => $this->pivot->position);
+        }
+
+        return $data;
     }
 }

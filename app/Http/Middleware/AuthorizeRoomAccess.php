@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Participant;
+use App\Models\Student;
 use App\Models\Room;
 use Closure;
 use Illuminate\Http\Request;
@@ -28,13 +28,11 @@ class AuthorizeRoomAccess
             return $next($request);
         }
 
-        if (session()->has('participant_id')) {
-            $participantId = session('participant_id');
-            $participant = Participant::find($participantId);
+        if (session()->has('student_id')) {
+            $student = Student::findOrFail(session('student_id'));
 
-            if (!$participant || $participant->room_id !== $room->id) abort(401);
-
-            return $next($request);
+            if ($student && $student->rooms()->find($room))
+                return $next($request);
         }
 
         abort(401);

@@ -23,14 +23,13 @@ class RoomController extends Controller
         if ($room) Gate::authorize('view', [Room::class, $room]);
 
         $room?->load([
-            'participants.moduleActivities.activity',
-            'participants.moduleActivities.module',
+            'students.attempts.modules.activities',
             'modules.activities'
         ]);
 
         $rooms = Auth::user()
             ->rooms()
-            ->withCount('participants')
+            ->withCount('students')
             ->orderByDesc('is_active')
             ->orderBy('name');
 
@@ -64,7 +63,7 @@ class RoomController extends Controller
             ->get();
 
         return Inertia::render('room/Form', [
-            'room'  => new RoomResource($room),
+            'room'    => new RoomResource($room),
             'modules' => ModuleResource::collection($modules)
         ]);
     }

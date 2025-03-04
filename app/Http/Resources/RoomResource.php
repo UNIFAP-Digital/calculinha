@@ -14,14 +14,15 @@ class RoomResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'                 => $this->id,
-            'name'               => $this->name,
-            'participants_count' => $this->whenCounted('participants'),
-            'participants'       => ParticipantResource::collection($this->whenLoaded('participants')),
-            'modules'              => ModuleResource::collection($this->whenLoaded('modules')),
-            'invite_code'        => $this->invite_code,
-            'is_active'          => $this->is_active,
-            'created_at'         => $this->created_at
+            'id'             => $this->id,
+            'name'           => $this->name,
+            'students_count' => $this->whenCounted('students'),
+            'students'       => StudentResource::collection($this->whenLoaded('students')),
+            'modules'        => ModuleResource::collection($this->whenLoaded('modules')),
+            'invite_code'    => $this->invite_code,
+            'is_active'      => $this->is_active,
+            'created_at'     => $this->created_at->toIso8601ZuluString(),
+            'updated_at'     => $this->updated_at->toIso8601ZuluString()
         ];
     }
 }

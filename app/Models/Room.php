@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Random\RandomException;
 
 class Room extends Model
@@ -19,6 +19,7 @@ class Room extends Model
     protected $casts = [
         'is_active'  => 'boolean',
         'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
 
     /**
@@ -48,8 +49,15 @@ class Room extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function participants(): HasMany
+    public function students(): HasManyThrough
     {
-        return $this->hasMany(Participant::class);
+        return $this->hasManyThrough(
+            Student::class,
+            Attempt::class,
+            'room_id',
+            'id',
+            'id',
+            'student_id'
+        );
     }
 }

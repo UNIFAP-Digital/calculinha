@@ -8,7 +8,7 @@ class QuizResultRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->guest() && session()->has('participant_id');
+        return auth()->guest() && session()->has('student_id');
     }
 
     public function rules(): array

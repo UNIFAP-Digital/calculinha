@@ -3,18 +3,23 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ModuleActivityController;
 use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\GameController;
+use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModuleController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome');
 
-Route::controller(GameController::class)->middleware('room.access')->prefix('/salas/{room}/quiz')->group(function () {
-    Route::get('/', 'index')->name('quiz.index');
-    Route::get('/{module}', 'play')->name('quiz.game');
-    Route::post('/result', 'result')->name('quiz.result');
-});
+Route
+    ::controller(AttemptController::class)
+    ->middleware('room.access')
+    ->name('quiz.')
+    ->prefix('/salas/{room}/quiz')
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{module}', 'show')->name('show');
+        Route::post('/result', 'result')->name('result');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::controller(ActivityController::class)->prefix('/atividades')->group(function () {
