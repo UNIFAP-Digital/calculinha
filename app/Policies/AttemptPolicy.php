@@ -18,6 +18,6 @@ class AttemptPolicy
 
     public function create(User|Student $user, Room $room): bool
     {
-        return !!$user->rooms()->find($room);
+        return !!$user->rooms()->find($room->id);
     }
 }

@@ -25,7 +25,7 @@ class RoomModulePolicy
 
     public function update(User $user, Room $room, Module $module): bool
     {
-        return $room->owner_id === $user->id && $room->modules()->find($module);
+        return $room->owner_id === $user->id && $room->modules()->find($module->id);
     }
 
     public function delete(User $user, Room $room): bool

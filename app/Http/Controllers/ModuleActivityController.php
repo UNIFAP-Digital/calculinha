@@ -13,7 +13,7 @@ class ModuleActivityController extends Controller
     {
         Gate::authorize('update', [ModuleActivity::class, $module, $activity]);
 
-        $activity = $module->activities()->find($activity);
+        $activity = $module->activities()->find($activity->id);
         $activity->pivot->moveUp();
 
         return back();
@@ -23,7 +23,7 @@ class ModuleActivityController extends Controller
     {
         Gate::authorize('update', [ModuleActivity::class, $module, $activity]);
 
-        $activity = $module->activities()->find($activity);
+        $activity = $module->activities()->find($activity->id);
         $activity->pivot->moveDown();
 
         return back();

@@ -25,7 +25,7 @@ class ModuleActivityPolicy
 
     public function update(User $user, Module $module, Activity $activity): bool
     {
-        return $module->owner_id === $user->id && $module->activities()->find($activity);
+        return $module->owner_id === $user->id && $module->activities()->find($activity->id);
     }
 
     public function delete(User $user, Module $module): bool
