@@ -26,4 +26,12 @@ class AttemptModuleActivity extends Model
     {
         return $this->belongsTo(AttemptModule::class, 'attempt_module_id');
     }
+
+    public function markAsAnswered(string $answer): void
+    {
+        $correctAnswer = $this->content['correct_answer'] ?? null;
+        $this->answer = $answer;
+        $this->is_correct = $correctAnswer !== null && $answer === $correctAnswer;
+        $this->save();
+    }
 }

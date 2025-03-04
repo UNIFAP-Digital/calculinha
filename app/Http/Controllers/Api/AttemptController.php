@@ -5,9 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttemptRequest;
 use App\Models\AttemptModuleActivity;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class AttemptController extends Controller
 {
+    /**
+     * @throws Throwable
+     */
     public function store(AttemptRequest $request)
     {
         $validated = $request->validated();
@@ -15,13 +20,14 @@ class AttemptController extends Controller
         $answer = $validated['answer'];
 
         $activity = AttemptModuleActivity::findOrFail($activityId);
-        $correctAnswer = $activity->content['correct_answer'] ?? null;
-        $isCorrect = $correctAnswer !== null && $answer === $correctAnswer;
 
-        $activity->answer = $answer;
-        $activity->is_correct = $isCorrect;
+        DB::transaction(function () use ($activity, $answer) {
+            $activity->markAsAnswered($answer);
 
-        $activity->save();
+            if ($activity->module->isCompleted()) {
+                $activity->module->attempt->advanceModule();
+            }
+        });
 
         return response()->noContent();
     }

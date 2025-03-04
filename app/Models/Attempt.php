@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +12,11 @@ class Attempt extends Model
     protected $fillable = [
         'student_id',
         'room_id',
-        'is_completed'
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => Status::class
     ];
 
     public function modules(): HasMany
@@ -31,8 +36,7 @@ class Attempt extends Model
         $attempt = $room
             ->attempts()
             ->whereStudentId($student->id)
-            ->whereIsCompleted(false)
-            ->orderBy('created_at')
+            ->whereStatus(Status::Current)
             ->first();
 
         return $attempt ?? static::create($room, $student);
@@ -40,10 +44,13 @@ class Attempt extends Model
 
     public static function fake(Room $room): Attempt
     {
-        $modules = $room->modules()->with('activities')->get();
+        $modules = $room->modules()->with('activities')->get()->map(function ($module, $idx) {
+            $module->setAttribute('status', $idx === 0 ? Status::Current->value : Status::Locked->value);
+            return $module;
+        });
 
         return Attempt
-            ::make(['room_id' => $room->id, 'is_completed' => false])
+            ::make(['room_id' => $room->id, 'status' => Status::Current])
             ->updateTimestamps()
             ->setRelation('modules', $modules);
     }
@@ -58,6 +65,7 @@ class Attempt extends Model
         $attempt = parent::create([
             'room_id'    => $room->id,
             'student_id' => $student->id,
+            'status'     => Status::Current
         ]);
         $activities = $room->modules->reduce(fn($activities, $module) => $activities->merge($module->activities), collect());
         $order = 1;
@@ -68,12 +76,12 @@ class Attempt extends Model
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
                 'content'     => $activity->content,
-                'order'       => $idx + 1,
+                'order'       => $idx + 1
             ]);
 
         $attempt
             ->modules()
-            ->create(['order' => $order++])
+            ->create(['order' => $order++, 'status' => Status::Current])
             ->activities()
             ->createMany($initialActivities);
 
@@ -93,6 +101,7 @@ class Attempt extends Model
                     'icon'        => $module->icon,
                     'color'       => $module->color,
                     'order'       => $order++,
+                    'status'      => Status::Locked
                 ])
                 ->activities()
                 ->createMany($moduleActivities);
@@ -104,15 +113,32 @@ class Attempt extends Model
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
                 'content'     => $activity->content,
-                'order'       => $idx + 1,
+                'order'       => $idx + 1
             ]);
 
         $attempt
             ->modules()
-            ->create(['order' => $order])
+            ->create(['order' => $order, 'status' => Status::Locked])
             ->activities()
             ->createMany($finalActivities);
 
         return $attempt;
+    }
+
+    public function advanceModule(): void
+    {
+        $currentModule = $this->modules()->firstWhere('status', Status::Current);
+
+        if (!$currentModule) return;
+
+        $currentModule->status = Status::Locked;
+        $currentModule->save();
+
+        $nextModule = $currentModule->nextModule();
+
+        if ($nextModule) {
+            $nextModule->status = Status::Current;
+            $nextModule->save();
+        }
     }
 }
