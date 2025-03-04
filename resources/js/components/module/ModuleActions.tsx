@@ -1,8 +1,8 @@
 import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDialog'
 import { Button } from '@/components/ui/button'
-import Module from '@/models/module'
 import { cn } from '@/utils/ui'
 import { ChevronDown, MoveDown, MoveUp, Pencil } from 'lucide-react'
+import { Module } from '@/models'
 
 interface ModuleActionsProps {
   module: Module

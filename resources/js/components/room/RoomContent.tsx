@@ -1,7 +1,7 @@
 import DestructiveActionAlertDialog from '@/components/DestructiveActionAlertDialog'
 import RoomTabs from '@/components/room/RoomTabs'
 import { Badge } from '@/components/ui/badge'
-import Room from '@/models/room'
+import { Room } from '@/models'
 import { Link } from '@inertiajs/react'
 import { Pencil, Play } from 'lucide-react'
 import { Button } from '../ui/button'

@@ -1,8 +1,8 @@
 import { ModuleActions } from '@/components/module/ModuleActions'
 import { ModuleHeader } from '@/components/module/ModuleHeader'
 import { Separator } from '@/components/ui/separator'
-import Module from '@/models/module'
 import { ReactNode, useState } from 'react'
+import { Module } from '@/models'
 
 export interface ModuleCardProps {
   module: Module
@@ -20,7 +20,7 @@ export default function ModuleCard({ module, order, isFirst, isLast, onEdit, onD
 
   return (
     <>
-      <div className="bg-card rounded-lg border" style={{ borderColor: module.color }}>
+      <div className="bg-card rounded-lg border" style={{ borderColor: module.color! }}>
         <div className="flex items-center justify-between">
           <ModuleHeader module={module} order={order} onClick={() => setIsExpanded(!isExpanded)} />
 

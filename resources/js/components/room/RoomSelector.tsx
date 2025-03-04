@@ -3,7 +3,7 @@ import RoomCard from '@/components/room/RoomCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import Room from '@/models/room'
+import { Room } from '@/models'
 import { cn } from '@/utils/ui'
 import { Book, Plus } from 'lucide-react'
 
@@ -37,7 +37,7 @@ export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate
                   <Book className="mr-2 h-4 w-4" />
                   <span>{room.name}</span>
                   <Badge className="ml-2" variant={room.is_active ? 'default' : 'secondary'}>
-                    {room.participants_count}
+                    {room.students_count}
                   </Badge>
                 </div>
               </SelectItem>

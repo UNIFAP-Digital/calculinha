@@ -3,8 +3,8 @@ import ModuleActivityList from '@/components/module/activity/ModuleActivityList'
 import ModuleCard from '@/components/module/ModuleCard'
 import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
+import { Module } from '@/models'
 import { Activity } from '@/models/activity'
-import Module from '@/models/module'
 import { Head, Link, router } from '@inertiajs/react'
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -18,7 +18,7 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
 
   const filteredModules = useMemo(() => {
     return modules.filter(
-      (module) => module.name.toLowerCase().includes(searchTerm.toLowerCase()) || module.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      (module) => module.name!.toLowerCase().includes(searchTerm.toLowerCase()) || module.description?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
   }, [modules, searchTerm])
 

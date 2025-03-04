@@ -1,6 +1,6 @@
 import ModuleActivityItem from '@/components/module/activity/ModuleActivityItem'
+import { Module } from '@/models'
 import { Activity } from '@/models/activity'
-import Module from '@/models/module'
 
 interface ActivityListProps {
   module: Module

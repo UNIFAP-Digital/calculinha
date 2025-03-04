@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { GameModule } from '@/pages/game/GameSelect'
+import { GameModule } from '@/machines/gameMachine'
 import { motion } from 'framer-motion'
 
 // Estilos de cores vibrantes baseados na referência
@@ -77,13 +77,13 @@ export default function QuizIntro({ primaryColor = '#6366f1', module, onStart }:
 
   return (
     <motion.div
-      className={`fixed inset-0 ${getGradientStyle()} flex flex-col items-center justify-center overmodule-hidden`}
+      className={`fixed inset-0 ${getGradientStyle()} overmodule-hidden flex flex-col items-center justify-center`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
       {/* Background Math Elements */}
-      <div className="absolute inset-0 overmodule-hidden">
+      <div className="overmodule-hidden absolute inset-0">
         <MathElements />
       </div>
 

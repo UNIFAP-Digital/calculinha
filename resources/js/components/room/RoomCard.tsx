@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import Room from '@/models/room'
+import { Room } from '@/models'
 import { Book, Users } from 'lucide-react'
 
 interface RoomCardProps {
@@ -20,7 +20,7 @@ export default function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
               <h3 className="font-medium">{room.name}</h3>
               <div className="mt-1 flex items-center text-sm text-gray-500">
                 <Users className="mr-2 h-3 w-3" />
-                <span>{room.participants_count} participantes</span>
+                <span>{room.students_count} participantes</span>
               </div>
             </div>
           </div>

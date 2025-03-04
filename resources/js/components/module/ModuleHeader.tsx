@@ -1,4 +1,4 @@
-import Module from '@/models/module'
+import { Module } from '@/models'
 
 interface ModuleHeaderProps {
   module: Module

@@ -1,8 +1,7 @@
 import ModuleActivityList from '@/components/module/activity/ModuleActivityList'
 import ModuleCard from '@/components/module/ModuleCard'
 import { ModuleConnector } from '@/components/room/tabs/modules/ModuleConnector'
-import Module from '@/models/module'
-import Room from '@/models/room'
+import { Module, Room } from '@/models'
 import { router } from '@inertiajs/react'
 import { Fragment, useMemo } from 'react'
 
@@ -28,7 +27,7 @@ export default function ModulesTab({ room }: ModulesTabProps) {
             <ModuleActivityList module={module} />
           </ModuleCard>
 
-          {index !== modules.length - 1 && <ModuleConnector color={module.color} />}
+          {index !== modules.length - 1 && <ModuleConnector color={module.color!} />}
         </Fragment>
       ))}
     </>

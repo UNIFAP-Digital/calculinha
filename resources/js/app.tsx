@@ -18,7 +18,7 @@ createInertiaApp({
       if (name === 'Welcome') {
         typedModule.default.theme = 'light'
       } else if (name.startsWith('auth/')) typedModule.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
-      else if (name.startsWith('game/')) {
+      else if (name.startsWith('quiz/')) {
         typedModule.default.theme = 'light'
       } else typedModule.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
       return typedModule

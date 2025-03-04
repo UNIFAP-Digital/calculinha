@@ -1,14 +1,15 @@
-import { GameFlow } from '@/pages/game/GameSelect'
+import { Module } from '@/models'
 import { assign, setup } from 'xstate'
 
+export type GameModule = Omit<Module, 'activities'> & Required<Pick<Module, 'activities'>>
+
 export interface GameMachineContext {
-  flow: GameFlow
+  module: GameModule
   currentActivityId: number
   currentActivityIndex: number
   correctAnswer: string | null
   isCorrectAnswer: boolean | null
   selectedAnswer: string | null
-  score: number
   totalActivities: number
   hits: number
   mistakes: number
@@ -16,17 +17,16 @@ export interface GameMachineContext {
 
 type GameMachineEvents = { type: 'start' } | { type: 'answer-selected'; answer: string } | { type: 'next-activity' } | { type: 'reset' }
 
-const defaultGameMachineContext = (flow: GameFlow): GameMachineContext => ({
-  flow: flow,
+const defaultGameMachineContext = (module: GameModule): GameMachineContext => ({
+  module: module,
   currentActivityId: 0,
   currentActivityIndex: 0,
   correctAnswer: null,
   isCorrectAnswer: null,
   selectedAnswer: null,
-  score: 0,
   hits: 0,
   mistakes: 0,
-  totalActivities: flow.activities.length,
+  totalActivities: module.activities.length,
 })
 
 export const gameMachine = setup({
@@ -34,16 +34,16 @@ export const gameMachine = setup({
     context: {} as GameMachineContext,
     events: {} as GameMachineEvents,
     input: {} as {
-      flow: GameFlow
+      module: GameModule
     },
   },
   guards: {
-    hasMoreActivities: ({ context }) => context.currentActivityIndex < context.flow.activities.length - 1,
-    finishedFlow: ({ context }) => context.currentActivityIndex === context.flow.activities.length - 1,
+    hasMoreActivities: ({ context }) => context.currentActivityIndex < context.module.activities.length - 1,
+    finishedModule: ({ context }) => context.currentActivityIndex === context.module.activities.length - 1,
   },
 }).createMachine({
   initial: 'intro',
-  context: ({ input }) => defaultGameMachineContext(input.flow),
+  context: ({ input }) => defaultGameMachineContext(input.module),
   states: {
     intro: {
       on: {
@@ -54,8 +54,8 @@ export const gameMachine = setup({
     },
     answering: {
       entry: assign({
-        correctAnswer: ({ context }) => context.flow.activities[context.currentActivityIndex].correct_answer,
-        currentActivityId: ({ context }) => context.flow.activities[context.currentActivityIndex].id,
+        correctAnswer: ({ context }) => context.module.activities[context.currentActivityIndex].correct_answer,
+        currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
       }),
       on: {
         'answer-selected': {
@@ -63,10 +63,9 @@ export const gameMachine = setup({
           actions: [
             assign({
               selectedAnswer: ({ event }) => event.answer,
-              isCorrectAnswer: ({ context, event }) => context.flow.activities[context.currentActivityIndex].correct_answer === event.answer,
+              isCorrectAnswer: ({ context, event }) => context.module.activities[context.currentActivityIndex].correct_answer === event.answer,
             }),
             assign({
-              score: ({ context }) => (context.isCorrectAnswer ? ++context.score : context.score),
               hits: ({ context }) => (context.isCorrectAnswer ? ++context.hits : context.hits),
               mistakes: ({ context }) => (!context.isCorrectAnswer ? ++context.mistakes : context.mistakes),
             }),
@@ -89,7 +88,7 @@ export const gameMachine = setup({
             }),
           },
           {
-            guard: { type: 'finishedFlow' },
+            guard: { type: 'finishedModule' },
             target: 'result',
           },
         ],
@@ -99,9 +98,11 @@ export const gameMachine = setup({
       on: {
         reset: {
           target: 'intro',
-          actions: assign(({ context }) => defaultGameMachineContext(context.flow)),
+          actions: assign(({ context }) => defaultGameMachineContext(context.module)),
         },
       },
     },
   },
 })
+
+export default gameMachine

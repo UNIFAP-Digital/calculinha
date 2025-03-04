@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import Room from '@/models/room'
+import { Room } from '@/models'
 import { Copy, Users } from 'lucide-react'
 
 type EmptyParticipantsCardProps = {

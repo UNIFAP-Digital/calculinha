@@ -1,6 +1,6 @@
 import EmptyParticipantsCard from '@/components/room/tabs/participants/EmptyParticipantsCard'
-import { ParticipantRanking } from '@/components/room/tabs/participants/ParticipantRanking'
-import Room from '@/models/room'
+import { StudentRanking } from '@/components/room/tabs/participants/StudentRanking'
+import { Room } from '@/models'
 import { useMemo } from 'react'
 
 type ParticipantsTabProps = {
@@ -8,14 +8,14 @@ type ParticipantsTabProps = {
 }
 
 export default function ParticipantsTab({ room }: ParticipantsTabProps) {
-  const participants = useMemo(() => room.participants!, [room.participants])
+  const students = useMemo(() => room.students ?? [], [room.students])
 
-  if (participants.length === 0) return <EmptyParticipantsCard room={room} />
+  if (students.length === 0) return <EmptyParticipantsCard room={room} />
 
   return (
     <div className="space-y-2">
-      {participants.map((participant, index) => (
-        <ParticipantRanking key={participant.id} participant={participant} position={index + 1} />
+      {students.map((participant, index) => (
+        <StudentRanking key={participant.id} student={participant} order={index + 1} />
       ))}
     </div>
   )

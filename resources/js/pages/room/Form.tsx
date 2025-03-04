@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input'
 import InputError from '@/components/ui/input-error'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import Module from '@/models/module'
-import Room from '@/models/room'
+import { Module, Room } from '@/models'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft } from 'lucide-react'
 import { FormEvent, useEffect } from 'react'
@@ -143,18 +142,22 @@ export default function RoomFormPage({ room, modules }: RoomFormPageProps) {
                     </Alert>
                   )}
 
-                  <div className="max-h-[600px] space-y-3 overmodule-y-auto pr-2">
+                  <div className="overmodule-y-auto max-h-[600px] space-y-3 pr-2">
                     {modules.map((module) => (
                       <Card key={module.id} className={`transition-all duration-200 ${data.module_ids.includes(module.id) ? 'border-primary border-2' : ''}`}>
                         <CardContent className="flex items-center justify-between p-4">
                           <div className="flex items-center space-x-3">
-                            <Checkbox id={`module-${module.id}`} checked={data.module_ids.includes(module.id)} onCheckedChange={() => toggleModule(module.id)} />
+                            <Checkbox
+                              id={`module-${module.id}`}
+                              checked={data.module_ids.includes(module.id)}
+                              onCheckedChange={() => toggleModule(module.id)}
+                            />
                             <Label htmlFor={`module-${module.id}`} className="cursor-pointer font-medium">
                               <span className="mr-2">{module.icon}</span>
                               {module.name}
                             </Label>
                           </div>
-                          <div className="h-4 w-4 rounded-full" style={{ backgroundColor: module.color }}></div>
+                          <div className="h-4 w-4 rounded-full" style={{ backgroundColor: module.color! }}></div>
                         </CardContent>
                       </Card>
                     ))}

@@ -9,8 +9,8 @@ import InputError from '@/components/ui/input-error'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
+import { Module } from '@/models'
 import { Activity } from '@/models/activity'
-import Module from '@/models/module'
 import { Head, useForm } from '@inertiajs/react'
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
 import { ArrowLeft } from 'lucide-react'
@@ -181,7 +181,7 @@ export default function ModuleFormPage({ module, activities }: ModuleFormPagePro
                     </Alert>
                   )}
 
-                  <div className="max-h-[600px] space-y-3 overmodule-y-auto pr-2">
+                  <div className="overmodule-y-auto max-h-[600px] space-y-3 pr-2">
                     {activities.map((activity) => (
                       <Card
                         key={activity.id}
