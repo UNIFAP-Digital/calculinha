@@ -1,7 +1,7 @@
 import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { GameActivity } from '@/pages/game/GameSelect'
+import { Activity } from '@/models'
 import { AnimatePresence } from 'framer-motion'
 import { FlameIcon } from 'lucide-react'
 import { useMemo } from 'react'
@@ -10,7 +10,7 @@ interface QuizGameProps {
   hits: number
   mistakes: number
   progress: string
-  activity: GameActivity
+  activity: Activity
   selectedAnswer: string | null
   onSelectAnswer: (answer: string) => void
 }
@@ -42,10 +42,10 @@ export default function QuizGame({ mistakes, hits, progress, activity, selectedA
       <div className="grid">
         {/* Question Text */}
         <div className="flex min-h-0 items-center justify-center py-10">
-          <Card className="relative mx-auto max-h-full max-w-3xl min-w-[75%] overmodule-visible text-center">
+          <Card className="overmodule-visible relative mx-auto max-h-full max-w-3xl min-w-[75%] text-center">
             <Badge className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-slate-700 px-3 py-1 tracking-widest">{progress}</Badge>
             <CardContent className="p-4 px-8 text-slate-950">
-              <h1 className="text-xl sm:text-3xl">{question}</h1>
+              <h1 className="text-center text-xl whitespace-pre-line sm:text-3xl">{question}</h1>
             </CardContent>
           </Card>
         </div>

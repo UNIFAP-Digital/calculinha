@@ -112,7 +112,7 @@ export function QuizOptionCard(props: OptionCardProps) {
       onClick={handleOnClick}
     >
       <CardContent className="flex h-full w-full items-center justify-center py-0">
-        <h2 className="text-center text-lg font-bold tracking-wider select-none sm:text-4xl">{option.text}</h2>
+        <h2 className="text-center text-lg font-bold tracking-wider whitespace-pre-line select-none sm:text-4xl">{option.text}</h2>
       </CardContent>
     </MotionCard>
   )
