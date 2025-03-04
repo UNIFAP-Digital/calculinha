@@ -28,7 +28,7 @@ class ModuleSeeder extends Seeder
                 'name'        => 'Adição',
                 'icon'        => '➕',
                 'description' => 'Aprenda adição de forma simples com objetos e números!',
-                'color'       => '#FF0000'
+                'color'       => '#D81E5B'
             ])
             ->activities()
             ->attach($activities);
@@ -41,7 +41,7 @@ class ModuleSeeder extends Seeder
             'name'        => 'Subtração',
             'icon'        => '➖',
             'description' => 'Aprenda subtração de forma simples com objetos e números!',
-            'color'       => '#00FF00'
+            'color'       => '#7DCFB6'
         ])
             ->activities()
             ->attach($activities);
@@ -54,7 +54,7 @@ class ModuleSeeder extends Seeder
             'name'        => 'Multiplicação',
             'icon'        => '✖️',
             'description' => 'Aprenda multiplicação de forma simples com objetos e números!',
-            'color'       => '#0000FF'
+            'color'       => '#3423A6'
         ])
             ->activities()
             ->attach($activities);
