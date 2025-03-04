@@ -16,9 +16,8 @@ class ModuleResource extends JsonResource
         $data = [
             'id'               => $this->id,
             'name'             => $this->name,
-            'icon'             => $this->icon,
             'description'      => $this->description,
-            'color'            => $this->color,
+            'operation'        => $this->operation,
             'activities_count' => $this->whenCounted('activities'),
             'activities'       => ActivityResource::collection($this->whenLoaded('activities')),
             'created_at'       => $this->created_at->toIso8601ZuluString(),

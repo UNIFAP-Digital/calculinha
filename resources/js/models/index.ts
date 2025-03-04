@@ -1,6 +1,7 @@
 export type { Activity } from './activity'
 export type { Attempt } from './attempt'
 export type { Module } from './module'
+export type { Operation } from './operation'
 export type { Room } from './room'
 export type { Stats } from './stats'
 export type { Status } from './status'

@@ -25,10 +25,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('module_id')->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            $table->string('icon')->nullable();
-            $table->string('color')->nullable();
             $table->integer('order');
             $table->enum('status', ['completed', 'current', 'locked']);
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division'])->nullable();
 
             $table->timestamps();
 
@@ -39,10 +38,14 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('attempt_module_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('activity_id');
-            $table->jsonb('content');
+
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
+            $table->string('type');
             $table->string('answer')->nullable();
             $table->boolean('is_correct')->nullable();
             $table->integer('order');
+            $table->jsonb('content');
+
             $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['attempt_module_id', 'activity_id']);

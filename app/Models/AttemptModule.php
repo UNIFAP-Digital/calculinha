@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Operation;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,10 +18,12 @@ class AttemptModule extends Model
         'color',
         'order',
         'status',
+        'operation'
     ];
 
     protected $casts = [
         'status' => Status::class,
+        'operation' => Operation::class,
     ];
 
     public function attempt(): BelongsTo

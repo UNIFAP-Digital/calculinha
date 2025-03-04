@@ -1,3 +1,4 @@
+import { Operation } from '@/models/operation'
 import { Status } from '@/models/status'
 import type { Activity } from './activity'
 import type { Stats } from './stats'
@@ -6,8 +7,7 @@ export interface Module {
   id: number
   name: string | null
   description: string | null
-  color: string | null
-  icon: string | null
+  operation: Operation | null
   created_at: string
   updated_at: string
 

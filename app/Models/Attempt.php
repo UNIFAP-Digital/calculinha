@@ -75,6 +75,8 @@ class Attempt extends Model
             ->take(12)
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
+                'type'        => $activity->type,
+                'operation'   => $activity->operation,
                 'content'     => $activity->content,
                 'order'       => $idx + 1
             ]);
@@ -88,6 +90,8 @@ class Attempt extends Model
         foreach ($room->modules as $module) {
             $moduleActivities = $module->activities->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
+                'type'        => $activity->type,
+                'operation'   => $activity->operation,
                 'content'     => $activity->content,
                 'order'       => $idx + 1
             ]);
@@ -96,6 +100,7 @@ class Attempt extends Model
                 ->modules()
                 ->create([
                     'module_id'   => $module->id,
+                    'operation'   => $module->operation,
                     'name'        => $module->name,
                     'description' => $module->description,
                     'icon'        => $module->icon,
@@ -112,6 +117,8 @@ class Attempt extends Model
             ->take(12)
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
+                'type'        => $activity->type,
+                'operation'   => $activity->operation,
                 'content'     => $activity->content,
                 'order'       => $idx + 1
             ]);
