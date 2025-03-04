@@ -11,14 +11,41 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('attempts', function (Blueprint $table) {
-            $table->foreignId('participant_id')->constrained()->onDelete('cascade');
+            $table->id();
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
-            $table->foreignId('activity_id')->constrained()->onDelete('cascade');
-            $table->string('answer');
-            $table->boolean('is_correct');
-            $table->timestamp('created_at');
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_completed')->default(false);
 
-            $table->primary(['participant_id', 'room_id', 'activity_id']);
+            $table->timestamps();
+        });
+
+        Schema::create('attempt_modules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('attempt_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('module_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('order');
+            $table->boolean('is_completed')->default(false);
+
+            $table->timestamps();
+
+            $table->unique(['attempt_id', 'module_id']);
+        });
+
+        Schema::create('attempt_module_activities', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('attempt_module_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('activity_id');
+            $table->jsonb('content');
+            $table->string('answer')->nullable();
+            $table->boolean('is_correct')->nullable();
+            $table->integer('order');
+            $table->timestamp('created_at')->useCurrent();
+
+            $table->unique(['attempt_module_id', 'activity_id']);
         });
     }
 
@@ -28,5 +55,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('attempts');
+        Schema::dropIfExists('attempt_modules');
+        Schema::dropIfExists('attempt_module_activities');
     }
 };
