@@ -13,7 +13,7 @@ class AttemptRequest extends FormRequest
         $student = Auth::guard('student')->user();
         $activity = AttemptModuleActivity::findOrFail($this->input('activity_id'));
 
-        return $activity->module->attempt->student_id === $student->id;
+        return ($activity->module->attempt->student_id === $student->id) && $activity->is_correct === null;
     }
 
     public function rules(): array
