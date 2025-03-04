@@ -14,8 +14,8 @@ class ActivitySeeder extends Seeder
         foreach ($activities as $activity) {
             Activity::create([
                 'is_active' => true,
+                'type'      => 'multiple_choice',
                 'content'   => [
-                    'type'           => 'multiple_choice',
                     'question'       => $activity[0],
                     'correct_answer' => $activity[1],
                     'wrong_answers'  => $activity[2]
