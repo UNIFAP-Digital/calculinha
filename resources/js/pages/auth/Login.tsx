@@ -11,9 +11,10 @@ import { MailQuestion } from 'lucide-react'
 import { FormEventHandler } from 'react'
 
 export default function LoginPage() {
+  /** TODO: Remove default values of debug */
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: '',
-    password: '',
+    email: 'calculinha@gmail.com',
+    password: 'asd',
     remember: false as boolean,
   })
 
