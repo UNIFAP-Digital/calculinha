@@ -1,9 +1,10 @@
 import type { Module } from '@/models/module'
 import type { Stats } from '@/models/stats'
+import { Status } from '@/models/status'
 
 export interface Attempt {
   id: number
-  is_completed: boolean
+  status: Status
   created_at: string
   updated_at: string
 

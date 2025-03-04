@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->boolean('is_completed')->default(false);
+            $table->enum('status', ['completed', 'current']);
 
             $table->timestamps();
         });
@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
             $table->integer('order');
-            $table->boolean('is_completed')->default(false);
+            $table->enum('status', ['completed', 'current', 'locked']);
 
             $table->timestamps();
 
