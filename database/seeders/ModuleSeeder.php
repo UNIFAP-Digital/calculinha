@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Operation;
+use App\Models\Activity;
 use App\Models\Module;
 use App\Models\ModuleActivity;
 use Illuminate\Database\Seeder;

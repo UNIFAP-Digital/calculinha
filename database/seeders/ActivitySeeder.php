@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Operation;
 use App\Models\Activity;
 use Illuminate\Database\Seeder;
 
@@ -9,18 +10,26 @@ class ActivitySeeder extends Seeder
 {
     public function run(): void
     {
-        $activities = array_merge($this->getAdditions(), $this->getSubtractions(), $this->getMultiplications(), $this->getDivisions());
+        $operations = [
+            Operation::Addition->value       => $this->getAdditions(),
+            Operation::Subtraction->value    => $this->getSubtractions(),
+            Operation::Multiplication->value => $this->getMultiplications(),
+            Operation::Division->value       => $this->getDivisions()
+        ];
 
-        foreach ($activities as $activity) {
-            Activity::create([
-                'is_active' => true,
-                'type'      => 'multiple_choice',
-                'content'   => [
-                    'question'       => $activity[0],
-                    'correct_answer' => $activity[1],
-                    'wrong_answers'  => $activity[2]
-                ]
-            ]);
+        foreach ($operations as $operation => $activities) {
+            foreach ($activities as $activity) {
+                Activity::create([
+                    'is_active' => true,
+                    'type'      => 'multiple_choice',
+                    'operation' => $operation,
+                    'content'   => [
+                        'question'       => $activity[0],
+                        'correct_answer' => $activity[1],
+                        'wrong_answers'  => $activity[2]
+                    ]
+                ]);
+            }
         }
     }
 
