@@ -16,7 +16,8 @@ class AttemptModuleActivity extends Model
         'answer',
         'is_correct',
         'order',
-        'operation'
+        'operation',
+        'type'
     ];
 
     protected $casts = [

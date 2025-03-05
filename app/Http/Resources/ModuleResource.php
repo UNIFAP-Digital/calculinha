@@ -19,6 +19,7 @@ class ModuleResource extends JsonResource
             'description'      => $this->description,
             'operation'        => $this->operation,
             'activities_count' => $this->whenCounted('activities'),
+            'activities_completed' => $this->whenHas('activities_completed'),
             'activities'       => ActivityResource::collection($this->whenLoaded('activities')),
             'created_at'       => $this->created_at->toIso8601ZuluString(),
             'updated_at'       => $this->updated_at->toIso8601ZuluString()

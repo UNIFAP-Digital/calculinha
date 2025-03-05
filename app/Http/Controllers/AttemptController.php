@@ -24,9 +24,16 @@ class AttemptController extends Controller
 
         if ($user instanceof Student) {
             $attempt = Attempt::current($room, $user);
-            $attempt->load('modules.activities');
+            $attempt->load([
+                'modules' =>
+                    fn($query) => $query->withCount([
+                        'activities',
+                        'activities as activities_completed' => fn($query) => $query->whereNotNull('is_correct')
+                    ])
+            ]);
         } else {
             $attempt = Attempt::fake($room);
+
         }
 
         return Inertia::render('quiz/Index', [

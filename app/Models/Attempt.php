@@ -12,7 +12,7 @@ class Attempt extends Model
     protected $fillable = [
         'student_id',
         'room_id',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -103,8 +103,6 @@ class Attempt extends Model
                     'operation'   => $module->operation,
                     'name'        => $module->name,
                     'description' => $module->description,
-                    'icon'        => $module->icon,
-                    'color'       => $module->color,
                     'order'       => $order++,
                     'status'      => Status::Locked
                 ])

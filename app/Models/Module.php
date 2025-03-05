@@ -16,7 +16,7 @@ class Module extends Model
         'description',
         'color',
         'position',
-        'operation'
+        'operation',
     ];
 
     protected $casts = [

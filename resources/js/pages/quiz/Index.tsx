@@ -1,6 +1,6 @@
 import { Attempt, Room, Student } from '@/models'
 import { Head } from '@inertiajs/react'
-import { motion } from 'framer-motion'
+import { color, motion } from 'framer-motion'
 import { ArrowRight, Award, CheckCircle, ClipboardCheck, Divide, LockIcon as LockClosed, Minus, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -73,129 +73,22 @@ export interface GameSelectPageProps {
   attempt: Attempt
 }
 
-export function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
-  if (attempt.modules.length === 0) {
-    return (
-      <>
-        <Head title="Jogar" />
-        <div className="flex min-h-screen items-center justify-center p-8">
-          <div className="text-center">
-            <h1 className="mb-4 text-4xl font-extrabold text-[#4B4B4B]">Nenhuma operação disponível</h1>
-            <p className="text-xl text-[#777777]">Entre em contato com o administrador para adicionar operações.</p>
-          </div>
-        </div>
-      </>
-    )
-  }
 
-  return (
-    <>
-      <Head title="Jogar" />
-
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          <motion.header className="mb-12 text-center" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">Jornada Matemática</h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">Complete cada módulo para desbloquear o próximo e avançar na sua jornada de aprendizado.</p>
-          </motion.header>
-
-          <div className="mx-auto max-w-3xl">
-            {attempt.modules.map((module, index) => (
-              <ModuleIntroCard
-                key={module.id}
-                module={module}
-                index={index}
-                totalModules={attempt.modules.length}
-                currentModuleIndex={attempt.currentModuleIndex}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
-const mockData = {
-  room: { id: 1, name: 'Sala de Matemática' },
-  attempt: {
-    currentModuleIndex: 2, // Usuário está no módulo de subtração (índice 2)
-    modules: colorThemes.map((theme, index) => ({
-      id: index + 1,
-      name: theme.name,
-      description: theme.description,
-      color: theme.color,
-      icon: theme.name.charAt(0),
-      isSpecial: theme.isSpecial,
-      status: index < 2 ? 'completed' : index === 2 ? 'current' : 'locked',
-      activities: Array(Math.floor(Math.random() * 3) + 3)
-        .fill(null)
-        .map((_, i) => ({
-          id: i + 1,
-          name: `Atividade ${i + 1}`,
-          completed: index < 2 ? true : index === 2 ? i < 1 : false,
-        })),
-    })),
-  },
-}
-
-// Componente para ícone "gordinho" sem o glow branco
-function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'current' }) {
-  // Cores baseadas no status
-  const iconColor = 'white'
-  let bgColor = color
-
-  if (status === 'locked') {
-    bgColor = '#9CA3AF' // Cinza para módulos bloqueados
-  } else if (status === 'completed') {
-    // Manter a cor original para completados
-  }
-
-  return (
-    <div className={`relative flex items-center justify-center ${className}`} style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}>
-      {/* Base shadow for 3D effect */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: size + 4,
-          height: size + 4,
-          background: bgColor,
-          opacity: 0.7,
-          transform: 'translateY(3px)',
-          filter: 'blur(2px)',
-        }}
-      />
-
-      {/* Icon background */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: size + 8,
-          height: size + 8,
-          background: bgColor,
-        }}
-      />
-
-      {/* Icon itself */}
-      <div className="relative z-10">
-        <Icon size={size} strokeWidth={3} color={iconColor} />
-      </div>
-    </div>
-  )
-}
 
 function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
   const [isHovered, setIsHovered] = useState(false)
+
+  module.name = index === 0 ? 'Pré-Teste' : index === totalModules - 1 ? 'Pós-Teste' : module.name
 
   // Determinar status do módulo
   const status = module.status // "completed", "current", ou "locked"
 
   // Calcular progresso
-  const completedActivities = module.activities.filter((a) => a.completed).length
-  const progressPercentage = (completedActivities / module.activities.length) * 100
+  const completedActivities = module.activities_completed
+  const progressPercentage = (completedActivities / module.activities_count) * 100
 
   // Determinar se o texto deve ser claro ou escuro
-  const isLight = (color) => {
+  const isLight = (color: string) => {
     const hex = color.replace('#', '')
     const r = Number.parseInt(hex.substr(0, 2), 16)
     const g = Number.parseInt(hex.substr(2, 2), 16)
@@ -204,10 +97,10 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
   }
 
   // Ajustar cores baseadas no status
-  let cardColor = module.color
-  let cardGradientStart = module.color
-  let cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || module.color
-  let textColor = isLight(module.color) ? '#000000' : '#FFFFFF'
+  let cardColor = colorThemes[index].color
+  let cardGradientStart = colorThemes[index].gradientStart
+  let cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || colorThemes[index].gradientEnd
+  let textColor = isLight(colorThemes[index].color) ? '#000000' : '#FFFFFF'
 
   if (status === 'locked') {
     cardColor = '#9CA3AF'
@@ -216,8 +109,8 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
     textColor = '#FFFFFF'
   } else if (status === 'completed') {
     // Manter as cores originais para completados, mas com opacidade reduzida
-    cardGradientStart = module.color
-    cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || module.color
+    cardGradientStart = colorThemes[index].gradientStart
+    cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || colorThemes[index].gradientEnd
   }
 
   // Ícone correspondente
@@ -271,20 +164,6 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
             {index + 1}
           </div>
 
-          {/* Linha conectora */}
-          {index < totalModules - 1 && (
-            <div
-              className={`absolute top-12 left-1/2 w-1 -translate-x-1/2 ${status === 'locked' ? 'opacity-30' : ''}`}
-              style={{
-                height: isLastMathModule ? '60px' : '40px',
-                background:
-                  status === 'completed'
-                    ? `linear-gradient(to bottom, ${module.color} 0%, ${mockData.attempt.modules[index + 1].color} 100%)`
-                    : `linear-gradient(to bottom, ${cardColor} 0%, rgba(200,200,200,0.3) 100%)`,
-                zIndex: -1,
-              }}
-            />
-          )}
         </div>
 
         {/* Card do módulo */}
@@ -374,7 +253,7 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
                 } ${status === 'completed' ? 'opacity-80' : ''}`}
                 style={{ backgroundColor: cardColor, color: textColor }}
               >
-                {completedActivities} de {module.activities.length}
+                {completedActivities} de {module.activities_count}
               </div>
             </div>
           </div>
@@ -393,3 +272,100 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
     </motion.div>
   )
 }
+
+export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
+  console.log(JSON.stringify(attempt, null, 2))
+ 
+  const currentModuleIndex = attempt.modules.findIndex(module => module.status === "current");
+  
+  
+
+  if (attempt.modules.length === 0) {
+    return (
+      <>
+        <Head title="Jogar" />
+        <div className="flex min-h-screen items-center justify-center p-8">
+          <div className="text-center">
+            <h1 className="mb-4 text-4xl font-extrabold text-[#4B4B4B]">Nenhuma operação disponível</h1>
+            <p className="text-xl text-[#777777]">Entre em contato com o administrador para adicionar operações.</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Head title="Jogar" />
+
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+          <motion.header className="mb-12 text-center" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">Jornada Matemática</h1>
+            <p className="mx-auto max-w-2xl text-xl text-gray-600">Complete cada módulo para desbloquear o próximo e avançar na sua jornada de aprendizado.</p>
+          </motion.header>
+
+          <div className="mx-auto max-w-3xl">
+            {attempt.modules.map((module, index) => (
+              <ModuleIntroCard
+                key={module.id}
+                module={module}
+                index={index}
+                totalModules={attempt.modules.length}
+                currentModuleIndex={currentModuleIndex}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+
+// Componente para ícone "gordinho" sem o glow branco
+function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'current' }) {
+  // Cores baseadas no status
+  const iconColor = 'white'
+  let bgColor = color
+
+  if (status === 'locked') {
+    bgColor = '#9CA3AF' // Cinza para módulos bloqueados
+  } else if (status === 'completed') {
+    // Manter a cor original para completados
+  }
+
+  return (
+    <div className={`relative flex items-center justify-center ${className}`} style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}>
+      {/* Base shadow for 3D effect */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: size + 4,
+          height: size + 4,
+          background: bgColor,
+          opacity: 0.7,
+          transform: 'translateY(3px)',
+          filter: 'blur(2px)',
+        }}
+      />
+
+      {/* Icon background */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: size + 8,
+          height: size + 8,
+          background: bgColor,
+        }}
+      />
+
+      {/* Icon itself */}
+      <div className="relative z-10">
+        <Icon size={size} strokeWidth={3} color={iconColor} />
+      </div>
+    </div>
+  )
+}
+
+

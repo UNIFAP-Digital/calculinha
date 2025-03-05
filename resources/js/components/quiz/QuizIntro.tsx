@@ -2,13 +2,6 @@ import { Button } from '@/components/ui/button'
 import { GameModule } from '@/machines/gameMachine'
 import { motion } from 'framer-motion'
 
-// Estilos de cores vibrantes baseados na referência
-const gradientStyles = {
-  orange: 'bg-gradient-to-br from-orange-500 to-orange-400',
-  teal: 'bg-gradient-to-br from-teal-500 to-teal-400',
-  indigo: 'bg-gradient-to-br from-indigo-500 to-indigo-400',
-  pink: 'bg-gradient-to-br from-pink-500 to-pink-400',
-}
 
 interface QuizIntroProps {
   primaryColor?: string
@@ -17,63 +10,8 @@ interface QuizIntroProps {
 }
 
 export default function QuizIntro({ primaryColor = '#6366f1', module, onStart }: QuizIntroProps) {
-  const getGradientStyle = () => {
-    if (primaryColor.includes('orange')) return gradientStyles.orange
-    if (primaryColor.includes('teal')) return gradientStyles.teal
-    if (primaryColor.includes('pink')) return gradientStyles.pink
 
-    return gradientStyles.indigo
-  }
-
-  // Elementos matemáticos flutuantes para o fundo
-  const MathElements = () => {
-    const elements = [
-      { icon: '+', size: 'text-6xl', color: 'text-white/20' },
-      { icon: '-', size: 'text-5xl', color: 'text-white/15' },
-      { icon: '×', size: 'text-7xl', color: 'text-white/20' },
-      { icon: '÷', size: 'text-6xl', color: 'text-white/15' },
-      { icon: '=', size: 'text-5xl', color: 'text-white/20' },
-      { icon: '123', size: 'text-4xl', color: 'text-white/15' },
-      { icon: '?', size: 'text-6xl', color: 'text-white/20' },
-      { icon: '√', size: 'text-5xl', color: 'text-white/15' },
-      { icon: '∑', size: 'text-7xl', color: 'text-white/10' },
-      { icon: '∞', size: 'text-6xl', color: 'text-white/15' },
-    ]
-
-    return (
-      <>
-        {elements.map((el, index) => (
-          <motion.div
-            key={index}
-            className={`absolute ${el.size} font-bold ${el.color} select-none`}
-            initial={{
-              x: Math.random() * 100 - 50,
-              y: Math.random() * 100 - 50,
-              opacity: 0,
-              rotate: Math.random() * 20 - 10,
-            }}
-            animate={{
-              x: [Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 100 - 50],
-              y: [Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 100 - 50],
-              opacity: [0.1, 0.2, 0.1],
-              rotate: [Math.random() * 20 - 10, Math.random() * 20 - 10, Math.random() * 20 - 10],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 20 + Math.random() * 10,
-              ease: 'linear',
-            }}
-            style={{
-              left: `${Math.random() * 90}%`,
-              top: `${Math.random() * 90}%`,
-            }}
-          >
-            {el.icon}
-          </motion.div>
-        ))}
-      </>
-    )
-  }
+   
 
   return (
     <motion.div

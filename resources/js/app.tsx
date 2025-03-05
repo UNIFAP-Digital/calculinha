@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
-import InertiaCustomApp from '@/lib/inertia'
+
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ReactNode } from 'react'
@@ -16,16 +16,14 @@ createInertiaApp({
       const typedModule = module as { default: { layout: (page: ReactNode) => ReactNode; theme?: string } }
 
       if (name === 'Welcome') {
-        typedModule.default.theme = 'light'
       } else if (name.startsWith('auth/')) typedModule.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
       else if (name.startsWith('quiz/')) {
-        typedModule.default.theme = 'light'
       } else typedModule.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
       return typedModule
     }),
   setup({ el, App, props }) {
     const root = createRoot(el)
-    root.render(<InertiaCustomApp App={App} props={props} />)
+    root.render(<App {...props} />)
   },
   progress: {
     color: '#3B82F6',
