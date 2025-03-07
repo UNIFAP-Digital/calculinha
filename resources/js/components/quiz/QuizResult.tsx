@@ -399,20 +399,11 @@ export default function QuizResult({ roomId, score, totalActivities, startGameAg
 
         {/* Action buttons */}
         <motion.div
-          className="grid w-full max-w-2xl grid-cols-2 gap-6"
+          className="grid w-full max-w-2xl grid-cols-1 items-start gap-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <motion.div whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }}>
-            <button onClick={startGameAgain} className={`h-14 w-full rounded-xl border border-white/20 ${theme.button} font-semibold text-white shadow-md`}>
-              <div className="flex items-center justify-center gap-2">
-                <RotateCcw className="h-5 w-5" />
-                <span>Jogar Novamente</span>
-              </div>
-            </button>
-          </motion.div>
-
           <motion.div whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }}>
             <Link href={route('quiz.index', roomId)} className="block h-full">
               <button className={`h-14 w-full rounded-xl border border-white/20 ${theme.button} font-semibold text-white shadow-md`}>

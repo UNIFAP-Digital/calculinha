@@ -17,6 +17,9 @@ export type ModuleTheme = {
   icon: LucideIcon
   description: string
   longDescription: string
+  isSpecial: boolean
+  buttonGradient: string
+  buttonShadow: string
 }
 
 export const colorThemes: Array<ModuleTheme> = [
@@ -30,8 +33,9 @@ export const colorThemes: Array<ModuleTheme> = [
     icon: ClipboardCheck,
     description: "Avaliação inicial de conhecimentos",
     longDescription: "Vamos verificar o que você já sabe sobre operações matemáticas com este teste inicial.",
-    // buttonGradient: "linear-gradient(135deg, #5ebbff 0%, #3d9dff 100%)",
-    // buttonShadow: "#2a85e5",
+    isSpecial: true,
+    buttonGradient: "linear-gradient(135deg, #5ebbff 0%, #3d9dff 100%)",
+    buttonShadow: "#2a85e5",
   },
   {
     name: "Adição",
@@ -44,6 +48,9 @@ export const colorThemes: Array<ModuleTheme> = [
     description: "Aprenda a somar números de forma divertida e interativa!",
     longDescription:
       "Aprenda a somar números de diferentes formas através de exercícios interativos e desafios divertidos.",
+    isSpecial: false,
+    buttonGradient: "linear-gradient(135deg, #20e4bc 0%, #0fbf96 100%)",
+    buttonShadow: "#0aa582",
   },
   {
     name: "Subtração",
@@ -55,6 +62,9 @@ export const colorThemes: Array<ModuleTheme> = [
     icon: Minus,
     description: "Pratique a subtração de valores e resolva problemas!",
     longDescription: "Aprenda a subtrair números e resolver problemas do dia a dia com técnicas simples e divertidas.",
+    isSpecial: false,
+    buttonGradient: "linear-gradient(135deg, #a18cff 0%, #7c5cff 100%)",
+    buttonShadow: "#6a4aef",
   },
   {
     name: "Multiplicação",
@@ -67,6 +77,9 @@ export const colorThemes: Array<ModuleTheme> = [
     description: "Multiplique números facilmente com técnicas especiais!",
     longDescription:
       "Multiplicar é como somar várias vezes o mesmo número! Aprenda técnicas divertidas para multiplicar rapidamente.",
+    isSpecial: false,
+    buttonGradient: "linear-gradient(135deg, #ff7e7e 0%, #ff5252 100%)",
+    buttonShadow: "#e64545",
   },
   {
     name: "Divisão",
@@ -79,6 +92,9 @@ export const colorThemes: Array<ModuleTheme> = [
     description: "Aprenda a dividir valores e compartilhar igualmente!",
     longDescription:
       "A divisão nos ajuda a repartir quantidades em partes iguais. Aprenda a dividir números de forma simples e prática.",
+    isSpecial: false,
+    buttonGradient: "linear-gradient(135deg, #5ebbff 0%, #3d9dff 100%)",
+    buttonShadow: "#2a85e5",
   },
   {
     name: "Pós-Teste",
@@ -90,8 +106,9 @@ export const colorThemes: Array<ModuleTheme> = [
     icon: Award,
     description: "Avaliação final de conhecimentos",
     longDescription: "Vamos verificar o quanto você aprendeu com este teste final de conhecimentos.",
-    // buttonGradient: "linear-gradient(135deg, #ff7ad9 0%, #ff42c0 100%)",
-    // buttonShadow: "#e032a8",
+    isSpecial: true,
+    buttonGradient: "linear-gradient(135deg, #ff7ad9 0%, #ff42c0 100%)",
+    buttonShadow: "#e032a8",
   },
 ]
 

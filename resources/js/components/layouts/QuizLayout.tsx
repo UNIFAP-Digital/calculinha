@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import { Toaster } from 'sonner'
-import '../../../css/quiz.css'
+
 
 export default function QuizLayout({ children }: PropsWithChildren) {
   return (

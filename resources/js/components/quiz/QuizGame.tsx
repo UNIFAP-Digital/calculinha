@@ -2,11 +2,12 @@ import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Activity, Module } from '@/models'
-import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
+import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
 import { AnimatePresence, motion } from 'framer-motion'
 import { FlameIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import '../../../css/quiz.css'
 
 interface QuizGameProps {
   module: Module
@@ -16,6 +17,7 @@ interface QuizGameProps {
   activity: Activity
   selectedAnswer: string | null
   onSelectAnswer: (answer: string) => void
+  handleNextActivity?: () => void
   currentQuestionIndex: number
 }
 
@@ -77,7 +79,7 @@ export  function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, 
   )
 } 
 
-export default function MathGame({ firstQuestionAnimation = false , selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex }: QuizGameProps) {
+export default function MathGame({ firstQuestionAnimation = false , selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
   const [selectedOption, setSelectedOption] = useState("")
   const [score, setScore] = useState(0)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -90,8 +92,9 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
 
 
   const answered = selectedAnswer !== null
-  const moduleTheme =
-    colorThemes.find((theme) => theme.name.toLowerCase() === quizData.module.toLowerCase()) || colorThemes[0]
+
+  const moduleTheme: ModuleTheme =
+    colorThemes.find((theme) => theme.name.toLowerCase() === module.name.toLowerCase()) || colorThemes[0]
 
   const typeColor = questionTypeColors[moduleTheme.name] || {
     gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
@@ -99,7 +102,7 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
   }
 
   const handleOptionSelect = (answer: string) => {
-    if (selectedAnswer) return
+    if (answered) return
     
     setSelectedOption(answer)
   }
@@ -112,9 +115,9 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
   }
 
   const handleNextQuestion = () => {
+    handleNextActivity?.()
     setShowFeedback(false)
-
-    setSelectedOption(null)
+    setSelectedOption("")
 
   }
 
@@ -160,11 +163,11 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
         <MathFloatingElements />
         <ChalkDust />
 
-        <ProgressBar current={currentQuestionIndex + 1} total={module.activities_count} moduleTheme={moduleTheme} />
+        <ProgressBar current={currentQuestionIndex + 1} total={module.stats?.total} moduleTheme={moduleTheme} />
       </div>
 
       {/* Feedback mode selector */}
-      <div className="fixed top-4 right-4 z-30 bg-white rounded-lg shadow-md p-2 flex items-center gap-2">
+      <div className="fixed top-4 left-4 z-30 bg-white rounded-lg shadow-md p-2 flex items-center gap-2">
         <span className="text-sm font-medium text-gray-700">Modo:</span>
         <select
           className="p-1 rounded border text-sm"
@@ -180,21 +183,17 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
       <div className="relative z-10 min-h-screen w-full">
         <div className="flex flex-col h-screen">
           {/* Header */}
-          <div className="flex items-start justify-between pt-16 px-4 md:px-8 relative">
-            {/* Score no canto esquerdo */}
-            <div>
-              <ScoreIndicator score={score} />
-            </div>
-
+          <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
             {/* Tipo de operação no canto direito */}
             <motion.div
-              className="flex items-center"
+              className="flex items-center gap-2"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
+              <ScoreIndicator score={score} />
               <div
-                className="px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+                className="px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
                 style={{
                   background: typeColor.gradient,
                   boxShadow: `0 3px 0 ${typeColor.shadow}, 0 4px 8px rgba(0, 0, 0, 0.2)`,
@@ -223,7 +222,7 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
             >
               <ProgressBadge
                 current={currentQuestionIndex + 1}
-                total={module.activities_count}
+                total={module.stats?.total}
                 moduleTheme={moduleTheme}
               />
 
@@ -245,7 +244,7 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
                         text: option,
                       }}
                       index={index}
-                      selected={selectedAnswer !== null && selectedAnswer === option}
+                      selected={selectedOption === option}
                       isCorrectAnswer={shuffledOptions.correctIndex === index}
                       answered={answered}
                       onClick={handleOptionSelect}

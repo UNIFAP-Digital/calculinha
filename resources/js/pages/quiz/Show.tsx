@@ -8,7 +8,7 @@ import { Module, Room } from '@/models'
 import { httpPost } from '@/utils/api'
 import { Head, usePage } from '@inertiajs/react'
 import { useMachine } from '@xstate/react'
-import '../../../css/quiz.css'
+
 
 interface QuizShowPageProps {
   room: Room
@@ -30,24 +30,13 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   }
 
   const handleAnswerSelect = (answer: string) => {
-    const isCorrect = answer === correctAnswer
-    const message = isCorrect ? 'Resposta correta!' : 'Resposta incorreta!'
 
     send({ type: 'answer-selected', answer })
 
-    /**
-     * quizToast({
-      message,
-      type: isCorrect ? 'correct' : 'incorrect',
-      button: {
-        onClick: () => {
-          handleSaveAnswer(gameModule.activities[currentActivityIndex].id, answer).finally(() => {
-            send({ type: 'next-activity' })
-          })
-        },
-      },
-    })
-     */
+  }
+
+  const handleNextActivity = () => {
+    send({ type: 'next-activity' })
   }
 
   return (
@@ -65,6 +54,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
           mistakes={mistakes}
           module={module}
           currentQuestionIndex={currentActivityIndex}
+          handleNextActivity={handleNextActivity}
         />
       )}
       {state.matches('result') && (
