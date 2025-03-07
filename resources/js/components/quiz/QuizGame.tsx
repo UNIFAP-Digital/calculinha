@@ -104,12 +104,15 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
   const handleOptionSelect = (answer: string) => {
     if (answered) return
     
+   
     setSelectedOption(answer)
   }
 
   const handleAnswer = (index = selectedOption) => {
     if (answered) return
 
+    const isCorrect = activity.correct_answer === selectedOption
+    setIsCorrect(isCorrect)
     onSelectAnswer(selectedOption)
     setShowFeedback(true)
   }
