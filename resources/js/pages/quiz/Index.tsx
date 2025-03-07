@@ -1,7 +1,17 @@
 import { Attempt, Room, Student } from '@/models'
-import { Head } from '@inertiajs/react'
-import { color, motion } from 'framer-motion'
-import { ArrowRight, Award, CheckCircle, ClipboardCheck, Divide, LockIcon as LockClosed, Minus, Plus, X } from 'lucide-react'
+import { Head, router } from '@inertiajs/react'
+import { motion } from 'framer-motion'
+import {
+  ArrowRight,
+  Award,
+  CheckCircle,
+  ClipboardCheck,
+  Divide,
+  LockIcon as LockClosed,
+  Minus,
+  Plus,
+  X,
+} from 'lucide-react'
 import { useState } from 'react'
 
 const colorThemes = [
@@ -73,19 +83,23 @@ export interface GameSelectPageProps {
   attempt: Attempt
 }
 
-
-
-function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
+function ModuleIntroCard({ module, index, totalModules, currentModuleIndex, onClick }) {
   const [isHovered, setIsHovered] = useState(false)
 
-  module.name = index === 0 ? 'Pré-Teste' : index === totalModules - 1 ? 'Pós-Teste' : module.name
+  module.name =
+    index === 0
+      ? 'Pré-Teste'
+      : index === totalModules - 1
+        ? 'Pós-Teste'
+        : module.name
 
   // Determinar status do módulo
   const status = module.status // "completed", "current", ou "locked"
 
   // Calcular progresso
   const completedActivities = module.activities_completed
-  const progressPercentage = (completedActivities / module.activities_count) * 100
+  const progressPercentage =
+    (completedActivities / module.activities_count) * 100
 
   // Determinar se o texto deve ser claro ou escuro
   const isLight = (color: string) => {
@@ -99,7 +113,9 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
   // Ajustar cores baseadas no status
   let cardColor = colorThemes[index].color
   let cardGradientStart = colorThemes[index].gradientStart
-  let cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || colorThemes[index].gradientEnd
+  let cardGradientEnd =
+    colorThemes.find((t) => t.name === module.name)?.baseColor ||
+    colorThemes[index].gradientEnd
   let textColor = isLight(colorThemes[index].color) ? '#000000' : '#FFFFFF'
 
   if (status === 'locked') {
@@ -110,14 +126,22 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
   } else if (status === 'completed') {
     // Manter as cores originais para completados, mas com opacidade reduzida
     cardGradientStart = colorThemes[index].gradientStart
-    cardGradientEnd = colorThemes.find((t) => t.name === module.name)?.baseColor || colorThemes[index].gradientEnd
+    cardGradientEnd =
+      colorThemes.find((t) => t.name === module.name)?.baseColor ||
+      colorThemes[index].gradientEnd
   }
 
   // Ícone correspondente
-  const IconComponent = colorThemes.find((t) => t.name === module.name)?.icon || Plus
+  const IconComponent =
+    colorThemes.find((t) => t.name === module.name)?.icon || Plus
 
   // Ícone de status
-  const StatusIcon = status === 'completed' ? CheckCircle : status === 'locked' ? LockClosed : ArrowRight
+  const StatusIcon =
+    status === 'completed'
+      ? CheckCircle
+      : status === 'locked'
+        ? LockClosed
+        : ArrowRight
 
   // Verificar se é um módulo especial (Pré-Teste ou Pós-Teste)
   const isSpecial = module.isSpecial
@@ -131,6 +155,8 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
   // Determinar se o módulo é interativo
   const isInteractive = status === 'current'
 
+
+
   return (
     <motion.div
       className={`mb-8 ${isSpecial ? 'relative z-10' : ''}`}
@@ -143,14 +169,25 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
         <div className="relative mt-12 mb-8">
           <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
           <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">OPERAÇÕES MATEMÁTICAS</span>
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              OPERAÇÕES MATEMÁTICAS
+            </span>
           </div>
         </div>
       )}
 
-      <div className="mb-2 flex items-center">
+      <div
+        className="mb-2 grid"
+        style={{
+          gridTemplateColumns: "70px 1fr", 
+          gridTemplateAreas: `
+        "number card"
+        "______ bar"
+        `,
+        }}
+      >
         {/* Número do módulo */}
-        <div className="relative mr-4">
+        <div className="relative mr-4 self-center" style={{gridArea: 'number'}}>
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${
               status === 'locked' ? 'opacity-60' : ''
@@ -158,20 +195,22 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
             style={{
               background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
               color: textColor,
-              boxShadow: isSpecial ? '0 0 0 4px rgba(0,0,0,0.05)' : '0 4px 6px rgba(0,0,0,0.1)',
+              boxShadow: isSpecial
+                ? '0 0 0 4px rgba(0,0,0,0.05)'
+                : '0 4px 6px rgba(0,0,0,0.1)',
             }}
           >
             {index + 1}
           </div>
-
         </div>
-
         {/* Card do módulo */}
         <motion.div
           className="flex-1"
           whileHover={{ scale: isInteractive ? 1.02 : 1 }}
           onHoverStart={() => isInteractive && setIsHovered(true)}
           onHoverEnd={() => isInteractive && setIsHovered(false)}
+          style={{gridArea: 'card'}}
+          onClick={() => onClick(module.id)}
         >
           <motion.div
             className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${
@@ -181,13 +220,16 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
             }`}
             style={{
               background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              boxShadow: isSpecial ? '0 8px 20px rgba(0,0,0,0.15)' : '0 4px 10px rgba(0,0,0,0.1)',
+              boxShadow: isSpecial
+                ? '0 8px 20px rgba(0,0,0,0.15)'
+                : '0 4px 10px rgba(0,0,0,0.1)',
             }}
             whileTap={{ scale: isInteractive ? 0.98 : 1 }}
           >
             {/* Overlay para módulos completados */}
-            {status === 'completed' && <div className="pointer-events-none absolute inset-0 bg-black opacity-10"></div>}
-
+            {status === 'completed' && (
+              <div className="pointer-events-none absolute inset-0 bg-black opacity-10"></div>
+            )}
             {/* Padrão de fundo */}
             <div
               className="absolute inset-0 opacity-10"
@@ -197,13 +239,19 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
                 backgroundSize: '30px 30px',
               }}
             />
-
             <div className="flex items-center">
               {/* Ícone */}
               <div className="mr-4">
-                <FatIcon icon={IconComponent} color={colorThemes.find((t) => t.name === module.name)?.baseColor || '#333'} size={32} status={status} />
+                <FatIcon
+                  icon={IconComponent}
+                  color={
+                    colorThemes.find((t) => t.name === module.name)
+                      ?.baseColor || '#333'
+                  }
+                  size={32}
+                  status={status}
+                />
               </div>
-
               <div className="flex-1">
                 <h2 className="text-xl font-bold" style={{ color: textColor }}>
                   {module.name}
@@ -211,61 +259,74 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
                 <p className="text-sm opacity-90" style={{ color: textColor }}>
                   {module.description}
                 </p>
-
                 {/* Status badge */}
                 <div
                   className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
                   style={{
-                    backgroundColor: status === 'completed' ? 'rgba(255,255,255,0.3)' : status === 'locked' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)',
+                    backgroundColor:
+                      status === 'completed'
+                        ? 'rgba(255,255,255,0.3)'
+                        : status === 'locked'
+                          ? 'rgba(0,0,0,0.2)'
+                          : 'rgba(255,255,255,0.3)',
                     color: textColor,
                   }}
                 >
-                  {status === 'completed' ? 'Completado' : status === 'locked' ? 'Bloqueado' : 'Em andamento'}
+                  {status === 'completed'
+                    ? 'Completado'
+                    : status === 'locked'
+                      ? 'Bloqueado'
+                      : 'Em andamento'}
                 </div>
               </div>
-
-              <motion.div animate={{ x: isHovered && isInteractive ? 5 : 0 }} transition={{ type: 'spring', stiffness: 300 }}>
+              <motion.div
+                animate={{ x: isHovered && isInteractive ? 5 : 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
                 <StatusIcon color={textColor} size={24} />
               </motion.div>
             </div>
           </motion.div>
-
-          {/* Barra de progresso */}
-          <div className="mt-3 px-1">
-            <div className="flex items-center gap-3">
-              <div
-                className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${
-                  status === 'locked' ? 'opacity-50' : ''
-                } ${status === 'completed' ? 'opacity-80' : ''}`}
-              >
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: cardColor }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 1, delay: index * 0.1 }}
-                />
-              </div>
-
-              <div
-                className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${
-                  status === 'locked' ? 'opacity-50' : ''
-                } ${status === 'completed' ? 'opacity-80' : ''}`}
-                style={{ backgroundColor: cardColor, color: textColor }}
-              >
-                {completedActivities} de {module.activities_count}
-              </div>
-            </div>
-          </div>
         </motion.div>
+              {/* Barra de progresso */}
+        <div className="mt-2 px-1" style={{gridArea: 'bar'}}>
+        <div className="flex items-center gap-3">
+          <div
+            className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${
+              status === 'locked' ? 'opacity-50' : ''
+            } ${status === 'completed' ? 'opacity-80' : ''}`}
+          >
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: cardColor }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 1, delay: index * 0.1 }}
+            />
+          </div>
+
+          <div
+            className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${
+              status === 'locked' ? 'opacity-50' : ''
+            } ${status === 'completed' ? 'opacity-80' : ''}`}
+            style={{ backgroundColor: cardColor, color: textColor }}
+          >
+            {completedActivities} de {module.activities_count}
+          </div>
+        </div>
       </div>
+      </div>
+
+   
 
       {/* Separador visual após o último módulo matemático */}
       {isLastMathModule && (
         <div className="relative mt-12 mb-8">
           <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
           <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">AVALIAÇÃO FINAL</span>
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              AVALIAÇÃO FINAL
+            </span>
           </div>
         </div>
       )}
@@ -274,11 +335,15 @@ function ModuleIntroCard({ module, index, totalModules, currentModuleIndex }) {
 }
 
 export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
-  console.log(JSON.stringify(attempt, null, 2))
- 
-  const currentModuleIndex = attempt.modules.findIndex(module => module.status === "current");
-  
-  
+
+
+  const currentModuleIndex = attempt.modules.findIndex(
+    (module) => module.status === 'current',
+  )
+
+  function handleOnClick(moduleId: string) {
+    router.visit(route("quiz.show", [room.id, moduleId]))
+  }
 
   if (attempt.modules.length === 0) {
     return (
@@ -286,8 +351,12 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
         <Head title="Jogar" />
         <div className="flex min-h-screen items-center justify-center p-8">
           <div className="text-center">
-            <h1 className="mb-4 text-4xl font-extrabold text-[#4B4B4B]">Nenhuma operação disponível</h1>
-            <p className="text-xl text-[#777777]">Entre em contato com o administrador para adicionar operações.</p>
+            <h1 className="mb-4 text-4xl font-extrabold text-[#4B4B4B]">
+              Nenhuma operação disponível
+            </h1>
+            <p className="text-xl text-[#777777]">
+              Entre em contato com o administrador para adicionar operações.
+            </p>
           </div>
         </div>
       </>
@@ -300,9 +369,19 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          <motion.header className="mb-12 text-center" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">Jornada Matemática</h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">Complete cada módulo para desbloquear o próximo e avançar na sua jornada de aprendizado.</p>
+          <motion.header
+            className="mb-12 text-center"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
+              Jornada Matemática
+            </h1>
+            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+              Complete cada módulo para desbloquear o próximo e avançar na sua
+              jornada de aprendizado.
+            </p>
           </motion.header>
 
           <div className="mx-auto max-w-3xl">
@@ -313,7 +392,8 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
                 index={index}
                 totalModules={attempt.modules.length}
                 currentModuleIndex={currentModuleIndex}
-              />
+                onClick={handleOnClick}
+                />
             ))}
           </div>
         </div>
@@ -322,9 +402,14 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   )
 }
 
-
 // Componente para ícone "gordinho" sem o glow branco
-function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'current' }) {
+function FatIcon({
+  icon: Icon,
+  color,
+  size = 24,
+  className = '',
+  status = 'current',
+}) {
   // Cores baseadas no status
   const iconColor = 'white'
   let bgColor = color
@@ -336,7 +421,10 @@ function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'curre
   }
 
   return (
-    <div className={`relative flex items-center justify-center ${className}`} style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}>
+    <div
+      className={`relative flex items-center justify-center ${className}`}
+      style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}
+    >
       {/* Base shadow for 3D effect */}
       <div
         className="absolute rounded-full"
@@ -367,5 +455,3 @@ function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'curre
     </div>
   )
 }
-
-

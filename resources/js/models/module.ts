@@ -5,7 +5,7 @@ import type { Stats } from './stats'
 
 export interface Module {
   id: number
-  name: string | null
+  name: string 
   description: string | null
   operation: Operation | null
   created_at: string

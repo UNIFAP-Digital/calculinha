@@ -35,7 +35,8 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
 
     send({ type: 'answer-selected', answer })
 
-    quizToast({
+    /**
+     * quizToast({
       message,
       type: isCorrect ? 'correct' : 'incorrect',
       button: {
@@ -46,13 +47,14 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
         },
       },
     })
+     */
   }
 
   return (
     <QuizLayout>
       <Head title="Quiz" />
 
-      {state.matches('intro') && <QuizIntro module={state.context.module} onStart={() => send({ type: 'start' })} />}
+      {state.matches('intro') && <QuizIntro module={gameModule} onStart={() => send({ type: 'start' })} />}
       {(state.matches('answering') || state.matches('answered')) && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
@@ -61,6 +63,8 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
           onSelectAnswer={handleAnswerSelect}
           hits={hits}
           mistakes={mistakes}
+          module={module}
+          currentQuestionIndex={currentActivityIndex}
         />
       )}
       {state.matches('result') && (

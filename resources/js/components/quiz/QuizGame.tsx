@@ -1,21 +1,25 @@
 import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Activity } from '@/models'
-import { AnimatePresence } from 'framer-motion'
+import { Activity, Module } from '@/models'
+import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
+import { OptionButton } from "@/components/quiz/OptionButton"
+import { AnimatePresence, motion } from 'framer-motion'
 import { FlameIcon } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 interface QuizGameProps {
+  module: Module
   hits: number
   mistakes: number
   progress: string
   activity: Activity
   selectedAnswer: string | null
   onSelectAnswer: (answer: string) => void
+  currentQuestionIndex: number
 }
 
-export default function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
+export  function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
   const { question, wrong_answers, correct_answer } = activity
 
   const shuffledAnswers = useMemo(() => {
@@ -69,6 +73,216 @@ export default function QuizGame({ mistakes, hits, progress, activity, selectedA
           </AnimatePresence>
         </div>
       </div>
+    </div>
+  )
+} 
+
+export default function MathGame({ firstQuestionAnimation = false , selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex }: QuizGameProps) {
+  const [selectedOption, setSelectedOption] = useState("")
+  const [score, setScore] = useState(0)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(false)
+  const [withoutFeedback, setWithoutFeedback] = useState(false)
+
+  console.log(JSON.stringify(module, null, 2))
+
+  const { question, wrong_answers, correct_answer } = activity
+
+
+  const answered = selectedAnswer !== null
+  const moduleTheme =
+    colorThemes.find((theme) => theme.name.toLowerCase() === quizData.module.toLowerCase()) || colorThemes[0]
+
+  const typeColor = questionTypeColors[moduleTheme.name] || {
+    gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
+    shadow: "#059669",
+  }
+
+  const handleOptionSelect = (answer: string) => {
+    if (selectedAnswer) return
+    
+    setSelectedOption(answer)
+  }
+
+  const handleAnswer = (index = selectedOption) => {
+    if (answered) return
+
+    onSelectAnswer(selectedOption)
+    setShowFeedback(true)
+  }
+
+  const handleNextQuestion = () => {
+    setShowFeedback(false)
+
+    setSelectedOption(null)
+
+  }
+
+  const shuffledOptions = useMemo(() => {
+    const allAnswers = [...wrong_answers]
+    const correctAnswer = correct_answer
+    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
+    allAnswers.splice(randomIndex, 0, correctAnswer)
+    return { answers: allAnswers, correctIndex: randomIndex }
+  }, [wrong_answers, correct_answer])
+
+
+  const isAnswerButtonDisabled = selectedOption === null || answered
+
+  return (
+    <div className={`min-h-screen relative overflow-hidden font-nunito`}>
+      {/* Background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          borderColor: "#8B4513",
+          background: "linear-gradient(135deg, #0e6245 0%, #0d7a56 50%, #0e6245 100%)",
+          boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <ChalkTextureFilter />
+
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            filter: "url(#chalkTexture)",
+            background: "linear-gradient(to right, #ffffff 0%, transparent 50%, #ffffff 100%)",
+          }}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            boxShadow: "inset 0 0 100px rgba(0, 0, 0, 0.4)",
+          }}
+        />
+
+        <MathFloatingElements />
+        <ChalkDust />
+
+        <ProgressBar current={currentQuestionIndex + 1} total={module.activities_count} moduleTheme={moduleTheme} />
+      </div>
+
+      {/* Feedback mode selector */}
+      <div className="fixed top-4 right-4 z-30 bg-white rounded-lg shadow-md p-2 flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-700">Modo:</span>
+        <select
+          className="p-1 rounded border text-sm"
+          value={withoutFeedback ? "without" : "with"}
+          onChange={(e) => setWithoutFeedback(e.target.value === "without")}
+        >
+          <option value="with">Com Feedback</option>
+          <option value="without">Sem Feedback</option>
+        </select>
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen w-full">
+        <div className="flex flex-col h-screen">
+          {/* Header */}
+          <div className="flex items-start justify-between pt-16 px-4 md:px-8 relative">
+            {/* Score no canto esquerdo */}
+            <div>
+              <ScoreIndicator score={score} />
+            </div>
+
+            {/* Tipo de operação no canto direito */}
+            <motion.div
+              className="flex items-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div
+                className="px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+                style={{
+                  background: typeColor.gradient,
+                  boxShadow: `0 3px 0 ${typeColor.shadow}, 0 4px 8px rgba(0, 0, 0, 0.2)`,
+                  border: "2px solid rgba(255,255,255,0.5)",
+                }}
+              >
+                <ChibiIcon icon={moduleTheme.icon} color={typeColor.shadow} size={20} />
+                <span className="text-white font-bold text-lg">{moduleTheme.name}</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Question */}
+          <div className="flex-1 flex items-center justify-center px-4 md:px-8 mt-4">
+            <motion.div
+              className="w-full max-w-4xl rounded-2xl p-6 md:p-8 text-center shadow-xl relative"
+              style={{
+                background: "rgba(255, 255, 255, 0.95)",
+                border: "2px solid rgba(255, 255, 255, 0.5)",
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.1)",
+              }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={activity.id}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <ProgressBadge
+                current={currentQuestionIndex + 1}
+                total={module.activities_count}
+                moduleTheme={moduleTheme}
+              />
+
+              <p className="text-3xl md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide mt-4">
+                {question}
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Options Container */}
+          <div className="px-4 md:px-8 mb-24 md:mb-28 mt-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 gap-4">
+                {shuffledOptions.answers.map((option, index) => (
+                  <div key={index} className="h-full">
+                    <OptionButton
+                      option={{
+                        id: `option-${index}`,
+                        text: option,
+                      }}
+                      index={index}
+                      selected={selectedAnswer !== null && selectedAnswer === option}
+                      isCorrectAnswer={shuffledOptions.correctIndex === index}
+                      answered={answered}
+                      onClick={handleOptionSelect}
+                      moduleTheme={moduleTheme}
+                      withoutFeedback={withoutFeedback}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Actions - bottom right */}
+          <div className="fixed bottom-8 right-8 z-20">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+              <NavigationButton
+                text="Responder"
+                onClick={() => handleAnswer()}
+                disabled={isAnswerButtonDisabled}
+                moduleTheme={moduleTheme}
+              />
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Answer feedback */}
+      <AnimatePresence>
+        {showFeedback && (
+          <AnswerFeedback
+            correct={isCorrect}
+            onContinue={handleNextQuestion}
+            moduleTheme={moduleTheme}
+            withoutFeedback={withoutFeedback}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

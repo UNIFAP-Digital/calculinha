@@ -83,7 +83,7 @@ class Attempt extends Model
 
         $attempt
             ->modules()
-            ->create(['order' => $order++, 'status' => Status::Current])
+            ->create(['order' => $order++, 'status' => Status::Current, 'name' => 'pre-test'])
             ->activities()
             ->createMany($initialActivities);
 
@@ -123,7 +123,7 @@ class Attempt extends Model
 
         $attempt
             ->modules()
-            ->create(['order' => $order, 'status' => Status::Locked])
+            ->create(['order' => $order, 'status' => Status::Locked, 'name' => 'pos-test'])
             ->activities()
             ->createMany($finalActivities);
 
