@@ -226,7 +226,7 @@ export default function MathGame({ firstQuestionAnimation = false , selectedAnsw
                 moduleTheme={moduleTheme}
               />
 
-              <p className="text-3xl md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide mt-4">
+              <p className="text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide mt-4">
                 {question}
               </p>
             </motion.div>
