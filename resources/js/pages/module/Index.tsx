@@ -17,7 +17,7 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
 
   const filteredModules = useMemo(() => {
     return modules.filter(
-      (module) => module.name!.toLowerCase().includes(searchTerm.toLowerCase()) || module.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      (module) => module.name!.toLowerCase().includes(searchTerm.toLowerCase()) || module.description?.toLowerCase().includes(searchTerm.toLowerCase())
     )
   }, [modules, searchTerm])
 
@@ -28,7 +28,7 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
   const handleDelete = (module: Module) => {
     router.delete(route('modules.destroy', module.id), {
       preserveScroll: true,
-      preserveState: true,
+      preserveState: true
     })
   }
 
@@ -36,9 +36,10 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
     <>
       <Head title="Trilhas" />
 
-      <Container compact>
-        <div className="pb-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <Container
+        compact
+        header={
+          <>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Biblioteca de Trilhas</h1>
               <p className="text-muted-foreground mt-1">Gerencie todas as suas trilhas aqui.</p>
@@ -54,9 +55,8 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
                 </Link>
               </Button>
             </div>
-          </div>
-        </div>
-
+          </>
+        }>
         <div className="space-y-4">
           {filteredModules.map((module) => (
             <ModuleCard key={module.id} module={module} onDelete={handleDelete} onEdit={handleEdit}>
@@ -65,7 +65,7 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
           ))}
 
           {filteredModules.length === 0 && (
-            <div className="text-muted-foreground py-8 text-center">
+            <div className="text-muted-foreground text-center">
               {modules.length === 0 ? 'Nenhuma trilha disponível.' : `Nenhuma trilha encontrada para "${searchTerm}".`}
             </div>
           )}

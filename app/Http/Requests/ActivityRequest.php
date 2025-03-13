@@ -21,9 +21,8 @@ class ActivityRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'question'        => ['required', 'string', 'min:5', 'max:255'],
-            'operation'       => ['required', Rule::enum(Operation::class)],
             'correct_answer'  => [
                 'required',
                 'string',
@@ -43,5 +42,33 @@ class ActivityRequest extends FormRequest
             'wrong_answers'   => ['required', 'array', 'size:3'],
             'wrong_answers.*' => ['required', 'string', 'min:1', 'max:100', 'distinct'],
         ];
+
+        if ($this->method() === 'POST') {
+            $rules['operation'] = ['required', Rule::enum(Operation::class)];
+        }
+
+        return $rules;
+    }
+
+    public function validated($key = null, $default = null): mixed
+    {
+        $validated = parent::validated($key, $default);
+        if ($key !== null) return $validated;
+
+        $content = [
+            'question'       => $validated['question'] ?? null,
+            'correct_answer' => $validated['correct_answer'] ?? null,
+            'wrong_answers'  => $validated['wrong_answers'] ?? null
+        ];
+
+        $fieldsToRemove = ['question', 'correct_answer', 'wrong_answers'];
+        foreach ($fieldsToRemove as $field) {
+            unset($validated[$field]);
+        }
+
+        $validated['type'] = 'multiple_choice';
+        $validated['content'] = $content;
+
+        return $validated;
     }
 }

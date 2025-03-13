@@ -6,6 +6,14 @@ import InputError from '@/components/ui/input-error'
 import { Activity } from '@/models/activity'
 import { useForm } from '@inertiajs/react'
 import { Check, X } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
 
 interface ActivityFormCardProps {
   activity?: Activity
@@ -20,6 +28,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
     question: activity?.question ?? '',
     correct_answer: activity?.correct_answer ?? '',
     wrong_answers: activity?.wrong_answers ?? ['', '', ''],
+    operation: activity?.operation ?? ''
   })
 
   const handleSave = () => {
@@ -28,14 +37,14 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
         onSuccess: () => {
           reset()
           onSaved()
-        },
+        }
       })
     } else {
       post(route('activities.store'), {
         onSuccess: () => {
           reset()
           onSaved()
-        },
+        }
       })
     }
   }
@@ -50,7 +59,23 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="space-y-2">
+        <div className="grid space-y-2">
+          <Label htmlFor="operation">Operação</Label>
+          <Select value={data.operation} disabled={isEditing} onValueChange={(value) => setData('operation', value)}>
+            <SelectTrigger id="operation" className="w-full">
+              <SelectValue placeholder="Selecione uma operação" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="addition">Adição</SelectItem>
+              <SelectItem value="subtraction">Subtração</SelectItem>
+              <SelectItem value="multiplication">Multiplicação</SelectItem>
+              <SelectItem value="division">Divisão</SelectItem>
+            </SelectContent>
+          </Select>
+          <InputError message={errors.operation} />
+        </div>
+
+        <div className="grid space-y-2">
           <TextAreaWithEmojiPicker
             id="question"
             label="Pergunta"
@@ -87,7 +112,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                 onChange={(value) => {
                   setData((previousData) => ({
                     ...previousData,
-                    wrong_answers: [value, previousData.wrong_answers[1], previousData.wrong_answers[2]],
+                    wrong_answers: [value, previousData.wrong_answers[1], previousData.wrong_answers[2]]
                   }))
                 }}
               />
@@ -106,7 +131,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                 onChange={(value) => {
                   setData((previousData) => ({
                     ...previousData,
-                    wrong_answers: [previousData.wrong_answers[0], value, previousData.wrong_answers[2]],
+                    wrong_answers: [previousData.wrong_answers[0], value, previousData.wrong_answers[2]]
                   }))
                 }}
               />
@@ -125,7 +150,7 @@ export default function ActivityFormCard({ activity, onCancel, onSaved }: Activi
                 onChange={(value) => {
                   setData((previousData) => ({
                     ...previousData,
-                    wrong_answers: [previousData.wrong_answers[0], previousData.wrong_answers[1], value],
+                    wrong_answers: [previousData.wrong_answers[0], previousData.wrong_answers[1], value]
                   }))
                 }}
               />

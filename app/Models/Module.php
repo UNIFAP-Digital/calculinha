@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Operation;
+use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,10 +18,12 @@ class Module extends Model
         'color',
         'position',
         'operation',
+        'type'
     ];
 
     protected $casts = [
         'operation' => Operation::class,
+        'type'      => Type::class,
     ];
 
     public function activities(): BelongsToMany

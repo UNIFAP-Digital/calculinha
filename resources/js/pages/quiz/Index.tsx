@@ -1,4 +1,13 @@
-import { Attempt, Room, Student } from '@/models'
+import {
+  Attempt,
+  Module,
+  Operation,
+  Room,
+  Status,
+  Student,
+  Type,
+} from '@/models'
+import { isLightColor } from '@/utils/color'
 import { Head, router } from '@inertiajs/react'
 import { motion } from 'framer-motion'
 import {
@@ -8,341 +17,26 @@ import {
   ClipboardCheck,
   Divide,
   LockIcon as LockClosed,
+  LucideIcon,
   Minus,
   Plus,
   X,
 } from 'lucide-react'
 import { useState } from 'react'
 
-const colorThemes = [
-  {
-    name: 'Pré-Teste',
-    color: '#5ebbff',
-    gradientStart: '#5ebbff',
-    gradientEnd: '#3d9dff',
-    baseColor: '#2a85e5',
-    icon: ClipboardCheck,
-    description: 'Avaliação inicial de conhecimentos',
-    isSpecial: true,
-  },
-  {
-    name: 'Adição',
-    color: '#20e4bc',
-    gradientStart: '#20e4bc',
-    gradientEnd: '#0fbf96',
-    baseColor: '#0aa582',
-    icon: Plus,
-    description: 'Aprenda a somar números',
-    isSpecial: false,
-  },
-  {
-    name: 'Subtração',
-    color: '#a18cff',
-    gradientStart: '#a18cff',
-    gradientEnd: '#7c5cff',
-    baseColor: '#6a4aef',
-    icon: Minus,
-    description: 'Pratique a subtração de valores',
-    isSpecial: false,
-  },
-  {
-    name: 'Multiplicação',
-    color: '#ff7e7e',
-    gradientStart: '#ff7e7e',
-    gradientEnd: '#ff5252',
-    baseColor: '#e64545',
-    icon: X,
-    description: 'Multiplique números facilmente',
-    isSpecial: false,
-  },
-  {
-    name: 'Divisão',
-    color: '#ffcf5e',
-    gradientStart: '#ffcf5e',
-    gradientEnd: '#ffb72a',
-    baseColor: '#e59e1a',
-    icon: Divide,
-    description: 'Aprenda a dividir valores',
-    isSpecial: false,
-  },
-  {
-    name: 'Pós-Teste',
-    color: '#ff7ad9',
-    gradientStart: '#ff7ad9',
-    gradientEnd: '#ff42c0',
-    baseColor: '#e032a8',
-    icon: Award,
-    description: 'Avaliação final de conhecimentos',
-    isSpecial: true,
-  },
-]
-
-export interface GameSelectPageProps {
-  room: Room
-  student: Student
-  attempt: Attempt
-}
-
-function ModuleIntroCard({ module, index, totalModules, currentModuleIndex, onClick }) {
-  const [isHovered, setIsHovered] = useState(false)
-
-  module.name =
-    index === 0
-      ? 'Pré-Teste'
-      : index === totalModules - 1
-        ? 'Pós-Teste'
-        : module.name
-
-  // Determinar status do módulo
-  const status = module.status // "completed", "current", ou "locked"
-
-  // Calcular progresso
-  const completedActivities = module.activities_completed
-  const progressPercentage =
-    (completedActivities / module.activities_count) * 100
-
-  // Determinar se o texto deve ser claro ou escuro
-  const isLight = (color: string) => {
-    const hex = color.replace('#', '')
-    const r = Number.parseInt(hex.substr(0, 2), 16)
-    const g = Number.parseInt(hex.substr(2, 2), 16)
-    const b = Number.parseInt(hex.substr(4, 2), 16)
-    return r * 0.299 + g * 0.587 + b * 0.114 > 186
-  }
-
-  // Ajustar cores baseadas no status
-  let cardColor = colorThemes[index].color
-  let cardGradientStart = colorThemes[index].gradientStart
-  let cardGradientEnd =
-    colorThemes.find((t) => t.name === module.name)?.baseColor ||
-    colorThemes[index].gradientEnd
-  let textColor = isLight(colorThemes[index].color) ? '#000000' : '#FFFFFF'
-
-  if (status === 'locked') {
-    cardColor = '#9CA3AF'
-    cardGradientStart = '#9CA3AF'
-    cardGradientEnd = '#6B7280'
-    textColor = '#FFFFFF'
-  } else if (status === 'completed') {
-    // Manter as cores originais para completados, mas com opacidade reduzida
-    cardGradientStart = colorThemes[index].gradientStart
-    cardGradientEnd =
-      colorThemes.find((t) => t.name === module.name)?.baseColor ||
-      colorThemes[index].gradientEnd
-  }
-
-  // Ícone correspondente
-  const IconComponent =
-    colorThemes.find((t) => t.name === module.name)?.icon || Plus
-
-  // Ícone de status
-  const StatusIcon =
-    status === 'completed'
-      ? CheckCircle
-      : status === 'locked'
-        ? LockClosed
-        : ArrowRight
-
-  // Verificar se é um módulo especial (Pré-Teste ou Pós-Teste)
-  const isSpecial = module.isSpecial
-
-  // Determinar se este módulo é o primeiro do grupo de operações matemáticas
-  const isFirstMathModule = index === 1 // Índice 1 é o primeiro após o Pré-Teste
-
-  // Determinar se este módulo é o último do grupo de operações matemáticas
-  const isLastMathModule = index === totalModules - 2 // Penúltimo módulo (antes do Pós-Teste)
-
-  // Determinar se o módulo é interativo
-  const isInteractive = status === 'current'
-
-
-
-  return (
-    <motion.div
-      className={`mb-8 ${isSpecial ? 'relative z-10' : ''}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-    >
-      {/* Separador visual para agrupar os módulos matemáticos */}
-      {isFirstMathModule && (
-        <div className="relative mt-12 mb-8">
-          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
-          <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
-              OPERAÇÕES MATEMÁTICAS
-            </span>
-          </div>
-        </div>
-      )}
-
-      <div
-        className="mb-2 grid"
-        style={{
-          gridTemplateColumns: "70px 1fr", 
-          gridTemplateAreas: `
-        "number card"
-        "______ bar"
-        `,
-        }}
-      >
-        {/* Número do módulo */}
-        <div className="relative mr-4 self-center" style={{gridArea: 'number'}}>
-          <div
-            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${
-              status === 'locked' ? 'opacity-60' : ''
-            } ${status === 'completed' ? 'opacity-80' : ''} ${isSpecial ? 'border-2 border-white' : ''}`}
-            style={{
-              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              color: textColor,
-              boxShadow: isSpecial
-                ? '0 0 0 4px rgba(0,0,0,0.05)'
-                : '0 4px 6px rgba(0,0,0,0.1)',
-            }}
-          >
-            {index + 1}
-          </div>
-        </div>
-        {/* Card do módulo */}
-        <motion.div
-          className="flex-1"
-          whileHover={{ scale: isInteractive ? 1.02 : 1 }}
-          onHoverStart={() => isInteractive && setIsHovered(true)}
-          onHoverEnd={() => isInteractive && setIsHovered(false)}
-          style={{gridArea: 'card'}}
-          onClick={() => onClick(module.id)}
-        >
-          <motion.div
-            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${
-              status === 'locked' ? 'cursor-not-allowed opacity-70' : ''
-            } ${status === 'completed' ? 'cursor-default opacity-85' : ''} ${isInteractive ? 'cursor-pointer' : ''} ${
-              isSpecial ? 'border-2 border-white' : ''
-            }`}
-            style={{
-              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              boxShadow: isSpecial
-                ? '0 8px 20px rgba(0,0,0,0.15)'
-                : '0 4px 10px rgba(0,0,0,0.1)',
-            }}
-            whileTap={{ scale: isInteractive ? 0.98 : 1 }}
-          >
-            {/* Overlay para módulos completados */}
-            {status === 'completed' && (
-              <div className="pointer-events-none absolute inset-0 bg-black opacity-10"></div>
-            )}
-            {/* Padrão de fundo */}
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage:
-                  'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')',
-                backgroundSize: '30px 30px',
-              }}
-            />
-            <div className="flex items-center">
-              {/* Ícone */}
-              <div className="mr-4">
-                <FatIcon
-                  icon={IconComponent}
-                  color={
-                    colorThemes.find((t) => t.name === module.name)
-                      ?.baseColor || '#333'
-                  }
-                  size={32}
-                  status={status}
-                />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold" style={{ color: textColor }}>
-                  {module.name}
-                </h2>
-                <p className="text-sm opacity-90" style={{ color: textColor }}>
-                  {module.description}
-                </p>
-                {/* Status badge */}
-                <div
-                  className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
-                  style={{
-                    backgroundColor:
-                      status === 'completed'
-                        ? 'rgba(255,255,255,0.3)'
-                        : status === 'locked'
-                          ? 'rgba(0,0,0,0.2)'
-                          : 'rgba(255,255,255,0.3)',
-                    color: textColor,
-                  }}
-                >
-                  {status === 'completed'
-                    ? 'Completado'
-                    : status === 'locked'
-                      ? 'Bloqueado'
-                      : 'Em andamento'}
-                </div>
-              </div>
-              <motion.div
-                animate={{ x: isHovered && isInteractive ? 5 : 0 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <StatusIcon color={textColor} size={24} />
-              </motion.div>
-            </div>
-          </motion.div>
-        </motion.div>
-              {/* Barra de progresso */}
-        <div className="mt-2 px-1" style={{gridArea: 'bar'}}>
-        <div className="flex items-center gap-3">
-          <div
-            className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${
-              status === 'locked' ? 'opacity-50' : ''
-            } ${status === 'completed' ? 'opacity-80' : ''}`}
-          >
-            <motion.div
-              className="h-full rounded-full"
-              style={{ background: cardColor }}
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 1, delay: index * 0.1 }}
-            />
-          </div>
-
-          <div
-            className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${
-              status === 'locked' ? 'opacity-50' : ''
-            } ${status === 'completed' ? 'opacity-80' : ''}`}
-            style={{ backgroundColor: cardColor, color: textColor }}
-          >
-            {completedActivities} de {module.activities_count}
-          </div>
-        </div>
-      </div>
-      </div>
-
-   
-
-      {/* Separador visual após o último módulo matemático */}
-      {isLastMathModule && (
-        <div className="relative mt-12 mb-8">
-          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
-          <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
-              AVALIAÇÃO FINAL
-            </span>
-          </div>
-        </div>
-      )}
-    </motion.div>
-  )
+type CardConfig = {
+  name: string
+  color: string
+  gradientStart: string
+  gradientEnd: string
+  baseColor: string
+  icon: LucideIcon
+  description: string
 }
 
 export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
-
-
-  const currentModuleIndex = attempt.modules.findIndex(
-    (module) => module.status === 'current',
-  )
-
-  function handleOnClick(moduleId: string) {
-    router.visit(route("quiz.show", [room.id, moduleId]))
+  function handleOnClick(moduleId: number) {
+    router.visit(route('quiz.show', [room.id, moduleId]))
   }
 
   if (attempt.modules.length === 0) {
@@ -373,8 +67,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
             className="mb-12 text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+            transition={{ duration: 0.5 }}>
             <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
               Jornada Matemática
             </h1>
@@ -390,10 +83,8 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
                 key={module.id}
                 module={module}
                 index={index}
-                totalModules={attempt.modules.length}
-                currentModuleIndex={currentModuleIndex}
                 onClick={handleOnClick}
-                />
+              />
             ))}
           </div>
         </div>
@@ -402,29 +93,310 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   )
 }
 
-// Componente para ícone "gordinho" sem o glow branco
+const getConfig = (type: Type, operation: Operation | null): CardConfig => {
+  if (type === 'pre-test')
+    return {
+      name: 'Pré-Teste',
+      color: '#5ebbff',
+      gradientStart: '#5ebbff',
+      gradientEnd: '#3d9dff',
+      baseColor: '#2a85e5',
+      icon: ClipboardCheck,
+      description: 'Avaliação inicial de conhecimentos',
+    }
+
+  if (type === 'post-test')
+    return {
+      name: 'Pós-Teste',
+      color: '#ff7ad9',
+      gradientStart: '#ff7ad9',
+      gradientEnd: '#ff42c0',
+      baseColor: '#e032a8',
+      icon: Award,
+      description: 'Avaliação final de conhecimentos',
+    }
+
+  if (operation === null)
+    throw new TypeError(
+      'A operação não pode ser null quando o tipo é exercício',
+    )
+
+  const operations: Record<Operation, CardConfig> = {
+    addition: {
+      name: 'Adição',
+      color: '#20e4bc',
+      gradientStart: '#20e4bc',
+      gradientEnd: '#0fbf96',
+      baseColor: '#0aa582',
+      icon: Plus,
+      description: 'Aprenda a somar números',
+    },
+    subtraction: {
+      name: 'Subtração',
+      color: '#a18cff',
+      gradientStart: '#a18cff',
+      gradientEnd: '#7c5cff',
+      baseColor: '#6a4aef',
+      icon: Minus,
+      description: 'Pratique a subtração de valores',
+    },
+    multiplication: {
+      name: 'Multiplicação',
+      color: '#ff7e7e',
+      gradientStart: '#ff7e7e',
+      gradientEnd: '#ff5252',
+      baseColor: '#e64545',
+      icon: X,
+      description: 'Multiplique números facilmente',
+    },
+    division: {
+      name: 'Divisão',
+      color: '#ffcf5e',
+      gradientStart: '#ffcf5e',
+      gradientEnd: '#ffb72a',
+      baseColor: '#e59e1a',
+      icon: Divide,
+      description: 'Aprenda a dividir valores',
+    },
+  }
+
+  return operations[operation]
+}
+
+export interface GameSelectPageProps {
+  room: Room
+  student: Student
+  attempt: Attempt
+}
+
+type ModuleIntroCardProps = {
+  module: Module
+  index: number
+  onClick: (moduleId: number) => void
+}
+
+function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const status = module.status!
+  const completedActivities = module.activities_completed!
+  const progressPercentage =
+    (completedActivities / module.activities_count!) * 100
+
+  const {
+    color,
+    baseColor,
+    icon: IconComponent,
+    gradientStart,
+    name,
+    description,
+  } = getConfig(module.type, module.operation)
+  let cardColor = color
+  let cardGradientStart = gradientStart
+  let cardGradientEnd = baseColor
+  let textColor = isLightColor(baseColor) ? '#000000' : '#FFFFFF'
+
+  if (status === 'locked') {
+    cardColor = '#9CA3AF'
+    cardGradientStart = '#9CA3AF'
+    cardGradientEnd = '#6B7280'
+    textColor = '#FFFFFF'
+  }
+
+  const StatusIcon =
+    status === 'completed'
+      ? CheckCircle
+      : status === 'locked'
+        ? LockClosed
+        : ArrowRight
+
+  const isExercise = module.type !== 'exercise'
+  const isInteractive = status === 'current'
+
+  return (
+    <motion.div
+      className={`mb-8 ${isExercise ? 'relative z-10' : ''}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}>
+      {module.type === 'post-test' && (
+        <div className="relative mt-12 mb-8">
+          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
+          <div className="relative flex justify-center">
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              AVALIAÇÃO FINAL
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div
+        className="mb-2 grid"
+        style={{
+          gridTemplateColumns: '70px 1fr',
+          gridTemplateAreas: `
+        "number card"
+        "______ bar"
+        `,
+        }}>
+        {/* Número do módulo */}
+        <div
+          className="relative mr-4 self-center"
+          style={{ gridArea: 'number' }}>
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${
+              status === 'locked' ? 'opacity-60' : ''
+            } ${status === 'completed' ? 'opacity-80' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
+            style={{
+              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
+              color: textColor,
+              boxShadow: isExercise
+                ? '0 0 0 4px rgba(0,0,0,0.05)'
+                : '0 4px 6px rgba(0,0,0,0.1)',
+            }}>
+            {index + 1}
+          </div>
+        </div>
+        {/* Card do módulo */}
+        <motion.div
+          className="flex-1"
+          whileHover={{ scale: isInteractive ? 1.02 : 1 }}
+          onHoverStart={() => isInteractive && setIsHovered(true)}
+          onHoverEnd={() => isInteractive && setIsHovered(false)}
+          style={{ gridArea: 'card' }}
+          onClick={() => onClick(module.id)}>
+          <motion.div
+            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${
+              status === 'locked' ? 'cursor-not-allowed opacity-70' : ''
+            } ${status === 'completed' ? 'cursor-default opacity-85' : ''} ${isInteractive ? 'cursor-pointer' : ''} ${
+              isExercise ? 'border-2 border-white' : ''
+            }`}
+            style={{
+              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
+              boxShadow: isExercise
+                ? '0 8px 20px rgba(0,0,0,0.15)'
+                : '0 4px 10px rgba(0,0,0,0.1)',
+            }}
+            whileTap={{ scale: isInteractive ? 0.98 : 1 }}>
+            {/* Overlay para módulos completados */}
+            {status === 'completed' && (
+              <div className="pointer-events-none absolute inset-0 bg-black opacity-10"></div>
+            )}
+            {/* Padrão de fundo */}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')',
+                backgroundSize: '30px 30px',
+              }}
+            />
+            <div className="flex items-center">
+              <div className="mr-4">
+                <FatIcon
+                  icon={IconComponent}
+                  color={baseColor}
+                  size={32}
+                  status={status}
+                />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold" style={{ color: textColor }}>
+                  {module.name ?? name}
+                </h2>
+                <p className="text-sm opacity-90" style={{ color: textColor }}>
+                  {module.description ?? description}
+                </p>
+                {/* Status badge */}
+                <div
+                  className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                  style={{
+                    backgroundColor:
+                      status === 'completed'
+                        ? 'rgba(255,255,255,0.3)'
+                        : status === 'locked'
+                          ? 'rgba(0,0,0,0.2)'
+                          : 'rgba(255,255,255,0.3)',
+                    color: textColor,
+                  }}>
+                  {status === 'completed'
+                    ? 'Completado'
+                    : status === 'locked'
+                      ? 'Bloqueado'
+                      : 'Em andamento'}
+                </div>
+              </div>
+              <motion.div
+                animate={{ x: isHovered && isInteractive ? 5 : 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}>
+                <StatusIcon color={textColor} size={24} />
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+        {/* Barra de progresso */}
+        <div className="mt-2 px-1" style={{ gridArea: 'bar' }}>
+          <div className="flex items-center gap-3">
+            <div
+              className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${
+                status === 'locked' ? 'opacity-50' : ''
+              } ${status === 'completed' ? 'opacity-80' : ''}`}>
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: cardColor }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercentage}%` }}
+                transition={{ duration: 1, delay: index * 0.1 }}
+              />
+            </div>
+
+            <div
+              className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${
+                status === 'locked' ? 'opacity-50' : ''
+              } ${status === 'completed' ? 'opacity-80' : ''}`}
+              style={{ backgroundColor: cardColor, color: textColor }}>
+              {completedActivities} de {module.activities_count}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {module.type === 'pre-test' && (
+        <div className="relative mt-12 mb-8">
+          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
+          <div className="relative flex justify-center">
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              OPERAÇÕES MATEMÁTICA
+            </span>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
+type FatIconProps = {
+  icon: LucideIcon
+  color: string
+  size: number
+  className?: string
+  status: Status
+}
+
 function FatIcon({
   icon: Icon,
   color,
   size = 24,
   className = '',
   status = 'current',
-}) {
-  // Cores baseadas no status
+}: FatIconProps) {
   const iconColor = 'white'
   let bgColor = color
-
-  if (status === 'locked') {
-    bgColor = '#9CA3AF' // Cinza para módulos bloqueados
-  } else if (status === 'completed') {
-    // Manter a cor original para completados
-  }
+  if (status === 'locked') bgColor = '#9CA3AF'
 
   return (
     <div
       className={`relative flex items-center justify-center ${className}`}
-      style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}
-    >
+      style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}>
       {/* Base shadow for 3D effect */}
       <div
         className="absolute rounded-full"

@@ -26,23 +26,17 @@ class ActivityController extends Controller
         ]);
     }
 
-    public function update(ActivityRequest $request, Activity $activity)
-    {
-        $validated = $request->validated();
-        $validated['type'] = 'multiple_choice';
-        $activity->update([
-            'content' => $validated
-        ]);
-        return back();
-    }
-
     public function store(ActivityRequest $request)
     {
         $validated = $request->validated();
-        $validated['type'] = 'multiple_choice';
-        $request->user()->activities()->create([
-            'content' => $validated,
-        ]);
+        $request->user()->activities()->create($validated);
+        return back();
+    }
+
+    public function update(ActivityRequest $request, Activity $activity)
+    {
+        $validated = $request->validated();
+        $activity->update($validated);
         return back();
     }
 

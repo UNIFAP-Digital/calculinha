@@ -26,30 +26,32 @@ class ModuleRequest extends FormRequest
     {
         $isUpdate = $this->method() === 'PUT';
         $module = $this->route('module');
+        $operation = $isUpdate ? $module->operation : $this->input('operation');
         $ownerId = Auth::user()->id;
         $uniqueRule = Rule::unique('modules', 'name')->where('owner_id', $ownerId);
 
         $rules = [
             'name'           => ['required', 'string', 'min:4', 'max:50'],
             'description'    => ['nullable', 'string', 'max:160'],
-            'operation'      => ['required', Rule::enum(Operation::class)],
-            'icon'           => ['required', 'string', 'max:8'],
-            'color'          => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6})$/'],
             'activity_ids'   => ['required', 'array', 'size:10'],
             'activity_ids.*' => [
                 'required',
                 'integer',
                 Rule
                     ::exists('activities', 'id')
-                    ->where('operation', $this->input('operation'))
+                    ->where('operation', $operation)
                     ->where(fn(Builder $query) => $query
                         ->where('owner_id', $ownerId)
                         ->orWhereNull('owner_id')
                     )],
         ];
 
-        if ($isUpdate) $rules['name'][] = $uniqueRule->ignore($module);
-        else $rules['name'][] = $uniqueRule;
+        if ($isUpdate)
+            $rules['name'][] = $uniqueRule->ignore($module);
+        else {
+            $rules['operation'] = ['required', Rule::enum(Operation::class)];
+            $rules['name'][] = $uniqueRule;
+        }
 
         return $rules;
     }

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Operation;
-use App\Models\Activity;
+use App\Enums\Type;
 use App\Models\Module;
 use App\Models\ModuleActivity;
 use Illuminate\Database\Seeder;
@@ -29,7 +29,8 @@ class ModuleSeeder extends Seeder
             ::create([
                 'name'        => 'Adição',
                 'description' => 'Aprenda adição de forma simples com objetos e números!',
-                'operation'   => Operation::Addition
+                'operation'   => Operation::Addition,
+                'type'        => Type::Exercise
             ])
             ->activities()
             ->attach($activities);
@@ -41,7 +42,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Subtração',
             'description' => 'Aprenda subtração de forma simples com objetos e números!',
-            'operation'   => Operation::Subtraction
+            'operation'   => Operation::Subtraction,
+            'type'        => Type::Exercise
         ])
             ->activities()
             ->attach($activities);
@@ -53,7 +55,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Multiplicação',
             'description' => 'Aprenda multiplicação de forma simples com objetos e números!',
-            'operation'   => Operation::Multiplication
+            'operation'   => Operation::Multiplication,
+            'type'        => Type::Exercise
         ])
             ->activities()
             ->attach($activities);
@@ -65,7 +68,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Divisão',
             'description' => 'Aprenda divisão de forma simples com objetos e números!',
-            'operation'   => Operation::Division
+            'operation'   => Operation::Division,
+            'type'        => Type::Exercise
         ])
             ->activities()
             ->attach($activities);

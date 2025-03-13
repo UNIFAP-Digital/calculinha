@@ -33,7 +33,6 @@ class AttemptController extends Controller
             ]);
         } else {
             $attempt = Attempt::fake($room);
-
         }
 
         return Inertia::render('quiz/Index', [

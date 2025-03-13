@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('description')->nullable();
             $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
+            $table->enum('type', ['pre-test', 'exercise','post-test']);
 
             $table->timestamps();
         });

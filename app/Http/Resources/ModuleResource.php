@@ -14,15 +14,16 @@ class ModuleResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data = [
-            'id'               => $this->id,
-            'name'             => $this->name,
-            'description'      => $this->description,
-            'operation'        => $this->operation,
-            'activities_count' => $this->whenCounted('activities'),
+            'id'                   => $this->id,
+            'name'                 => $this->name,
+            'description'          => $this->description,
+            'operation'            => $this->operation,
+            'type'                 => $this->type,
+            'activities_count'     => $this->whenCounted('activities'),
             'activities_completed' => $this->whenHas('activities_completed'),
-            'activities'       => ActivityResource::collection($this->whenLoaded('activities')),
-            'created_at'       => $this->created_at->toIso8601ZuluString(),
-            'updated_at'       => $this->updated_at->toIso8601ZuluString()
+            'activities'           => ActivityResource::collection($this->whenLoaded('activities')),
+            'created_at'           => $this->created_at->toIso8601ZuluString(),
+            'updated_at'           => $this->updated_at->toIso8601ZuluString()
         ];
 
         if ($this->hasAttribute('status'))

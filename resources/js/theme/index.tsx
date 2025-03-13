@@ -1,11 +1,24 @@
-import React from "react"
+import React from 'react'
 
-import { useState } from "react"
+import { useState } from 'react'
 
-import { Plus, Minus, X, Divide, ChevronRight, LucideIcon, ClipboardCheck, Award } from "lucide-react"
-import { motion } from "framer-motion"
-import { DisplayModuleName, } from "@/lib/constants"
+import { Plus, Minus, X, Divide, ChevronRight, LucideIcon, ClipboardCheck, Award } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { DisplayModuleName } from '@/lib/constants'
+import { Operation } from '@/models'
 
+export function getTheme(operation: Operation): ModuleTheme {
+    switch (operation) {
+    case 'addition':
+        return colorThemes[1]
+    case 'subtraction':
+        return colorThemes[2]
+    case 'multiplication':
+        return colorThemes[3]
+    case 'division':
+        return colorThemes[4]
+    }
+}
 
 export type ModuleTheme = {
   name: DisplayModuleName
@@ -187,7 +200,7 @@ export const FatIcon = ({ icon: Icon, color, size = 24, className = "" }) => (
       <Icon size={size} strokeWidth={3} color="white" />
     </div>
 
- 
+
   </div>
 )
 

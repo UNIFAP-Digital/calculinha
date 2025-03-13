@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Activity } from '@/models/activity'
+import { getTheme } from '@/theme'
 import { Edit } from 'lucide-react'
 
 interface ActivityCardProps {
@@ -13,20 +14,34 @@ interface ActivityCardProps {
   onDelete: () => void
 }
 
-export default function ActivityCard({ activity, onEdit, onDelete }: ActivityCardProps) {
+export default function ActivityCard({
+  activity,
+  onEdit,
+  onDelete,
+}: ActivityCardProps) {
+  const OperationIcon = getTheme(activity.operation).icon
+
   return (
     <Card>
       <CardContent className="flex justify-between p-4">
-        <div>
-          <p className="mb-2 text-sm font-medium">{activity.question}</p>
-          <p className="text-muted-foreground text-sm">
-            <span className="font-medium">Resposta correta:</span> {activity.correct_answer}
-          </p>
+        <div className="flex items-center">
+          <div className="mr-3 flex items-start">
+            <OperationIcon className="text-primary h-5 w-5" />
+          </div>
+          <div>
+            <p className="mb-2 text-sm font-medium">{activity.question}</p>
+            <p className="text-muted-foreground text-sm">
+              <span className="font-medium">Resposta correta:</span>
+              {activity.correct_answer}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center">
           <Badge variant="secondary" className="mr-4">
-            {activity.type === 'multiple_choice' ? 'Múltipla escolha' : activity.type}
+            {activity.type === 'multiple_choice'
+              ? 'Múltipla escolha'
+              : activity.type}
           </Badge>
           <Separator orientation="vertical" className="mx-2 h-8" />
           <div className="flex space-x-1">

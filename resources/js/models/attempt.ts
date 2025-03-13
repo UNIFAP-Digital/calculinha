@@ -5,6 +5,7 @@ import { Status } from '@/models/status'
 export interface Attempt {
   id: number
   status: Status
+  number: number
   created_at: string
   updated_at: string
 

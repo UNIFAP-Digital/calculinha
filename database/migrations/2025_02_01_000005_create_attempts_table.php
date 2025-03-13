@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->integer('order');
             $table->enum('status', ['completed', 'current', 'locked']);
             $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division'])->nullable();
+            $table->enum('type', ['pre-test', 'exercise','post-test']);
 
             $table->timestamps();
 

@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Enums\Operation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activity extends Model
 {
     protected $fillable = [
         'content',
+        'type',
         'is_active',
         'operation',
     ];
@@ -20,11 +20,6 @@ class Activity extends Model
         'is_active' => 'boolean',
         'operation' => Operation::class,
     ];
-
-    public function moduleActivity(): HasMany
-    {
-        return $this->hasMany(ModuleActivity::class);
-    }
 
     public function owner(): BelongsTo
     {

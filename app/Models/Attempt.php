@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,7 @@ class Attempt extends Model
         'student_id',
         'room_id',
         'status',
+        'number'
     ];
 
     protected $casts = [
@@ -45,12 +47,14 @@ class Attempt extends Model
     public static function fake(Room $room): Attempt
     {
         $modules = $room->modules()->with('activities')->get()->map(function ($module, $idx) {
-            $module->setAttribute('status', $idx === 0 ? Status::Current->value : Status::Locked->value);
+            $module->setAttribute('status', $idx === 0 ? Status::Current : Status::Locked);
+            $module->setAttribute('activities_count', $module->activities()->count());
+            $module->setAttribute('activities_completed', 0);
             return $module;
         });
 
         return Attempt
-            ::make(['room_id' => $room->id, 'status' => Status::Current])
+            ::make(['room_id' => $room->id, 'status' => Status::Current, 'number' => 1])
             ->updateTimestamps()
             ->setRelation('modules', $modules);
     }
@@ -60,12 +64,18 @@ class Attempt extends Model
         return $room->attempts()->whereStudentId($student->id)->exists();
     }
 
+    private static function numberOfAttempts(Room $room, Student $student): int
+    {
+        return $room->attempts()->whereStudentId($student->id)->count();
+    }
+
     private static function create(Room $room, Student $student): Attempt
     {
         $attempt = parent::create([
             'room_id'    => $room->id,
             'student_id' => $student->id,
-            'status'     => Status::Current
+            'status'     => Status::Current,
+            'number'     => static::numberOfAttempts($room, $student) + 1
         ]);
         $activities = $room->modules->reduce(fn($activities, $module) => $activities->merge($module->activities), collect());
         $order = 1;
@@ -83,7 +93,7 @@ class Attempt extends Model
 
         $attempt
             ->modules()
-            ->create(['order' => $order++, 'status' => Status::Current, 'name' => 'pre-test'])
+            ->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest])
             ->activities()
             ->createMany($initialActivities);
 
@@ -104,7 +114,8 @@ class Attempt extends Model
                     'name'        => $module->name,
                     'description' => $module->description,
                     'order'       => $order++,
-                    'status'      => Status::Locked
+                    'status'      => Status::Locked,
+                    'type'        => Type::Exercise,
                 ])
                 ->activities()
                 ->createMany($moduleActivities);
@@ -123,7 +134,7 @@ class Attempt extends Model
 
         $attempt
             ->modules()
-            ->create(['order' => $order, 'status' => Status::Locked, 'name' => 'pos-test'])
+            ->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest])
             ->activities()
             ->createMany($finalActivities);
 
