@@ -24,7 +24,7 @@ export default function TextAreaWithEmojiPicker({ id, label, value, onChange, pl
   }
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full grid space-y-2">
       {label && <Label htmlFor={id}>{label}</Label>}
 
       <div className="relative">
