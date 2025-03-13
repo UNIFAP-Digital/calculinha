@@ -3,6 +3,7 @@
 namespace App\Models\Abstracts;
 
 use App\Models\Contracts\Positionable;
+use App\Models\RoomModule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -30,8 +31,9 @@ abstract class PositionablePivot extends Pivot implements Positionable
 
     public function moveUp(): void
     {
-        $query = $this->getPivotQuery();
+        $query = $this->getPivotSelectQuery();
 
+        /** @var RoomModule $previous */
         $previous = $query
             ->where('position', '<', $this->position)
             ->orderBy('position', 'desc')
@@ -39,8 +41,10 @@ abstract class PositionablePivot extends Pivot implements Positionable
 
         if ($previous) {
             $newPosition = $previous->position - (static::$positionGap / 2);
-            $this->position = (int)$newPosition;
-            $this->save();
+
+            $this->getPivotUpdateQuery()->update([
+                'position' => $newPosition,
+            ]);
 
             if ($this->needsRebalancing()) {
                 $this->rebalancePositions();
@@ -50,7 +54,7 @@ abstract class PositionablePivot extends Pivot implements Positionable
 
     public function moveDown(): void
     {
-        $query = $this->getPivotQuery();
+        $query = $this->getPivotSelectQuery();
 
         $next = $query
             ->where('position', '>', $this->position)
@@ -59,8 +63,10 @@ abstract class PositionablePivot extends Pivot implements Positionable
 
         if ($next) {
             $newPosition = $next->position + (static::$positionGap / 2);
-            $this->position = (int)$newPosition;
-            $this->save();
+
+            $this->getPivotUpdateQuery()->update([
+                'position' => $newPosition,
+            ]);
 
             if ($this->needsRebalancing()) {
                 $this->rebalancePositions();
@@ -70,37 +76,41 @@ abstract class PositionablePivot extends Pivot implements Positionable
 
     public function rebalancePositions(): void
     {
-        $query = $this->getPivotQuery();
+        $query = $this->getPivotSelectQuery();
         $items = $query->orderBy('position')->get();
         $position = static::$initialPosition;
 
         foreach ($items as $item) {
-            $item->position = $position;
-            $item->save();
+            $this->getPivotUpdateQuery($item)->update([
+                'position' => $position,
+            ]);
+
             $position += static::$positionGap;
         }
     }
 
     protected function needsRebalancing(): bool
     {
-        $query = $this->getPivotQuery();
-
-        return $query
-            ->where(function ($query) {
-                $query->whereBetween('position', [
-                    $this->position - static::$positionGap / 4,
-                    $this->position + static::$positionGap / 4
-                ])
-                    ->where('id', '!=', $this->id);
-            })
+        return $this->getPivotSelectQuery()
+            ->whereBetween('position', [
+                $this->position - static::$positionGap / 4,
+                $this->position + static::$positionGap / 4
+            ])
             ->exists();
     }
 
-    protected function getPivotQuery(): Builder
+    protected function getPivotSelectQuery(): Builder
     {
-        $column = $this->getPositionGroupColumn();
-        $groupValue = $this->getPositionGroupValue();
+        return static
+            ::where($this->getPositionGroupColumn(), $this->getPositionGroupValue());
+    }
 
-        return static::where($column, $groupValue);
+    protected function getPivotUpdateQuery($model = null): Builder
+    {
+        $targetModel = $model ?? $this;
+
+        return static
+            ::where($this->getForeignKey(), $targetModel->getAttribute($this->getForeignKey()))
+            ->where($this->getRelatedKey(), $targetModel->getAttribute($this->getRelatedKey()));
     }
 }
