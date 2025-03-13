@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['completed', 'current']);
+            $table->integer('number');
 
             $table->timestamps();
         });
