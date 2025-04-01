@@ -79,22 +79,22 @@ export  function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, 
   )
 } 
 
-export default function MathGame({ firstQuestionAnimation = false , selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
+export default function MathGame({ firstQuestionAnimation = false, selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
   const [selectedOption, setSelectedOption] = useState("")
   const [score, setScore] = useState(0)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [withoutFeedback, setWithoutFeedback] = useState(false)
-
-  console.log(JSON.stringify(module, null, 2))
-
   const { question, wrong_answers, correct_answer } = activity
 
 
   const answered = selectedAnswer !== null
 
-  const moduleTheme: ModuleTheme =
-    colorThemes.find((theme) => theme.name.toLowerCase() === module.name.toLowerCase()) || colorThemes[0]
+  console.log('WE ARE HERE')
+
+  const moduleTheme: ModuleTheme = module?.name
+    ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
+    : colorThemes[0];
 
   const typeColor = questionTypeColors[moduleTheme.name] || {
     gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
