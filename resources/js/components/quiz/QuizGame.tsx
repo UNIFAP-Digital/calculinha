@@ -21,7 +21,7 @@ interface QuizGameProps {
   currentQuestionIndex: number
 }
 
-export  function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
+export function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
   const { question, wrong_answers, correct_answer } = activity
 
   const shuffledAnswers = useMemo(() => {
@@ -77,7 +77,7 @@ export  function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, 
       </div>
     </div>
   )
-} 
+}
 
 export default function MathGame({ firstQuestionAnimation = false, selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
   const [selectedOption, setSelectedOption] = useState("")
@@ -90,8 +90,6 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
 
   const answered = selectedAnswer !== null
 
-  console.log('WE ARE HERE')
-
   const moduleTheme: ModuleTheme = module?.name
     ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
     : colorThemes[0];
@@ -103,8 +101,8 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
 
   const handleOptionSelect = (answer: string) => {
     if (answered) return
-    
-   
+
+
     setSelectedOption(answer)
   }
 
@@ -136,7 +134,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   const isAnswerButtonDisabled = selectedOption === null || answered
 
   return (
-    <div className={`min-h-screen relative overflow-hidden font-nunito`}>
+    <div className={`min-h-screen relative font-nunito`}>
       {/* Background */}
       <div
         className="absolute inset-0"
@@ -184,7 +182,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
 
       {/* Main content */}
       <div className="relative z-10 min-h-screen w-full">
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen pb-12">
           {/* Header */}
           <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
             {/* Tipo de operação no canto direito */}
@@ -210,7 +208,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
           </div>
 
           {/* Question */}
-          <div className="flex-1 flex items-center justify-center px-4 md:px-8 mt-4">
+          <div className="flex-1 flex items-center justify-center px-4 md:px-8 md:mt-4">
             <motion.div
               className="w-full max-w-4xl rounded-2xl p-6 md:p-8 text-center shadow-xl relative"
               style={{
@@ -229,18 +227,18 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
                 moduleTheme={moduleTheme}
               />
 
-              <p className="text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide mt-4">
+              <p className="text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
                 {question}
               </p>
             </motion.div>
           </div>
 
           {/* Options Container */}
-          <div className="px-4 md:px-8 mb-24 md:mb-28 mt-6">
+          <div className="px-4 md:px-8 mb-8 md:mb-28 md:mt-6">
             <div className="max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {shuffledOptions.answers.map((option, index) => (
-                  <div key={index} className="h-full">
+                  <div key={index} className="h-14 md:h-full">
                     <OptionButton
                       option={{
                         id: `option-${index}`,
@@ -260,8 +258,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
             </div>
           </div>
 
-          {/* Actions - bottom right */}
-          <div className="fixed bottom-8 right-8 z-20">
+          <div className="md:mb-28 justify-center items-center flex">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
               <NavigationButton
                 text="Responder"

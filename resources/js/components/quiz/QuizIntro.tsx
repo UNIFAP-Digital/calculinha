@@ -290,20 +290,6 @@ export default function MathModuleIntro({ moduleName = "Adição", onStart }: Ma
 
   const ModuleIcon = moduleTheme.icon
 
-  const infoCards = [
-    {
-      icon: Brain,
-      title: "Aprenda Conceitos",
-      description: "Entenda os fundamentos da operação de forma clara e divertida.",
-      color: moduleTheme.color,
-    },
-    {
-      icon: Target,
-      title: "Pratique Habilidades",
-      description: "Resolva exercícios interativos e desafios para fixar o aprendizado.",
-      color: moduleTheme.color,
-    },
-  ]
 
   return (
     <div className={`min-h-screen w-full px-2 md:px-0 bg-gray-50 grid place-items-center font-nunito`}>
@@ -321,7 +307,7 @@ export default function MathModuleIntro({ moduleName = "Adição", onStart }: Ma
       {showParticles && <SparkleParticles moduleTheme={moduleTheme} />}
 
       {/* Main content */}
-      <div className="container mx-auto z-10 flex flex-col justify-center ">
+      <div className="container mx-auto z-10 flex flex-col justify-center">
         <AnimatePresence>   
             <div className="flex flex-col items-center">
               {/* Main module visualization */}
@@ -332,7 +318,7 @@ export default function MathModuleIntro({ moduleName = "Adição", onStart }: Ma
                 transition={{ delay: 0.2, duration: 0.8, type: "spring" }}
               >
                 <div
-                  className="bg-white overflow-hidden rounded-3xl p-6 md:p-8 shadow-xl relative max-h-[80vh] md:max-h-none"
+                  className="bg-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden"
                   style={{
                     border: `3px solid ${moduleTheme.color}30`,
                     boxShadow: `0 20px 50px ${moduleTheme.color}20, 0 10px 20px rgba(0,0,0,0.05)`,
@@ -393,19 +379,6 @@ export default function MathModuleIntro({ moduleName = "Adição", onStart }: Ma
                       </p>
                     </motion.div>
 
-                    {/* Info cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                      {infoCards.map((card, index) => (
-                        <InfoCard
-                          key={index}
-                          icon={card.icon}
-                          title={card.title}
-                          description={card.description}
-                          color={card.color}
-                          delay={0.7 + index * 0.1}
-                        />
-                      ))}
-                    </div>
 
                     {/* Start button */}
                     <motion.div
