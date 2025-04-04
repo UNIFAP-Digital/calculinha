@@ -8,16 +8,16 @@ import { DisplayModuleName } from '@/lib/constants'
 import { Operation } from '@/models'
 
 export function getTheme(operation: Operation): ModuleTheme {
-    switch (operation) {
+  switch (operation) {
     case 'addition':
-        return colorThemes[1]
+      return colorThemes[1]
     case 'subtraction':
-        return colorThemes[2]
+      return colorThemes[2]
     case 'multiplication':
-        return colorThemes[3]
+      return colorThemes[3]
     case 'division':
-        return colorThemes[4]
-    }
+      return colorThemes[4]
+  }
 }
 
 export type ModuleTheme = {
@@ -330,9 +330,8 @@ export const NavigationButton = ({ text, onClick, disabled, moduleTheme }) => {
 
   return (
     <button
-      className={`px-8 py-4 rounded-full shadow-md flex items-center gap-3 transition-all duration-200 disabled:opacity-50 ${
-        disabled ? "cursor-not-allowed" : "cursor-pointer"
-      }`}
+      className={`flex justify-center items-center w-full px-8 py-4 rounded-2xl shadow-md  gap-3 transition-all duration-200 disabled:opacity-50 ${disabled ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
       style={{
         background: isPressed
           ? moduleTheme.baseColor || "#2563eb"

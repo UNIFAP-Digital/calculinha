@@ -181,7 +181,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 min-h-screen w-full">
+      <div className="relative z-10 min-h-screen w-full px-4">
         <div className="flex flex-col h-screen pb-12">
           {/* Header */}
           <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
@@ -208,7 +208,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
           </div>
 
           {/* Question */}
-          <div className="flex-1 flex items-center justify-center px-4 md:px-8 md:mt-4">
+          <div className="flex-1 flex items-center justify-center md:px-8 md:mt-4">
             <motion.div
               className="w-full max-w-4xl rounded-2xl p-6 md:p-8 text-center shadow-xl relative"
               style={{
@@ -227,14 +227,14 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
                 moduleTheme={moduleTheme}
               />
 
-              <p className="text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
+              <p className="text-2xl md:text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
                 {question}
               </p>
             </motion.div>
           </div>
 
           {/* Options Container */}
-          <div className="px-4 md:px-8 mb-8 md:mb-28 md:mt-6">
+          <div className="md:px-8 mb-8 md:mb-28 md:mt-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {shuffledOptions.answers.map((option, index) => (
@@ -258,8 +258,8 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
             </div>
           </div>
 
-          <div className="md:mb-28 justify-center items-center flex">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <div className="md:mb-28 justify-center items-center flex ">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className='w-full md:w-1/2 max-w-xl'>
               <NavigationButton
                 text="Responder"
                 onClick={() => handleAnswer()}
