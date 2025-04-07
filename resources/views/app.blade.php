@@ -24,7 +24,24 @@
 </head>
 
 <body class="font-sans antialiased">
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget({
+  rootPath: "/app",
+  opacity: 1,
+  position: 'L',
+  avatar: 'random'
+});
+  </script>
     @inertia
+    
 </body>
 
 </html>

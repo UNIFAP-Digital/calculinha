@@ -1,0 +1,283 @@
+/*! For license information please see vlibras-plugin.js.LICENSE.txt */
+;(() => {
+  var __webpack_modules__ = {
+      './node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/components/AccessButton/styles.scss':
+        (module, exports, __webpack_require__) => {
+          eval(
+            '// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.id, "[vw] [vw-access-button] {\\n  display: none;\\n  flex-direction: row-reverse;\\n  width: 40px;\\n  height: 40px;\\n  cursor: pointer;\\n  overflow: hidden;\\n  position: absolute;\\n  border-radius: 8px;\\n  transition: all .5s ease;\\n  right: 0;\\n  left: auto; }\\n  [vw] [vw-access-button] img {\\n    max-height: 40px;\\n    transition: all .5s ease;\\n    border-radius: 8px;\\n    opacity: 1 !important;\\n    visibility: visible !important; }\\n  [vw] [vw-access-button] .access-button {\\n    width: 40px;\\n    height: 40px;\\n    z-index: 1; }\\n  [vw] [vw-access-button] .pop-up {\\n    position: absolute;\\n    height: 40px;\\n    min-width: 150px;\\n    z-index: 0;\\n    left: 0;\\n    right: auto; }\\n  [vw] [vw-access-button]:hover {\\n    width: 200px; }\\n  [vw] [vw-access-button].isLeft {\\n    flex-direction: row;\\n    left: 0;\\n    right: auto; }\\n    [vw] [vw-access-button].isLeft .pop-up {\\n      left: auto;\\n      right: 0; }\\n  [vw] [vw-access-button].isTopOrBottom:hover {\\n    bottom: -20px;\\n    top: 0;\\n    margin-right: -80px; }\\n  [vw] [vw-access-button].active {\\n    display: flex; }\\n", ""]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack://VLibras/./widget/src/components/AccessButton/styles.scss?./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js',
+          )
+        },
+      './node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/components/PluginWrapper/styles.scss':
+        (module, exports, __webpack_require__) => {
+          eval(
+            '// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.id, "[vw].left [vw-plugin-wrapper] {\\n  float: left; }\\n\\n[vw] [vw-plugin-wrapper] {\\n  position: relative;\\n  display: none;\\n  width: 300px;\\n  height: 100%;\\n  float: right;\\n  background: white;\\n  -webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);\\n  -moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);\\n  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);\\n  border-radius: 12px;\\n  -moz-border-radius: 12px;\\n  -webkit-border-radius: 12px; }\\n  [vw] [vw-plugin-wrapper].active {\\n    display: -webkit-flex;\\n    display: flex;\\n    flex-direction: column;\\n    -webkit-flex-direction: column;\\n    height: 450px;\\n    max-width: 100%;\\n    min-height: 100%; }\\n", ""]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack://VLibras/./widget/src/components/PluginWrapper/styles.scss?./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js',
+          )
+        },
+      './node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/scss/styles.scss':
+        (module, exports, __webpack_require__) => {
+          eval(
+            '// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.id, "div[vw] {\\n  position: fixed;\\n  max-width: 95vw;\\n  min-height: 40px;\\n  min-width: 40px;\\n  right: 0;\\n  top: 50%;\\n  transform: translateY(-50%);\\n  z-index: 2147483647 !important;\\n  display: none;\\n  margin: 10px !important; }\\n  div[vw].enabled {\\n    display: block; }\\n  div[vw].active {\\n    margin-top: -285px; }\\n  div[vw].left {\\n    left: 0;\\n    right: initial; }\\n", ""]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack://VLibras/./widget/src/scss/styles.scss?./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js',
+          )
+        },
+      './node_modules/css-loader/dist/runtime/api.js': (module) => {
+        'use strict'
+        eval(
+          '\n\n/*\n  MIT License http://www.opensource.org/licenses/mit-license.php\n  Author Tobias Koppers @sokra\n*/\n// css base code, injected by the css-loader\n// eslint-disable-next-line func-names\nmodule.exports = function (useSourceMap) {\n  var list = []; // return the list of modules as css string\n\n  list.toString = function toString() {\n    return this.map(function (item) {\n      var content = cssWithMappingToString(item, useSourceMap);\n\n      if (item[2]) {\n        return "@media ".concat(item[2], " {").concat(content, "}");\n      }\n\n      return content;\n    }).join(\'\');\n  }; // import a list of modules into the list\n  // eslint-disable-next-line func-names\n\n\n  list.i = function (modules, mediaQuery, dedupe) {\n    if (typeof modules === \'string\') {\n      // eslint-disable-next-line no-param-reassign\n      modules = [[null, modules, \'\']];\n    }\n\n    var alreadyImportedModules = {};\n\n    if (dedupe) {\n      for (var i = 0; i < this.length; i++) {\n        // eslint-disable-next-line prefer-destructuring\n        var id = this[i][0];\n\n        if (id != null) {\n          alreadyImportedModules[id] = true;\n        }\n      }\n    }\n\n    for (var _i = 0; _i < modules.length; _i++) {\n      var item = [].concat(modules[_i]);\n\n      if (dedupe && alreadyImportedModules[item[0]]) {\n        // eslint-disable-next-line no-continue\n        continue;\n      }\n\n      if (mediaQuery) {\n        if (!item[2]) {\n          item[2] = mediaQuery;\n        } else {\n          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);\n        }\n      }\n\n      list.push(item);\n    }\n  };\n\n  return list;\n};\n\nfunction cssWithMappingToString(item, useSourceMap) {\n  var content = item[1] || \'\'; // eslint-disable-next-line prefer-destructuring\n\n  var cssMapping = item[3];\n\n  if (!cssMapping) {\n    return content;\n  }\n\n  if (useSourceMap && typeof btoa === \'function\') {\n    var sourceMapping = toComment(cssMapping);\n    var sourceURLs = cssMapping.sources.map(function (source) {\n      return "/*# sourceURL=".concat(cssMapping.sourceRoot || \'\').concat(source, " */");\n    });\n    return [content].concat(sourceURLs).concat([sourceMapping]).join(\'\\n\');\n  }\n\n  return [content].join(\'\\n\');\n} // Adapted from convert-source-map (MIT)\n\n\nfunction toComment(sourceMap) {\n  // eslint-disable-next-line no-undef\n  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));\n  var data = "sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(base64);\n  return "/*# ".concat(data, " */");\n}\n\n//# sourceURL=webpack://VLibras/./node_modules/css-loader/dist/runtime/api.js?',
+        )
+      },
+      './widget/src/components/AccessButton/template.html': (
+        __unused_webpack_module,
+        __webpack_exports__,
+        __webpack_require__,
+      ) => {
+        'use strict'
+        eval(
+          '__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("<img class=\\"access-button\\" data-src=\\"assets/access_icon.svg\\"\\r\\n    alt=\\"Conteúdo acessível em Libras usando o VLibras Widget com opções dos Avatares Ícaro, Hosana ou Guga.\\" />\\r\\n<img class=\\"pop-up\\" data-src=\\"assets/access_popup.jpg\\"\\r\\n    alt=\\"Conteúdo acessível em Libras usando o VLibras Widget com opções dos Avatares Ícaro, Hosana ou Guga.\\" />");\n\n//# sourceURL=webpack://VLibras/./widget/src/components/AccessButton/template.html?',
+        )
+      },
+      './widget/src/components/PluginWrapper/template.html': (
+        __unused_webpack_module,
+        __webpack_exports__,
+        __webpack_require__,
+      ) => {
+        'use strict'
+        eval(
+          '__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("<div vp>\\r\\n  <div vp-box></div>\\r\\n  <div vp-message-box></div>\\r\\n  <div vp-settings></div>\\r\\n  <div vp-dictionary></div>\\r\\n  <div vp-settings-btn></div>\\r\\n  <div vp-info-screen></div>\\r\\n  <div vp-suggestion-screen></div>\\r\\n  <div vp-translator-screen></div>\\r\\n  <div vp-main-guide-screen></div>\\r\\n  <div vp-suggestion-button></div>\\r\\n  <div vp-rate-box></div>\\r\\n  <div vp-change-avatar></div>\\r\\n  <div vp-additional-options></div>\\r\\n  <div vp-controls></div>\\r\\n  <span vp-click-blocker></span>\\r\\n</div>");\n\n//# sourceURL=webpack://VLibras/./widget/src/components/PluginWrapper/template.html?',
+        )
+      },
+      './widget/src/components/AccessButton/styles.scss': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          'var api = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");\n            var content = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./styles.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/components/AccessButton/styles.scss");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === \'string\') {\n              content = [[module.id, content, \'\']];\n            }\n\nvar options = {};\n\noptions.insert = "head";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack://VLibras/./widget/src/components/AccessButton/styles.scss?',
+        )
+      },
+      './widget/src/components/PluginWrapper/styles.scss': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          'var api = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");\n            var content = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./styles.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/components/PluginWrapper/styles.scss");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === \'string\') {\n              content = [[module.id, content, \'\']];\n            }\n\nvar options = {};\n\noptions.insert = "head";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack://VLibras/./widget/src/components/PluginWrapper/styles.scss?',
+        )
+      },
+      './widget/src/scss/styles.scss': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          'var api = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");\n            var content = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./styles.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./widget/src/scss/styles.scss");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === \'string\') {\n              content = [[module.id, content, \'\']];\n            }\n\nvar options = {};\n\noptions.insert = "head";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack://VLibras/./widget/src/scss/styles.scss?',
+        )
+      },
+      './node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        'use strict'
+        eval(
+          "\n\nvar isOldIE = function isOldIE() {\n  var memo;\n  return function memorize() {\n    if (typeof memo === 'undefined') {\n      // Test for IE <= 9 as proposed by Browserhacks\n      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805\n      // Tests for existence of standard globals is to allow style-loader\n      // to operate correctly into non-standard environments\n      // @see https://github.com/webpack-contrib/style-loader/issues/177\n      memo = Boolean(window && document && document.all && !window.atob);\n    }\n\n    return memo;\n  };\n}();\n\nvar getTarget = function getTarget() {\n  var memo = {};\n  return function memorize(target) {\n    if (typeof memo[target] === 'undefined') {\n      var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself\n\n      if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {\n        try {\n          // This will throw an exception if access to iframe is blocked\n          // due to cross-origin restrictions\n          styleTarget = styleTarget.contentDocument.head;\n        } catch (e) {\n          // istanbul ignore next\n          styleTarget = null;\n        }\n      }\n\n      memo[target] = styleTarget;\n    }\n\n    return memo[target];\n  };\n}();\n\nvar stylesInDom = [];\n\nfunction getIndexByIdentifier(identifier) {\n  var result = -1;\n\n  for (var i = 0; i < stylesInDom.length; i++) {\n    if (stylesInDom[i].identifier === identifier) {\n      result = i;\n      break;\n    }\n  }\n\n  return result;\n}\n\nfunction modulesToDom(list, options) {\n  var idCountMap = {};\n  var identifiers = [];\n\n  for (var i = 0; i < list.length; i++) {\n    var item = list[i];\n    var id = options.base ? item[0] + options.base : item[0];\n    var count = idCountMap[id] || 0;\n    var identifier = \"\".concat(id, \" \").concat(count);\n    idCountMap[id] = count + 1;\n    var index = getIndexByIdentifier(identifier);\n    var obj = {\n      css: item[1],\n      media: item[2],\n      sourceMap: item[3]\n    };\n\n    if (index !== -1) {\n      stylesInDom[index].references++;\n      stylesInDom[index].updater(obj);\n    } else {\n      stylesInDom.push({\n        identifier: identifier,\n        updater: addStyle(obj, options),\n        references: 1\n      });\n    }\n\n    identifiers.push(identifier);\n  }\n\n  return identifiers;\n}\n\nfunction insertStyleElement(options) {\n  var style = document.createElement('style');\n  var attributes = options.attributes || {};\n\n  if (typeof attributes.nonce === 'undefined') {\n    var nonce =  true ? __webpack_require__.nc : 0;\n\n    if (nonce) {\n      attributes.nonce = nonce;\n    }\n  }\n\n  Object.keys(attributes).forEach(function (key) {\n    style.setAttribute(key, attributes[key]);\n  });\n\n  if (typeof options.insert === 'function') {\n    options.insert(style);\n  } else {\n    var target = getTarget(options.insert || 'head');\n\n    if (!target) {\n      throw new Error(\"Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.\");\n    }\n\n    target.appendChild(style);\n  }\n\n  return style;\n}\n\nfunction removeStyleElement(style) {\n  // istanbul ignore if\n  if (style.parentNode === null) {\n    return false;\n  }\n\n  style.parentNode.removeChild(style);\n}\n/* istanbul ignore next  */\n\n\nvar replaceText = function replaceText() {\n  var textStore = [];\n  return function replace(index, replacement) {\n    textStore[index] = replacement;\n    return textStore.filter(Boolean).join('\\n');\n  };\n}();\n\nfunction applyToSingletonTag(style, index, remove, obj) {\n  var css = remove ? '' : obj.media ? \"@media \".concat(obj.media, \" {\").concat(obj.css, \"}\") : obj.css; // For old IE\n\n  /* istanbul ignore if  */\n\n  if (style.styleSheet) {\n    style.styleSheet.cssText = replaceText(index, css);\n  } else {\n    var cssNode = document.createTextNode(css);\n    var childNodes = style.childNodes;\n\n    if (childNodes[index]) {\n      style.removeChild(childNodes[index]);\n    }\n\n    if (childNodes.length) {\n      style.insertBefore(cssNode, childNodes[index]);\n    } else {\n      style.appendChild(cssNode);\n    }\n  }\n}\n\nfunction applyToTag(style, options, obj) {\n  var css = obj.css;\n  var media = obj.media;\n  var sourceMap = obj.sourceMap;\n\n  if (media) {\n    style.setAttribute('media', media);\n  } else {\n    style.removeAttribute('media');\n  }\n\n  if (sourceMap && typeof btoa !== 'undefined') {\n    css += \"\\n/*# sourceMappingURL=data:application/json;base64,\".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), \" */\");\n  } // For old IE\n\n  /* istanbul ignore if  */\n\n\n  if (style.styleSheet) {\n    style.styleSheet.cssText = css;\n  } else {\n    while (style.firstChild) {\n      style.removeChild(style.firstChild);\n    }\n\n    style.appendChild(document.createTextNode(css));\n  }\n}\n\nvar singleton = null;\nvar singletonCounter = 0;\n\nfunction addStyle(obj, options) {\n  var style;\n  var update;\n  var remove;\n\n  if (options.singleton) {\n    var styleIndex = singletonCounter++;\n    style = singleton || (singleton = insertStyleElement(options));\n    update = applyToSingletonTag.bind(null, style, styleIndex, false);\n    remove = applyToSingletonTag.bind(null, style, styleIndex, true);\n  } else {\n    style = insertStyleElement(options);\n    update = applyToTag.bind(null, style, options);\n\n    remove = function remove() {\n      removeStyleElement(style);\n    };\n  }\n\n  update(obj);\n  return function updateStyle(newObj) {\n    if (newObj) {\n      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {\n        return;\n      }\n\n      update(obj = newObj);\n    } else {\n      remove();\n    }\n  };\n}\n\nmodule.exports = function (list, options) {\n  options = options || {}; // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>\n  // tags it will allow on a page\n\n  if (!options.singleton && typeof options.singleton !== 'boolean') {\n    options.singleton = isOldIE();\n  }\n\n  list = list || [];\n  var lastIdentifiers = modulesToDom(list, options);\n  return function update(newList) {\n    newList = newList || [];\n\n    if (Object.prototype.toString.call(newList) !== '[object Array]') {\n      return;\n    }\n\n    for (var i = 0; i < lastIdentifiers.length; i++) {\n      var identifier = lastIdentifiers[i];\n      var index = getIndexByIdentifier(identifier);\n      stylesInDom[index].references--;\n    }\n\n    var newLastIdentifiers = modulesToDom(newList, options);\n\n    for (var _i = 0; _i < lastIdentifiers.length; _i++) {\n      var _identifier = lastIdentifiers[_i];\n\n      var _index = getIndexByIdentifier(_identifier);\n\n      if (stylesInDom[_index].references === 0) {\n        stylesInDom[_index].updater();\n\n        stylesInDom.splice(_index, 1);\n      }\n    }\n\n    lastIdentifiers = newLastIdentifiers;\n  };\n};\n\n//# sourceURL=webpack://VLibras/./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js?",
+        )
+      },
+      './plugin/constants/development-paths.js': (module) => {
+        eval(
+          "module.exports = {\r\n  ROOT_PATH: '../../widget/app/',\r\n  \r\n  DICTIONARY_URL: 'https://dicionario2.vlibras.gov.br/signs?version=2018.3.1',\r\n  REVIEW_URL: 'https://traducao2.vlibras.gov.br/review',\r\n  SIGNS_URL: 'https://repositorio-dth.vlibras.gov.br/api/signs',\r\n};\r\n\n\n//# sourceURL=webpack://VLibras/./plugin/constants/development-paths.js?",
+        )
+      },
+      './plugin/utils/index.js': (
+        __unused_webpack_module,
+        __webpack_exports__,
+        __webpack_require__,
+      ) => {
+        'use strict'
+        eval(
+          "__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   $: () => (/* binding */ $),\n/* harmony export */   $$: () => (/* binding */ $$),\n/* harmony export */   $0: () => (/* binding */ $0),\n/* harmony export */   _off: () => (/* binding */ _off),\n/* harmony export */   _on: () => (/* binding */ _on),\n/* harmony export */   _vwOff: () => (/* binding */ _vwOff),\n/* harmony export */   _vwOn: () => (/* binding */ _vwOn),\n/* harmony export */   addClass: () => (/* binding */ addClass),\n/* harmony export */   addClickBlocker: () => (/* binding */ addClickBlocker),\n/* harmony export */   canTranslate: () => (/* binding */ canTranslate),\n/* harmony export */   disableControlsButton: () => (/* binding */ disableControlsButton),\n/* harmony export */   formatGloss: () => (/* binding */ formatGloss),\n/* harmony export */   getAvatar: () => (/* binding */ getAvatar),\n/* harmony export */   getDocumentDim: () => (/* binding */ getDocumentDim),\n/* harmony export */   getRect: () => (/* binding */ getRect),\n/* harmony export */   getWidget: () => (/* binding */ getWidget),\n/* harmony export */   getWidgetPosition: () => (/* binding */ getWidgetPosition),\n/* harmony export */   hasClass: () => (/* binding */ hasClass),\n/* harmony export */   isFullscreen: () => (/* binding */ isFullscreen),\n/* harmony export */   isPlaying: () => (/* binding */ isPlaying),\n/* harmony export */   removeClass: () => (/* binding */ removeClass),\n/* harmony export */   setWidgetPosition: () => (/* binding */ setWidgetPosition),\n/* harmony export */   toggleClass: () => (/* binding */ toggleClass),\n/* harmony export */   toggleUnityMainLoop: () => (/* binding */ toggleUnityMainLoop)\n/* harmony export */ });\n// Check if the widget is in fullscreen mode\r\nconst isFullscreen = () => {\r\n  return hasClass(document.body, 'vpw-fullscreen');\r\n}\r\n\r\n// Check if the widget is playing\r\nconst isPlaying = () => {\r\n  return hasClass($('div[vp-controls]'), 'vpw-playing');\r\n}\r\n\r\n// Get Widget's current avatar\r\nconst getAvatar = () => {\r\n  return window.plugin.player.avatar;\r\n}\r\n\r\n// Get Widget's current position\r\nconst getWidgetPosition = () => {\r\n  return window.plugin ? window.plugin.position : undefined;\r\n}\r\n\r\n// Format the gloss => EXAMPLE&EXAMPLE to EXAMPLE(EXAMPLE)\r\nconst formatGloss = gloss => {\r\n  return gloss.indexOf('&') != -1 ? gloss.replace('&', '(') + ')' : gloss;\r\n}\r\n\r\n// Get a valid Widget element\r\n// * www.correios.com.br\r\nconst getWidget = () => {\r\n  return $('[vp]').closest('[vw]');\r\n}\r\n\r\n// Set Widget's position\r\nconst setWidgetPosition = (position) => {\r\n  window.dispatchEvent(new CustomEvent('vp-widget-wrapper-set-side',\r\n    { detail: position }));\r\n}\r\n\r\n// Select an element using a CSS selector, optionally within a specific parent element\r\nconst $ = (path, element = null) => {\r\n  return element ? element.querySelector(path) : $(path, document);\r\n}\r\n\r\n// Select multiple elements using a CSS selector, optionally within a specific parent element\r\nconst $$ = (path, element = null) => {\r\n  return element ? element.querySelectorAll(path) : $$(path, document);\r\n}\r\n\r\n// Shortcut for selecting the body element\r\nconst $0 = document.body;\r\n\r\n// Check if an element has a specific class\r\nconst hasClass = (element, clss) => {\r\n  return element ? element.classList.contains(clss) : undefined;\r\n}\r\n\r\n// Add a class to an element\r\nconst addClass = (element, clss) => {\r\n  element.classList.add(clss);\r\n}\r\n\r\n// Get the dimensions of the document's client area\r\nconst getDocumentDim = () => {\r\n  const { clientWidth, clientHeight } = document.documentElement;\r\n  return { w: clientWidth, h: clientHeight }\r\n}\r\n\r\n// Remove a class from an element\r\nconst removeClass = (element, clss) => {\r\n  element.classList.remove(clss);\r\n}\r\n\r\n// Toggle a class on an element, optionally controlled by a boolean\r\nconst toggleClass = (element, clss, bool = undefined) => {\r\n  element.classList.toggle(clss, bool);\r\n}\r\n\r\n// Get the bounding rectangle of an element\r\nconst getRect = (element) => {\r\n  return element.getBoundingClientRect();\r\n}\r\n\r\n// Enable or disable Widget's clicks\r\nconst addClickBlocker = (bool) => {\r\n  toggleClass($('.vpw-skip-welcome-message'), 'vp-disabled', bool);\r\n  toggleClass($('[vp-click-blocker]'), 'vp-enabled', bool);\r\n}\r\n\r\n// Check if translation is possible (used in text capture)\r\nconst canTranslate = () => {\r\n  return hasClass($('[vp-controls]'), 'vpw-controls')\r\n    && !hasClass($('.vp-guide-container'), 'vp-enabled')\r\n    && hasClass($('[vw-plugin-wrapper]'), 'active');\r\n}\r\n\r\nconst toggleUnityMainLoop = (bool) => {\r\n  if (bool) window.plugin.player.player.Module.resumeMainLoop();\r\n  else window.plugin.player.player.Module.pauseMainLoop();\r\n}\r\n\r\n// Disable 'play/pause/repeat' button in controls\r\nconst disableControlsButton = (bool = true) => {\r\n  if (bool) $('[vp-controls] .vpw-controls-button').setAttribute('disabled', true);\r\n  else $('[vp-controls] .vpw-controls-button').removeAttribute('disabled');\r\n}\r\n\r\n// Add an event listener to an element\r\nconst _on = (element, event, callback) => {\r\n  element.addEventListener(event, callback);\r\n}\r\n\r\n// Remove an event listener from an element\r\nconst _off = (element, event, callback) => {\r\n  element.removeEventListener(event, callback);\r\n}\r\n\r\n// Add an listener to an Plugin element (ex.: player or playerManager)\r\n// That's equivalent, ex., to: player.on('gloss:end', callback)\r\nconst _vwOn = (element, event, callback) => {\r\n  element.addListener(event, callback)\r\n}\r\n\r\n// Remove an listener from an Plugin element (ex.: player or playerManager)\r\nconst _vwOff = (element, event, callback) => {\r\n  element.removeListener(event, callback)\r\n}\r\n\n\n//# sourceURL=webpack://VLibras/./plugin/utils/index.js?",
+        )
+      },
+      './widget/src/Widget.js': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          "const AccessButton = __webpack_require__(/*! ./components/AccessButton */ \"./widget/src/components/AccessButton/index.js\");\r\nconst PluginWrapper = __webpack_require__(/*! ./components/PluginWrapper */ \"./widget/src/components/PluginWrapper/index.js\");\r\n\r\n__webpack_require__(/*! ./scss/styles.scss */ \"./widget/src/scss/styles.scss\");\r\n\r\nconst { $, $$, addClass, toggleUnityMainLoop, removeClass, getWidget } = __webpack_require__(/*! ~utils */ \"./plugin/utils/index.js\");\r\nconst { ROOT_PATH: DEFAULT_ROOT_PATH } = __webpack_require__(/*! ~constants */ \"./plugin/constants/development-paths.js\");\r\n\r\nconst availablePositions = ['TL', 'T', 'TR', 'L', 'R', 'BL', 'B', 'BR'];\r\nconst availableAvatars = ['icaro', 'hosana', 'guga', 'random'];\r\n\r\nmodule.exports = function Widget(...args) {\r\n  const optObject = typeof args[0] === 'object' && args[0];\r\n\r\n  const personalization = optObject ? optObject.personalization : args[1];\r\n  let rootPath = optObject ? optObject.rootPath : args[0];\r\n  let position = optObject ? optObject.position : args[3];\r\n  let opacity = optObject ? optObject.opacity : args[2];\r\n  let avatar = optObject.avatar;\r\n\r\n  if (rootPath === undefined) rootPath = DEFAULT_ROOT_PATH;\r\n  else if (rootPath && !rootPath.endsWith('/')) rootPath += '/';\r\n  if (isNaN(opacity) || opacity < 0 || opacity > 1) opacity = 1;\r\n  if (!availablePositions.includes(position)) position = 'R';\r\n  if (!availableAvatars.includes(avatar)) avatar = 'icaro';\r\n\r\n  const pluginWrapper = new PluginWrapper();\r\n  const accessButton = new AccessButton({\r\n    rootPath, pluginWrapper, personalization,\r\n    opacity, position, avatar\r\n  });\r\n\r\n  let tempF;\r\n\r\n  if (window.onload) {\r\n    tempF = window.onload;\r\n  }\r\n\r\n  window.onload = () => {\r\n    resolveMultipleWidgetsIssue();\r\n\r\n    if (tempF) tempF();\r\n\r\n    this.element = $('[vw-plugin-wrapper]').closest('[vw]');\r\n\r\n    const wrapper = $('[vw-plugin-wrapper]');\r\n    const access = $('[vw-access-button]');\r\n\r\n    accessButton.load($('[vw-access-button]'), this.element);\r\n    pluginWrapper.load($('[vw-plugin-wrapper]'));\r\n\r\n    window.addEventListener('vp-widget-wrapper-set-side', (event) => {\r\n      const position = event.detail;\r\n      if (!position || !availablePositions.includes(position)) return;\r\n\r\n      this.element = getWidget();\r\n\r\n      this.element.style.left = position.includes('L')\r\n        ? '0' : ['T', 'B'].includes(position) ? '50%' : 'initial';\r\n\r\n      this.element.style.right = position.includes('R')\r\n        ? '0' : 'initial';\r\n\r\n      this.element.style.top = position.includes('T')\r\n        ? '0' : ['L', 'R'].includes(position) ? '50%' : 'initial';\r\n\r\n      this.element.style.bottom = position.includes('B')\r\n        ? '0' : 'initial';\r\n\r\n      this.element.style.transform = ['L', 'R'].includes(position)\r\n        ? 'translateY(calc(-50% - 10px))' : ['T', 'B'].includes(position)\r\n          ? 'translateX(calc(-50% - 10px))' : 'initial';\r\n\r\n      const access = $('[vw-access-button]');\r\n\r\n      access.classList.toggle('isLeft', position.includes('L'));\r\n      access.classList.toggle('isTopOrBottom', 'TB'.includes(position));\r\n\r\n      // Set position\r\n      if (window.plugin) window.plugin.position = position;\r\n    });\r\n\r\n    $$('img[data-src]', this.element).forEach((image) => {\r\n      const imagePath = image.attributes['data-src'].value;\r\n      image.src = rootPath ? rootPath + '/' + imagePath : imagePath;\r\n    });\r\n\r\n    window.addEventListener('vp-widget-close', (event) => {\r\n      access.classList.toggle('active');\r\n      wrapper.classList.toggle('active');\r\n      addClass($('div[vp-change-avatar]'), 'active');\r\n      addClass($('div[vp-additional-options]'), 'vp-enabled');\r\n      removeClass($('div[vp-controls]'), 'vpw-selectText');\r\n      toggleUnityMainLoop(false);\r\n    });\r\n  \r\n    window.addEventListener('vw-change-opacity', (event) => {\r\n      wrapper.style.background = `rgba(235,235,235, ${event.detail})`;\r\n    });\r\n\r\n    // Apply Widget default position\r\n    if (availablePositions.includes(position)) {\r\n      window.dispatchEvent(\r\n        new CustomEvent('vp-widget-wrapper-set-side', { detail: position }));\r\n    }\r\n  };\r\n\r\n  function resolveMultipleWidgetsIssue() {\r\n    $$('[vw]').forEach(vw => {\r\n      if (!($('[vp]'), vw)) {\r\n        vw.removeAttribute('vw');\r\n\r\n         if (location.hostname.includes('correios.com.br')) {\r\n          removeClass(vw, 'enabled');\r\n        }\r\n      }\r\n    })\r\n  }\r\n\r\n};\r\n\n\n//# sourceURL=webpack://VLibras/./widget/src/Widget.js?",
+        )
+      },
+      './widget/src/components/AccessButton/index.js': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          'const template = (__webpack_require__(/*! ./template.html */ "./widget/src/components/AccessButton/template.html")["default"]);\r\n\r\n__webpack_require__(/*! ./styles.scss */ "./widget/src/components/AccessButton/styles.scss");\r\n\r\nconst { canTranslate, toggleUnityMainLoop } = __webpack_require__(/*! ~utils */ "./plugin/utils/index.js");\r\n\r\nfunction AccessButton(props) {\r\n  this.personalization = props.personalization;\r\n  this.rootPath = props.rootPath;\r\n  this.enableWelcome = props.enableWelcome;\r\n  this.pluginWrapper = props.pluginWrapper;\r\n  this.opacity = props.opacity;\r\n  this.position = props.position;\r\n  this.avatar = props.avatar;\r\n  this.vw_links = null;\r\n  this.currentElement = null;\r\n  this.currentSpanElement = null;\r\n  this.ready = false;\r\n}\r\n\r\nAccessButton.prototype.load = function (element, vw) {\r\n  this.element = element;\r\n  this.element.innerHTML = template;\r\n  this.element.addEventListener(\'click\', async () => {\r\n    this.element.classList.toggle(\'active\');\r\n    this.pluginWrapper.element.classList.toggle(\'active\');\r\n    if (this.ready) toggleUnityMainLoop(true);\r\n\r\n    // Dynamic imports\r\n    const { Plugin } = await __webpack_require__.e(/*! import() */ "vendors-plugin_index_js-widget_src_components_AccessButton_text-capture_js").then(__webpack_require__.bind(__webpack_require__, /*! ../../../../plugin/ */ "./plugin/index.js"));\r\n    const { loadTextCaptureScript } = await __webpack_require__.e(/*! import() */ "vendors-plugin_index_js-widget_src_components_AccessButton_text-capture_js").then(__webpack_require__.bind(__webpack_require__, /*! ./text-capture */ "./widget/src/components/AccessButton/text-capture.js"));\r\n\r\n    window.VLibras.Plugin = Plugin;\r\n\r\n    const config = {\r\n      enableMoveWindow: true,\r\n      enableWelcome: true,\r\n      personalization: this.personalization,\r\n      wrapper: this.pluginWrapper.element,\r\n      position: this.position,\r\n      rootPath: this.rootPath,\r\n      opacity: this.opacity,\r\n      avatar: this.avatar,\r\n    };\r\n\r\n    if (!window.plugin) window.plugin = new window.VLibras.Plugin(config);\r\n\r\n    if (this.ready) loadTextCaptureScript();\r\n    else {\r\n      const _canTranslate = setInterval(() => {\r\n        if (!canTranslate()) return;\r\n        loadTextCaptureScript();\r\n        this.ready = true;\r\n        clearInterval(_canTranslate);\r\n      }, 1000);\r\n    }\r\n  });\r\n};\r\n\r\nmodule.exports = AccessButton;\n\n//# sourceURL=webpack://VLibras/./widget/src/components/AccessButton/index.js?',
+        )
+      },
+      './widget/src/components/PluginWrapper/index.js': (
+        module,
+        __unused_webpack_exports,
+        __webpack_require__,
+      ) => {
+        eval(
+          'const template = (__webpack_require__(/*! ./template.html */ "./widget/src/components/PluginWrapper/template.html")["default"]);\r\n\r\n__webpack_require__(/*! ./styles.scss */ "./widget/src/components/PluginWrapper/styles.scss");\r\n\r\nfunction PluginWrapper() { }\r\n\r\nPluginWrapper.prototype.load = function (element) {\r\n  this.element = element;\r\n  this.element.innerHTML = template;\r\n};\r\n\r\nmodule.exports = PluginWrapper;\r\n\n\n//# sourceURL=webpack://VLibras/./widget/src/components/PluginWrapper/index.js?',
+        )
+      },
+      './widget/src/index.js': (
+        __unused_webpack_module,
+        __webpack_exports__,
+        __webpack_require__,
+      ) => {
+        'use strict'
+        eval(
+          '__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   Widget: () => (/* binding */ Widget)\n/* harmony export */ });\nconst Widget = __webpack_require__(/*! ./Widget */ "./widget/src/Widget.js");\r\n\r\n\r\n\n\n//# sourceURL=webpack://VLibras/./widget/src/index.js?',
+        )
+      },
+      window: (e) => {
+        'use strict'
+        e.exports = window.window
+      },
+    },
+    __webpack_module_cache__ = {},
+    inProgress,
+    dataWebpackPrefix
+  function __webpack_require__(e) {
+    var n = __webpack_module_cache__[e]
+    if (void 0 !== n) return n.exports
+    var t = (__webpack_module_cache__[e] = { id: e, exports: {} })
+    return (
+      __webpack_modules__[e].call(t.exports, t, t.exports, __webpack_require__),
+      t.exports
+    )
+  }
+  ;(__webpack_require__.m = __webpack_modules__),
+    (__webpack_require__.d = (e, n) => {
+      for (var t in n)
+        __webpack_require__.o(n, t) &&
+          !__webpack_require__.o(e, t) &&
+          Object.defineProperty(e, t, { enumerable: !0, get: n[t] })
+    }),
+    (__webpack_require__.f = {}),
+    (__webpack_require__.e = (e) =>
+      Promise.all(
+        Object.keys(__webpack_require__.f).reduce(
+          (n, t) => (__webpack_require__.f[t](e, n), n),
+          [],
+        ),
+      )),
+    (__webpack_require__.u = (e) => 'vlibras-plugin.chunk.js'),
+    (__webpack_require__.o = (e, n) =>
+      Object.prototype.hasOwnProperty.call(e, n)),
+    (inProgress = {}),
+    (dataWebpackPrefix = 'VLibras:'),
+    (__webpack_require__.l = (e, n, t, s) => {
+      if (inProgress[e]) inProgress[e].push(n)
+      else {
+        var r, o
+        if (void 0 !== t)
+          for (
+            var i = document.getElementsByTagName('script'), a = 0;
+            a < i.length;
+            a++
+          ) {
+            var l = i[a]
+            if (
+              l.getAttribute('src') == e ||
+              l.getAttribute('data-webpack') == dataWebpackPrefix + t
+            ) {
+              r = l
+              break
+            }
+          }
+        r ||
+          ((o = !0),
+          ((r = document.createElement('script')).charset = 'utf-8'),
+          (r.timeout = 120),
+          __webpack_require__.nc &&
+            r.setAttribute('nonce', __webpack_require__.nc),
+          r.setAttribute('data-webpack', dataWebpackPrefix + t),
+          (r.src = e)),
+          (inProgress[e] = [n])
+        var c = (n, t) => {
+            ;(r.onerror = r.onload = null), clearTimeout(d)
+            var s = inProgress[e]
+            if (
+              (delete inProgress[e],
+              r.parentNode && r.parentNode.removeChild(r),
+              s && s.forEach((e) => e(t)),
+              n)
+            )
+              return n(t)
+          },
+          d = setTimeout(
+            c.bind(null, void 0, { type: 'timeout', target: r }),
+            12e4,
+          )
+        ;(r.onerror = c.bind(null, r.onerror)),
+          (r.onload = c.bind(null, r.onload)),
+          o && document.head.appendChild(r)
+      }
+    }),
+    (__webpack_require__.r = (e) => {
+      'undefined' != typeof Symbol &&
+        Symbol.toStringTag &&
+        Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+        Object.defineProperty(e, '__esModule', { value: !0 })
+    }),
+    (__webpack_require__.p = '../../widget/app/'),
+    (() => {
+      var e = { widget: 0 }
+      __webpack_require__.f.j = (n, t) => {
+        var s = __webpack_require__.o(e, n) ? e[n] : void 0
+        if (0 !== s)
+          if (s) t.push(s[2])
+          else {
+            var r = new Promise((t, r) => (s = e[n] = [t, r]))
+            t.push((s[2] = r))
+            var o = __webpack_require__.p + __webpack_require__.u(n),
+              i = new Error()
+            __webpack_require__.l(
+              o,
+              (t) => {
+                if (
+                  __webpack_require__.o(e, n) &&
+                  (0 !== (s = e[n]) && (e[n] = void 0), s)
+                ) {
+                  var r = t && ('load' === t.type ? 'missing' : t.type),
+                    o = t && t.target && t.target.src
+                  ;(i.message =
+                    'Loading chunk ' + n + ' failed.\n(' + r + ': ' + o + ')'),
+                    (i.name = 'ChunkLoadError'),
+                    (i.type = r),
+                    (i.request = o),
+                    s[1](i)
+                }
+              },
+              'chunk-' + n,
+              n,
+            )
+          }
+      }
+      var n = (n, t) => {
+          var s,
+            r,
+            [o, i, a] = t,
+            l = 0
+          if (o.some((n) => 0 !== e[n])) {
+            for (s in i)
+              __webpack_require__.o(i, s) && (__webpack_require__.m[s] = i[s])
+            if (a) a(__webpack_require__)
+          }
+          for (n && n(t); l < o.length; l++)
+            (r = o[l]),
+              __webpack_require__.o(e, r) && e[r] && e[r][0](),
+              (e[r] = 0)
+        },
+        t = (self.webpackChunkVLibras = self.webpackChunkVLibras || [])
+      t.forEach(n.bind(null, 0)), (t.push = n.bind(null, t.push.bind(t)))
+    })(),
+    (__webpack_require__.nc = void 0)
+  var __webpack_exports__ = __webpack_require__('./widget/src/index.js')
+  window.VLibras = __webpack_exports__
+})()

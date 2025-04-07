@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import '../../css/welcome.css'
+import VLibras from '@/components/vlibras/vlibras'
 
 export default function Welcome() {
   return (

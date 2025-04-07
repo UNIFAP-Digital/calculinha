@@ -348,8 +348,8 @@ const StatCard = ({ title, value, icon: Icon, color, delay = 0 }) => {
 const FeedbackMessage = ({ score, totalPossibleScore, moduleTheme }) => {
   const percentage = (score / totalPossibleScore) * 100
 
-  let message = "Módulo Concluído"
-  let subMessage = "Você completou com sucesso!"
+  const message = "Módulo Concluído"
+  const subMessage = "Você completou com sucesso!"
 
   return (
     <motion.div
