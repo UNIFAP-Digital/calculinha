@@ -5,19 +5,21 @@ namespace App\Models;
 use App\Enums\Operation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'content',
         'type',
-        'is_active',
         'operation',
+        'owner_id'
     ];
 
     protected $casts = [
         'content'   => 'array',
-        'is_active' => 'boolean',
         'operation' => Operation::class,
     ];
 

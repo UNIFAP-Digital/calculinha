@@ -7,9 +7,12 @@ use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Module extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'room_id',
         'name',
@@ -18,7 +21,8 @@ class Module extends Model
         'color',
         'position',
         'operation',
-        'type'
+        'type',
+        'owner_id'
     ];
 
     protected $casts = [

@@ -16,10 +16,10 @@ return new class extends Migration {
 
             $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
             $table->string('type');
-            $table->boolean('is_active')->default(true);
             $table->jsonb('content');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +28,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::table('activities', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('activities');
     }
 };

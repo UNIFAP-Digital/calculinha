@@ -16,13 +16,13 @@ return new class extends Migration {
 
             $table->string('name');
             $table->string('invite_code')->unique();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('room_module', function (Blueprint $table) {
-            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('room_id')->constrained()->onDelete('restrict');
+            $table->foreignId('module_id')->constrained()->onDelete('restrict');
 
             $table->integer('position');
 
@@ -35,7 +35,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('rooms');
         Schema::dropIfExists('room_module');
+        Schema::table('rooms', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::dropIfExists('rooms');
     }
 };

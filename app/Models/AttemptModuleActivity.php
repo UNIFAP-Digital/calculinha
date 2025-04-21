@@ -8,27 +8,39 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AttemptModuleActivity extends Model
 {
+    protected $table = 'attempt_module_activities';
+
     public $timestamps = false;
 
     protected $fillable = [
+        'attempt_module_id',
         'activity_id',
-        'content',
+        'operation',
+        'type',
         'answer',
         'is_correct',
         'order',
-        'operation',
-        'type'
+        'content'
     ];
 
     protected $casts = [
+        'is_correct' => 'boolean',
         'content'    => 'array',
-        'created_at' => 'datetime',
         'operation'  => Operation::class,
+        'created_at' => 'datetime'
     ];
 
-    public function module(): BelongsTo
+    public function attemptModule(): BelongsTo
     {
-        return $this->belongsTo(AttemptModule::class, 'attempt_module_id');
+        return $this->belongsTo(AttemptModule::class);
+    }
+
+    /**
+     * Get the original Activity, including soft-deleted ones.
+     */
+    public function originalActivity(): BelongsTo
+    {
+        return $this->belongsTo(Activity::class, 'activity_id')->withTrashed();
     }
 
     public function markAsAnswered(string $answer): void

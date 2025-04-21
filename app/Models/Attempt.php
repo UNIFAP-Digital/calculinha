@@ -77,66 +77,91 @@ class Attempt extends Model
             'status'     => Status::Current,
             'number'     => static::numberOfAttempts($room, $student) + 1
         ]);
-        $activities = $room->modules->reduce(fn($activities, $module) => $activities->merge($module->activities), collect());
+
+        // Fetch only active modules and their active activities for the new attempt
+        $activeRoomModules = $room->modules()->with(['activities' => fn ($query) => $query->whereNull('activities.deleted_at')])->get();
+
+        // Collect all active activities from the active modules for potential use in pre/post tests
+        $allActiveActivities = $activeRoomModules->reduce(fn($carry, $module) => $carry->merge($module->activities), collect());
+
         $order = 1;
 
-        $initialActivities = $activities
-            ->shuffle()
-            ->take(12)
+        // Pre-Test Module (using random sample of active activities from the room)
+        $preTestActivities = $allActiveActivities
+            ->whenNotEmpty(fn ($collection) => $collection->random(min(12, $collection->count())))
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
                 'type'        => $activity->type,
                 'operation'   => $activity->operation,
-                'content'     => $activity->content,
+                'content'     => $activity->content, // Snapshot content
                 'order'       => $idx + 1
-            ]);
+            ])->all();
 
-        $attempt
-            ->modules()
-            ->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest])
-            ->activities()
-            ->createMany($initialActivities);
-
-        foreach ($room->modules as $module) {
-            $moduleActivities = $module->activities->map(fn($activity, $idx) => [
-                'activity_id' => $activity->id,
-                'type'        => $activity->type,
-                'operation'   => $activity->operation,
-                'content'     => $activity->content,
-                'order'       => $idx + 1
-            ]);
-
-            $attempt
+        if (!empty($preTestActivities)) {
+             $attempt
                 ->modules()
-                ->create([
-                    'module_id'   => $module->id,
-                    'operation'   => $module->operation,
-                    'name'        => $module->name,
-                    'description' => $module->description,
-                    'order'       => $order++,
-                    'status'      => Status::Locked,
-                    'type'        => Type::Exercise,
-                ])
+                ->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest]) // Initially unlocked
                 ->activities()
-                ->createMany($moduleActivities);
+                ->createMany($preTestActivities);
+        } else {
+             // Handle case with no activities? Maybe skip pre-test or throw error?
+             // For now, let's assume a room must have activities. If not, this attempt might be invalid.
+             // If pre-test is skipped, ensure the first exercise module is unlocked.
+             $attempt->modules()->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest]); // Create empty pre-test? Or adjust logic
         }
 
-        $finalActivities = $activities
-            ->shuffle()
-            ->take(12)
+
+        // Exercise Modules (snapshotting data from active room modules)
+        foreach ($activeRoomModules as $module) {
+            $moduleActivities = $module->activities // Already filtered for active activities
+                ->map(fn($activity, $idx) => [
+                    'activity_id' => $activity->id, // Link to original (active) activity
+                    'type'        => $activity->type, // Snapshot
+                    'operation'   => $activity->operation, // Snapshot
+                    'content'     => $activity->content, // Snapshot
+                    'order'       => $idx + 1
+                ])->all();
+
+            $attemptModule = $attempt
+                ->modules()
+                ->create([
+                    'module_id'   => $module->id, // Link to original module
+                    'operation'   => $module->operation, // Snapshot
+                    'name'        => $module->name, // Snapshot
+                    'description' => $module->description, // Snapshot
+                    'order'       => $order++,
+                    // Lock subsequent modules if pre-test exists and had activities
+                    'status'      => ($order === 3 && !empty($preTestActivities)) ? Status::Locked : (($order === 2 && empty($preTestActivities)) ? Status::Current : Status::Locked),
+                    'type'        => Type::Exercise,
+                ]);
+
+            if (!empty($moduleActivities)) {
+                $attemptModule->activities()->createMany($moduleActivities);
+            }
+        }
+
+        // Post-Test Module (using random sample of active activities from the room)
+        $postTestActivities = $allActiveActivities
+            ->whenNotEmpty(fn ($collection) => $collection->random(min(12, $collection->count())))
             ->map(fn($activity, $idx) => [
                 'activity_id' => $activity->id,
                 'type'        => $activity->type,
                 'operation'   => $activity->operation,
                 'content'     => $activity->content,
                 'order'       => $idx + 1
-            ]);
+            ])->all();
 
-        $attempt
-            ->modules()
-            ->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest])
-            ->activities()
-            ->createMany($finalActivities);
+        if (!empty($postTestActivities)) {
+             $attempt
+                ->modules()
+                ->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest])
+                ->activities()
+                ->createMany($postTestActivities);
+        } else {
+             // Handle case with no activities? Maybe skip post-test.
+             $attempt->modules()->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest]);
+        }
+
 
         return $attempt;
     }

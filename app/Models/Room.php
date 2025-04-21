@@ -7,18 +7,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Random\RandomException;
 
 class Room extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'invite_code',
-        'is_active',
+        'owner_id'
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->constrained()->onDelete('restrict');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['completed', 'current']);
             $table->integer('number');
@@ -33,13 +33,13 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            $table->unique(['attempt_id', 'module_id']);
+            $table->unique(['attempt_id', 'order']);
         });
 
         Schema::create('attempt_module_activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attempt_module_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('activity_id');
+            $table->unsignedBigInteger('activity_id')->nullable();
 
             $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
             $table->string('type');
@@ -50,7 +50,7 @@ return new class extends Migration {
 
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['attempt_module_id', 'activity_id']);
+            $table->unique(['attempt_module_id', 'order']);
         });
     }
 
@@ -59,8 +59,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('attempts');
-        Schema::dropIfExists('attempt_modules');
         Schema::dropIfExists('attempt_module_activities');
+        Schema::dropIfExists('attempt_modules');
+        Schema::dropIfExists('attempts');
     }
 };
