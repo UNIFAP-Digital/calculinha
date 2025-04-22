@@ -8,9 +8,8 @@ use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class AttemptModule extends Pivot
+class AttemptModule extends Model
 {
     protected $table = 'attempt_modules';
 
@@ -47,9 +46,7 @@ class AttemptModule extends Pivot
             ->orderBy('order');
     }
 
-    /**
-     * Get the original Module, including soft-deleted ones.
-     */
+
     public function originalModule(): BelongsTo
     {
         return $this->belongsTo(Module::class, 'module_id')->withTrashed();
@@ -57,11 +54,24 @@ class AttemptModule extends Pivot
 
     public function nextModule(): ?self
     {
-        return self::whereAttemptId($this->attempt_id)->whereOrder($this->order + 1)->first();
+        // Find the next module by order, ensuring robustness
+        return $this->attempt->modules()
+                  ->where('order', '>', $this->order)
+                  ->orderBy('order', 'asc')
+                  ->first();
     }
 
     public function isCompleted(): bool
     {
-        return $this->activities()->whereNull('is_correct')->exists();
+        // A module is completed if it has activities and none of them are unanswered (is_correct is not null)
+        $totalActivities = $this->activities()->count();
+        if ($totalActivities === 0) {
+            return true; // Consider modules with no activities completed by default?
+        }
+        $answeredActivities = $this->activities()->whereNotNull('is_correct')->count();
+        return $totalActivities === $answeredActivities;
+        
+        // Alternative stricter check: Ensure *no* activity exists where is_correct IS null.
+        // return !$this->activities()->whereNull('is_correct')->exists(); 
     }
 }

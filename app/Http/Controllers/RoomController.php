@@ -30,7 +30,6 @@ class RoomController extends Controller
         $rooms = Auth::user()
             ->rooms()
             ->withCount('students')
-            ->orderByDesc('is_active')
             ->orderBy('name');
 
         return Inertia::render('room/Index', [
@@ -94,17 +93,63 @@ class RoomController extends Controller
     public function store(RoomRequest $request)
     {
         $validated = $request->validated();
-        $moduleIds = $validated['module_ids'];
+        $coreModuleIds = $validated['module_ids'];
         unset($validated['module_ids']);
 
-        $room = DB::transaction(function () use ($moduleIds, $validated) {
-            $room = Auth::user()->rooms()->create($validated);
+        $room = DB::transaction(function () use ($coreModuleIds, $validated) {
+            $user = Auth::user();
+            /** @var Room $room */
+            $room = $user->rooms()->create($validated);
 
-            $room->modules()->sync(
-                Arr::mapWithKeys($moduleIds, fn($moduleId, $index) => [
-                    $moduleId => ['position' => RoomModule::$initialPosition + (RoomModule::$positionGap * ($index + 1))]
-                ])
-            );
+            // Create Pre‑Test and Post‑Test modules owned by the creator
+            $preTestModule = $user->modules()->create([
+                'name'        => 'Pre‑Test',
+                'description' => 'Pre‑assessment automatically generated',
+                'operation'   => \App\Enums\Operation::Addition, // Arbitrary – can contain mixed questions
+                'type'        => \App\Enums\Type::PreTest,
+            ]);
+
+            $postTestModule = $user->modules()->create([
+                'name'        => 'Post‑Test',
+                'description' => 'Post‑assessment automatically generated',
+                'operation'   => \App\Enums\Operation::Addition,
+                'type'        => \App\Enums\Type::PostTest,
+            ]);
+
+            // Populate both assessments with 12 random activities
+            $randomActivities = fn() => \App\Models\Activity::query()
+                ->inRandomOrder()
+                ->limit(12)
+                ->pluck('id');
+
+            $position = 1;
+            foreach ([$preTestModule, $postTestModule] as $assessmentModule) {
+                $assessmentModule->activities()->sync(
+                    collect($randomActivities())->mapWithKeys(fn($id, $idx) => [
+                        $id => ['position' => $idx + 1]
+                    ])->all()
+                );
+            }
+
+            // Build pivot data keeping desired order: PRE_TEST, CORE…, POST_TEST
+            $pivotData = [];
+            $position = \App\Models\RoomModule::$initialPosition;
+            $gap      = \App\Models\RoomModule::$positionGap;
+
+            // 1. Pre‑Test
+            $pivotData[$preTestModule->id] = ['position' => $position];
+            $position += $gap;
+
+            // 2. Core modules chosen by user
+            foreach ($coreModuleIds as $moduleId) {
+                $pivotData[$moduleId] = ['position' => $position];
+                $position += $gap;
+            }
+
+            // 3. Post‑Test
+            $pivotData[$postTestModule->id] = ['position' => $position];
+
+            $room->modules()->sync($pivotData);
 
             return $room;
         });

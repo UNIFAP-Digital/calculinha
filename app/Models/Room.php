@@ -17,12 +17,14 @@ class Room extends Model
     protected $fillable = [
         'name',
         'invite_code',
-        'owner_id'
+        'owner_id',
+        'is_active'
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
+        'is_active' => 'boolean'
     ];
 
     /**

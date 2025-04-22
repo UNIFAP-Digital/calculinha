@@ -16,7 +16,7 @@ class InviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'invite_code'   => ['required', 'string', Rule::exists('rooms')->where('is_active', true)],
+            'invite_code'   => ['required', 'string', Rule::exists('rooms')->whereNull('deleted_at')],
             'enrollment_id' => ['required', 'string', 'min:3', 'max:8'],
             'name'          => ['required', 'string', 'min:3', 'max:255'],
         ];

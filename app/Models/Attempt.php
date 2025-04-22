@@ -7,6 +7,7 @@ use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Actions\Attempts\CreateAttempt;
 
 class Attempt extends Model
 {
@@ -33,30 +34,73 @@ class Attempt extends Model
         return $this->belongsTo(Student::class);
     }
 
+    /**
+     * Get the student's current, active attempt for a room, or create one.
+     */
     public static function current(Room $room, Student $student): Attempt
     {
         $attempt = $room
             ->attempts()
-            ->whereStudentId($student->id)
-            ->whereStatus(Status::Current)
+            ->where('student_id', $student->id)
+            ->where('status', Status::Current)
             ->first();
 
-        return $attempt ?? static::create($room, $student);
+        return $attempt ?? app(CreateAttempt::class)->execute($room, $student);
     }
 
     public static function fake(Room $room): Attempt
     {
-        $modules = $room->modules()->with('activities')->get()->map(function ($module, $idx) {
-            $module->setAttribute('status', $idx === 0 ? Status::Current : Status::Locked);
-            $module->setAttribute('activities_count', $module->activities()->count());
-            $module->setAttribute('activities_completed', 0);
-            return $module;
+        // Create a fake attempt instance
+        $attempt = Attempt::make([
+            'room_id'    => $room->id, 
+            'student_id' => Student::factory()->create()->id, // Need a student
+            'status'     => Status::Current, 
+            'number'     => 1
+        ])->setRelation('room', $room);
+
+        // Fetch actual room modules with activities and pivot data
+        $roomModules = $room->modules()->with('activities')->get();
+
+        // Create fake AttemptModule relations mirroring the real structure
+        $attemptModules = $roomModules->map(function ($module) use ($attempt, $roomModules) {
+            $attemptModule = AttemptModule::make([
+                'attempt_id'  => $attempt->id, // Needs an ID, but we are faking
+                'module_id'   => $module->id,
+                'operation'   => $module->operation,
+                'name'        => $module->name,
+                'description' => $module->description,
+                'order'       => $module->pivot->position,
+                'status'      => $module->pivot->position === ($roomModules->first()->pivot->position ?? null)
+                                        ? Status::Current 
+                                        : Status::Locked,
+                'type'        => $module->type,
+            ]);
+
+            // Create fake AttemptModuleActivity relations
+            $activities = $module->activities->map(function ($activity, $idx) use ($attemptModule) {
+                return AttemptModuleActivity::make([
+                    'attempt_module_id' => $attemptModule->id, // Needs an ID
+                    'activity_id'       => $activity->id,
+                    'type'              => $activity->type,
+                    'operation'         => $activity->operation,
+                    'content'           => $activity->content,
+                    'order'             => $idx + 1,
+                    'answer'            => null,
+                    'is_correct'        => null,
+                ]);
+            });
+            $attemptModule->setRelation('activities', $activities);
+            $attemptModule->setAttribute('activities_count', $activities->count()); // Add count for UI
+            $attemptModule->setAttribute('activities_completed', 0); // Add completed count for UI
+
+            return $attemptModule;
         });
 
-        return Attempt
-            ::make(['room_id' => $room->id, 'status' => Status::Current, 'number' => 1])
-            ->updateTimestamps()
-            ->setRelation('modules', $modules);
+        // Set the relations on the fake attempt
+        $attempt->setRelation('modules', $attemptModules);
+        
+        // We don't save the fake attempt or its relations to DB
+        return $attempt;
     }
 
     public static function hasAny(Room $room, Student $student): bool
@@ -69,117 +113,27 @@ class Attempt extends Model
         return $room->attempts()->whereStudentId($student->id)->count();
     }
 
-    private static function create(Room $room, Student $student): Attempt
-    {
-        $attempt = parent::create([
-            'room_id'    => $room->id,
-            'student_id' => $student->id,
-            'status'     => Status::Current,
-            'number'     => static::numberOfAttempts($room, $student) + 1
-        ]);
-
-        // Fetch only active modules and their active activities for the new attempt
-        $activeRoomModules = $room->modules()->with(['activities' => fn ($query) => $query->whereNull('activities.deleted_at')])->get();
-
-        // Collect all active activities from the active modules for potential use in pre/post tests
-        $allActiveActivities = $activeRoomModules->reduce(fn($carry, $module) => $carry->merge($module->activities), collect());
-
-        $order = 1;
-
-        // Pre-Test Module (using random sample of active activities from the room)
-        $preTestActivities = $allActiveActivities
-            ->whenNotEmpty(fn ($collection) => $collection->random(min(12, $collection->count())))
-            ->map(fn($activity, $idx) => [
-                'activity_id' => $activity->id,
-                'type'        => $activity->type,
-                'operation'   => $activity->operation,
-                'content'     => $activity->content, // Snapshot content
-                'order'       => $idx + 1
-            ])->all();
-
-        if (!empty($preTestActivities)) {
-             $attempt
-                ->modules()
-                ->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest]) // Initially unlocked
-                ->activities()
-                ->createMany($preTestActivities);
-        } else {
-             // Handle case with no activities? Maybe skip pre-test or throw error?
-             // For now, let's assume a room must have activities. If not, this attempt might be invalid.
-             // If pre-test is skipped, ensure the first exercise module is unlocked.
-             $attempt->modules()->create(['order' => $order++, 'status' => Status::Current, 'type' => Type::PreTest]); // Create empty pre-test? Or adjust logic
-        }
-
-
-        // Exercise Modules (snapshotting data from active room modules)
-        foreach ($activeRoomModules as $module) {
-            $moduleActivities = $module->activities // Already filtered for active activities
-                ->map(fn($activity, $idx) => [
-                    'activity_id' => $activity->id, // Link to original (active) activity
-                    'type'        => $activity->type, // Snapshot
-                    'operation'   => $activity->operation, // Snapshot
-                    'content'     => $activity->content, // Snapshot
-                    'order'       => $idx + 1
-                ])->all();
-
-            $attemptModule = $attempt
-                ->modules()
-                ->create([
-                    'module_id'   => $module->id, // Link to original module
-                    'operation'   => $module->operation, // Snapshot
-                    'name'        => $module->name, // Snapshot
-                    'description' => $module->description, // Snapshot
-                    'order'       => $order++,
-                    // Lock subsequent modules if pre-test exists and had activities
-                    'status'      => ($order === 3 && !empty($preTestActivities)) ? Status::Locked : (($order === 2 && empty($preTestActivities)) ? Status::Current : Status::Locked),
-                    'type'        => Type::Exercise,
-                ]);
-
-            if (!empty($moduleActivities)) {
-                $attemptModule->activities()->createMany($moduleActivities);
-            }
-        }
-
-        // Post-Test Module (using random sample of active activities from the room)
-        $postTestActivities = $allActiveActivities
-            ->whenNotEmpty(fn ($collection) => $collection->random(min(12, $collection->count())))
-            ->map(fn($activity, $idx) => [
-                'activity_id' => $activity->id,
-                'type'        => $activity->type,
-                'operation'   => $activity->operation,
-                'content'     => $activity->content,
-                'order'       => $idx + 1
-            ])->all();
-
-        if (!empty($postTestActivities)) {
-             $attempt
-                ->modules()
-                ->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest])
-                ->activities()
-                ->createMany($postTestActivities);
-        } else {
-             // Handle case with no activities? Maybe skip post-test.
-             $attempt->modules()->create(['order' => $order, 'status' => Status::Locked, 'type' => Type::PostTest]);
-        }
-
-
-        return $attempt;
-    }
-
     public function advanceModule(): void
     {
-        $currentModule = $this->modules()->firstWhere('status', Status::Current);
+        $currentModule = $this->modules()->where('status', Status::Current)->first();
 
-        if (!$currentModule) return;
+        if (!$currentModule) return; // Already completed or no current module found
 
-        $currentModule->status = Status::Locked;
+        $currentModule->status = Status::Locked; 
         $currentModule->save();
 
-        $nextModule = $currentModule->nextModule();
+        // Find the next module in sequence using the order field
+        $nextModule = $this->modules()
+                           ->where('order', '>', $currentModule->order)
+                           ->orderBy('order', 'asc')
+                           ->first();
 
         if ($nextModule) {
             $nextModule->status = Status::Current;
             $nextModule->save();
+        } else {
+            $this->status = Status::Completed;
+            $this->save();
         }
     }
 }
