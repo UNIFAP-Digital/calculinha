@@ -1,7 +1,6 @@
-import { Head, Link } from '@inertiajs/react'
-import '../../css/welcome.css'
-import VLibras from '@/components/vlibras/vlibras'
 import ProfileCard from '@/components/ui/ProfileCard'
+import { Head } from '@inertiajs/react'
+import '../../css/welcome.css'
 
 export default function Welcome() {
   return (
@@ -14,7 +13,7 @@ export default function Welcome() {
         <header className="animate-fade-in w-full max-w-6xl text-center pt-2 sm:pt-4 lg:pt-6">
           <div className="mb-1 flex justify-center sm:mb-2 lg:mb-3">
             <img 
-              src="/favicon.ico" 
+              src="/favicon.svg" 
               alt="Logo Calculinha" 
               className="h-10 w-10 transition-transform duration-700 hover:rotate-6 sm:h-14 sm:w-14 lg:h-16 lg:w-16" 
             />
