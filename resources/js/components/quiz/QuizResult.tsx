@@ -262,8 +262,6 @@ interface QuizResultProps {
 }
 
 export default function QuizResult({ roomId, score, totalActivities, startGameAgain }: QuizResultProps) {
-  const [, setAnimationComplete] = useState(false)
-
   // Calculate score percentage
   const percentageScore = useMemo(() => {
     const validScore = Math.max(0, Math.min(score, totalActivities))
@@ -384,7 +382,6 @@ export default function QuizResult({ roomId, score, totalActivities, startGameAg
               <ScoreCounter
                 score={score}
                 onComplete={() => {
-                  setAnimationComplete(true)
                   launchConfetti()
                 }}
               />

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('room_id')->constrained()->onDelete('restrict');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['completed', 'current']);
+            $table->enum('status', ['completed', 'current', 'passed', 'failed']); 
             $table->integer('number');
 
             $table->timestamps();
@@ -27,7 +27,11 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->string('description')->nullable();
             $table->integer('order');
-            $table->enum('status', ['completed', 'current', 'locked']);
+            $table->enum('status', ['completed', 'current', 'locked', 'passed', 'failed']); // Adicionado os novos status
+            
+            // CORREÇÃO: Adicionada a coluna 'score' que estava a causar o erro.
+            $table->integer('score')->nullable()->after('status');
+            
             $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division'])->nullable();
             $table->enum('type', ['pre-test', 'exercise','post-test']);
 

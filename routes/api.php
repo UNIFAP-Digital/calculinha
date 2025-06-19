@@ -3,10 +3,11 @@
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AttemptController;
 use App\Http\Controllers\Api\ModuleController;
+use App\Http\Controllers\Api\QuizCompletionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:student')->name('api.')->group(function () {
-    Route::post('/resultado', [AttemptController::class, 'store'])->name('quiz.store');
+    Route::post('/quiz/complete', [QuizCompletionController::class, 'store'])->name('quiz.complete');
 });
 
 Route::middleware('auth:sanctum')->name('api.')->group(function () {

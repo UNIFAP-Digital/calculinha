@@ -20,7 +20,9 @@ import {
   LucideIcon,
   Minus,
   Plus,
+  RotateCcw, Star, // NOVO: Ícone para "Tentar Novamente"
   X,
+  XCircle, // NOVO: Ícone alternativo para "Reprovado"
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -60,7 +62,6 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   return (
     <>
       <Head title="Jogar" />
-
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="container mx-auto px-4 py-8 md:py-12">
           <motion.header
@@ -122,42 +123,10 @@ const getConfig = (type: Type, operation: Operation | null): CardConfig => {
     )
 
   const operations: Record<Operation, CardConfig> = {
-    addition: {
-      name: 'Adição',
-      color: '#20e4bc',
-      gradientStart: '#20e4bc',
-      gradientEnd: '#0fbf96',
-      baseColor: '#0aa582',
-      icon: Plus,
-      description: 'Aprenda a somar números',
-    },
-    subtraction: {
-      name: 'Subtração',
-      color: '#a18cff',
-      gradientStart: '#a18cff',
-      gradientEnd: '#7c5cff',
-      baseColor: '#6a4aef',
-      icon: Minus,
-      description: 'Pratique a subtração de valores',
-    },
-    multiplication: {
-      name: 'Multiplicação',
-      color: '#ff7e7e',
-      gradientStart: '#ff7e7e',
-      gradientEnd: '#ff5252',
-      baseColor: '#e64545',
-      icon: X,
-      description: 'Multiplique números facilmente',
-    },
-    division: {
-      name: 'Divisão',
-      color: '#ffcf5e',
-      gradientStart: '#ffcf5e',
-      gradientEnd: '#ffb72a',
-      baseColor: '#e59e1a',
-      icon: Divide,
-      description: 'Aprenda a dividir valores',
-    },
+    addition: { name: 'Adição', color: '#20e4bc', gradientStart: '#20e4bc', gradientEnd: '#0fbf96', baseColor: '#0aa582', icon: Plus, description: 'Aprenda a somar números' },
+    subtraction: { name: 'Subtração', color: '#a18cff', gradientStart: '#a18cff', gradientEnd: '#7c5cff', baseColor: '#6a4aef', icon: Minus, description: 'Pratique a subtração de valores' },
+    multiplication: { name: 'Multiplicação', color: '#ff7e7e', gradientStart: '#ff7e7e', gradientEnd: '#ff5252', baseColor: '#e64545', icon: X, description: 'Multiplique números facilmente' },
+    division: { name: 'Divisão', color: '#ffcf5e', gradientStart: '#ffcf5e', gradientEnd: '#ffb72a', baseColor: '#e59e1a', icon: Divide, description: 'Aprenda a dividir valores' },
   }
 
   return operations[operation]
@@ -176,20 +145,18 @@ type ModuleIntroCardProps = {
 }
 
 function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
+
+  console.log('ModuleIntroCard', module);
   const [isHovered, setIsHovered] = useState(false)
   const status = module.status!
   const completedActivities = module.activities_completed!
-  const progressPercentage =
-    (completedActivities / module.activities_count!) * 100
+  const progressPercentage = (completedActivities / module.activities_count!) * 100
 
-  const {
-    color,
-    baseColor,
-    icon: IconComponent,
-    gradientStart,
-    name,
-    description,
-  } = getConfig(module.type, module.operation)
+  const { color, baseColor, icon: IconComponent, gradientStart, name, description } = getConfig(module.type, module.operation)
+
+  const isInteractive = status === 'current' || status === 'failed' || status === 'passed'
+
+  // 2. Define cores e estilos com base no novo status.
   let cardColor = color
   let cardGradientStart = gradientStart
   let cardGradientEnd = baseColor
@@ -200,17 +167,27 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
     cardGradientStart = '#9CA3AF'
     cardGradientEnd = '#6B7280'
     textColor = '#FFFFFF'
+  } else if (status === 'failed') {
+    // Cor avermelhada para indicar que precisa tentar novamente.
+    cardColor = '#FF8A80' // Light Red
+    cardGradientStart = '#FF8A80'
+    cardGradientEnd = '#FF5252' // Red
+    textColor = '#FFFFFF'
   }
 
-  const StatusIcon =
-    status === 'completed'
-      ? CheckCircle
-      : status === 'locked'
-        ? LockClosed
-        : ArrowRight
+  // 3. Define o ícone e o texto do status com base nos novos casos.
+  const StatusInfo = {
+    current: { icon: ArrowRight, text: 'Em andamento' },
+    locked: { icon: LockClosed, text: 'Bloqueado' },
+    passed: { icon: CheckCircle, text: 'Aprovado' },
+    failed: { icon: RotateCcw, text: 'Tente Novamente' },
+    completed: { icon: CheckCircle, text: 'Completado' }, // Fallback para status antigo
+  }
+  const { icon: StatusIcon, text: statusText } = StatusInfo[status] || StatusInfo.completed;
+
+  // -- FIM DAS ALTERAÇÕES --
 
   const isExercise = module.type !== 'exercise'
-  const isInteractive = status === 'current'
 
   return (
     <motion.div
@@ -233,71 +210,47 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
         className="mb-2 grid"
         style={{
           gridTemplateColumns: '70px 1fr',
-          gridTemplateAreas: `
-        "number card"
-        "______ bar"
-        `,
+          gridTemplateAreas: `"number card" "______ bar"`,
         }}>
-        {/* Número do módulo */}
         <div
           className="relative mr-4 self-center"
           style={{ gridArea: 'number' }}>
           <div
-            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${
-              status === 'locked' ? 'opacity-60' : ''
-            } ${status === 'completed' ? 'opacity-80' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
+            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${status === 'locked' ? 'opacity-60' : ''
+              } ${status === 'passed' ? 'opacity-80' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
             style={{
               background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
               color: textColor,
-              boxShadow: isExercise
-                ? '0 0 0 4px rgba(0,0,0,0.05)'
-                : '0 4px 6px rgba(0,0,0,0.1)',
+              boxShadow: isExercise ? '0 0 0 4px rgba(0,0,0,0.05)' : '0 4px 6px rgba(0,0,0,0.1)',
             }}>
             {index + 1}
           </div>
         </div>
-        {/* Card do módulo */}
         <motion.div
           className="flex-1"
           whileHover={{ scale: isInteractive ? 1.02 : 1 }}
           onHoverStart={() => isInteractive && setIsHovered(true)}
           onHoverEnd={() => isInteractive && setIsHovered(false)}
           style={{ gridArea: 'card' }}
-          onClick={() => onClick(module.id)}>
+          onClick={() => isInteractive && onClick(module.id)}>
           <motion.div
-            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${
-              status === 'locked' ? 'cursor-not-allowed opacity-70' : ''
-            } ${status === 'completed' ? 'cursor-default opacity-85' : ''} ${isInteractive ? 'cursor-pointer' : ''} ${
-              isExercise ? 'border-2 border-white' : ''
-            }`}
+            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${!isInteractive ? 'cursor-not-allowed' : 'cursor-pointer'
+              } ${status === 'locked' ? 'opacity-70' : ''} ${status === 'passed' ? 'opacity-85' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
             style={{
               background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              boxShadow: isExercise
-                ? '0 8px 20px rgba(0,0,0,0.15)'
-                : '0 4px 10px rgba(0,0,0,0.1)',
+              boxShadow: isExercise ? '0 8px 20px rgba(0,0,0,0.15)' : '0 4px 10px rgba(0,0,0,0.1)',
             }}
             whileTap={{ scale: isInteractive ? 0.98 : 1 }}>
-            {/* Overlay para módulos completados */}
-            {status === 'completed' && (
-              <div className="pointer-events-none absolute inset-0 bg-black opacity-10"></div>
+
+            {(status === 'passed' || status === 'failed') && (
+              <div className={`pointer-events-none absolute inset-0 ${status === 'passed' ? 'bg-green-500/10' : 'bg-red-500/10'}`}></div>
             )}
-            {/* Padrão de fundo */}
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage:
-                  'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')',
-                backgroundSize: '30px 30px',
-              }}
-            />
+
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')', backgroundSize: '30px 30px' }} />
+
             <div className="flex items-center">
               <div className="mr-4">
-                <FatIcon
-                  icon={IconComponent}
-                  color={baseColor}
-                  size={32}
-                  status={status}
-                />
+                <FatIcon icon={IconComponent} color={baseColor} size={32} status={status} />
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-bold" style={{ color: textColor }}>
@@ -306,24 +259,20 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
                 <p className="text-sm opacity-90" style={{ color: textColor }}>
                   {module.description ?? description}
                 </p>
-                {/* Status badge */}
                 <div
                   className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
                   style={{
-                    backgroundColor:
-                      status === 'completed'
-                        ? 'rgba(255,255,255,0.3)'
-                        : status === 'locked'
-                          ? 'rgba(0,0,0,0.2)'
-                          : 'rgba(255,255,255,0.3)',
+                    backgroundColor: 'rgba(255,255,255,0.3)',
                     color: textColor,
                   }}>
-                  {status === 'completed'
-                    ? 'Completado'
-                    : status === 'locked'
-                      ? 'Bloqueado'
-                      : 'Em andamento'}
+                  {statusText}
                 </div>
+                {(status === 'passed' || status === 'failed') && (
+                  <div className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2.5 py-1 text-xs font-semibold" style={{ color: textColor }}>
+                    <Star size={12} className="opacity-80 flex-shrink-0" />
+                    <span className="font-mono">{module?.score} / {module.activities_count}</span>
+                  </div>
+                )}
               </div>
               <motion.div
                 animate={{ x: isHovered && isInteractive ? 5 : 0 }}
@@ -333,13 +282,9 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
             </div>
           </motion.div>
         </motion.div>
-        {/* Barra de progresso */}
         <div className="mt-2 px-1" style={{ gridArea: 'bar' }}>
           <div className="flex items-center gap-3">
-            <div
-              className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${
-                status === 'locked' ? 'opacity-50' : ''
-              } ${status === 'completed' ? 'opacity-80' : ''}`}>
+            <div className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${!isInteractive ? 'opacity-50' : ''}`}>
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: cardColor }}
@@ -348,11 +293,8 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
                 transition={{ duration: 1, delay: index * 0.1 }}
               />
             </div>
-
             <div
-              className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${
-                status === 'locked' ? 'opacity-50' : ''
-              } ${status === 'completed' ? 'opacity-80' : ''}`}
+              className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${!isInteractive ? 'opacity-50' : ''}`}
               style={{ backgroundColor: cardColor, color: textColor }}>
               {completedActivities} de {module.activities_count}
             </div>
@@ -382,45 +324,17 @@ type FatIconProps = {
   status: Status
 }
 
-function FatIcon({
-  icon: Icon,
-  color,
-  size = 24,
-  className = '',
-  status = 'current',
-}: FatIconProps) {
+function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'current' }: FatIconProps) {
   const iconColor = 'white'
   let bgColor = color
-  if (status === 'locked') bgColor = '#9CA3AF'
+  if (status === 'locked' || status === 'failed') bgColor = '#9CA3AF'
 
   return (
     <div
       className={`relative flex items-center justify-center ${className}`}
       style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))' }}>
-      {/* Base shadow for 3D effect */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: size + 4,
-          height: size + 4,
-          background: bgColor,
-          opacity: 0.7,
-          transform: 'translateY(3px)',
-          filter: 'blur(2px)',
-        }}
-      />
-
-      {/* Icon background */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: size + 8,
-          height: size + 8,
-          background: bgColor,
-        }}
-      />
-
-      {/* Icon itself */}
+      <div className="absolute rounded-full" style={{ width: size + 4, height: size + 4, background: bgColor, opacity: 0.7, transform: 'translateY(3px)', filter: 'blur(2px)' }} />
+      <div className="absolute rounded-full" style={{ width: size + 8, height: size + 8, background: bgColor }} />
       <div className="relative z-10">
         <Icon size={size} strokeWidth={3} color={iconColor} />
       </div>
