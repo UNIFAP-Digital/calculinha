@@ -43,7 +43,7 @@ export default function LoginPage() {
                   <AlertTitle>Tem um convite?</AlertTitle>
                   <AlertDescription>
                     Então clique{' '}
-                    <NavLink href={route('invite')} variant="underline">
+                    <NavLink href={route('student.login')} variant="underline">
                       aqui
                     </NavLink>{' '}
                     para acessar por ele.
@@ -109,7 +109,7 @@ export default function LoginPage() {
           </NavLink>
           .
         </div>
-      </div>
+      </div >
     </>
   )
 }

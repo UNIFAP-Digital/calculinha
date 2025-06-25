@@ -33,7 +33,7 @@ export default function Welcome() {
             title="Sou Aluno"
             description="Vamos jogar e aprender matemática juntos! Embarque nessa aventura divertida com a Calcuinha."
             buttonText="Começar a Jogar!"
-            buttonHref={route('invite')}
+            buttonHref={route('student.login')}
             buttonVariant="primary"
             containerClassName="animate-fade-in"
           >

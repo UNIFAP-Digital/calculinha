@@ -1,28 +1,43 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\ModuleActivityController;
 use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModuleController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::inertia('/', 'Welcome')->name('index');
 
-Route
-    ::controller(AttemptController::class)
-    ->middleware('auth:web,student')
-    ->name('quiz.')
-    ->prefix('/salas/{room}/quiz')
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{module}', 'show')->name('show');
-    });
+Route::middleware('auth:student')->group(function () {
+    Route::get('/student/dashboard', function () {
+        $student = Auth::user();
+
+        $lastAttempt = $student->attempts()->latest()->first();
+
+        if ($lastAttempt) {
+            return redirect()->route('quiz.index', ['room' => $lastAttempt->room_id]);
+        }
+
+        return redirect()->route('index');
+
+    })->name('student.dashboard');
+
+    Route::controller(AttemptController::class)
+        ->name('quiz.')
+        ->prefix('/salas/{room}/quiz')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{module}', 'show')->name('show');
+        });
+    });      
 
 Route::middleware('auth')->group(function () {
-    Route
-        ::controller(ActivityController::class)
+    Route::controller(ActivityController::class)
         ->name('activities.')
         ->prefix('/atividades')
         ->group(function () {
@@ -32,8 +47,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{activity}', 'destroy')->name('destroy');
         });
 
-    Route
-        ::controller(ModuleController::class)
+    Route::controller(ModuleController::class)
         ->name('modules.')
         ->prefix('/trilhas')
         ->group(function () {
@@ -44,8 +58,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{module}', 'update')->name('update');
             Route::delete('/{module}', 'destroy')->name('destroy');
 
-            Route
-                ::controller(ModuleActivityController::class)
+            Route::controller(ModuleActivityController::class)
                 ->name('activities.')
                 ->prefix('/{module}/atividades')
                 ->group(function () {
@@ -54,8 +67,7 @@ Route::middleware('auth')->group(function () {
                 });
         });
 
-    Route
-        ::controller(RoomController::class)
+    Route::controller(RoomController::class)
         ->name('rooms.')
         ->prefix('/salas')
         ->group(function () {
@@ -66,8 +78,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{room}', 'update')->name('update');
             Route::delete('/{room}', 'destroy')->name('destroy');
 
-            Route
-                ::controller(RoomModuleController::class)
+            Route::controller(RoomModuleController::class)
                 ->prefix('/{room}/trilhas')
                 ->name('modules.')
                 ->group(function () {
@@ -77,4 +88,4 @@ Route::middleware('auth')->group(function () {
         });
 })->scopeBindings();
 
-require __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php'; 
