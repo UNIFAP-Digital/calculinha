@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Actions\Attempts\CreateAttempt;
 use App\Enums\Status;
 use App\Enums\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Actions\Attempts\CreateAttempt;
 
 class Attempt extends Model
 {
@@ -52,9 +52,9 @@ class Attempt extends Model
     {
         // Create a fake attempt instance
         $attempt = Attempt::make([
-            'room_id'    => $room->id, 
+            'room_id'    => $room->id,
             'student_id' => Student::factory()->create()->id, // Need a student
-            'status'     => Status::Current, 
+            'status'     => Status::Current,
             'number'     => 1
         ])->setRelation('room', $room);
 
@@ -71,8 +71,8 @@ class Attempt extends Model
                 'description' => $module->description,
                 'order'       => $module->pivot->position,
                 'status'      => $module->pivot->position === ($roomModules->first()->pivot->position ?? null)
-                                        ? Status::Current 
-                                        : Status::Locked,
+                                    ? Status::Current
+                                    : Status::Locked,
                 'type'        => $module->type,
             ]);
 
@@ -119,14 +119,14 @@ class Attempt extends Model
 
         if (!$currentModule) return; // Already completed or no current module found
 
-        $currentModule->status = Status::Locked; 
+        $currentModule->status = Status::Locked;
         $currentModule->save();
 
         // Find the next module in sequence using the order field
         $nextModule = $this->modules()
-                           ->where('order', '>', $currentModule->order)
-                           ->orderBy('order', 'asc')
-                           ->first();
+                            ->where('order', '>', $currentModule->order)
+                            ->orderBy('order', 'asc')
+                            ->first();
 
         if ($nextModule) {
             $nextModule->status = Status::Current;

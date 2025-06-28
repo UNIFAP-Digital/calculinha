@@ -134,7 +134,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   const isAnswerButtonDisabled = selectedOption === null || answered
 
   return (
-    <div className={`min-h-screen relative font-nunito`}>
+    <div className={`min-h-screen relative font-nunito `}>
       {/* Background */}
       <div
         className="absolute inset-0"
@@ -181,7 +181,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 min-h-screen w-full px-4">
+      <div className="relative z-10 min-h-screen w-full px-4 overflow-scroll">
         <div className="flex flex-col h-screen pb-12">
           {/* Header */}
           <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">

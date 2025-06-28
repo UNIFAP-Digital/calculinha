@@ -32,7 +32,7 @@ return new class extends Migration {
             // CORREÇÃO: Adicionada a coluna 'score' que estava a causar o erro.
             $table->integer('score')->nullable()->after('status');
             
-            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division'])->nullable();
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division', 'all'])->nullable();
             $table->enum('type', ['pre-test', 'exercise','post-test']);
 
             $table->timestamps();
@@ -45,7 +45,7 @@ return new class extends Migration {
             $table->foreignId('attempt_module_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('activity_id')->nullable();
 
-            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division', 'all', ]);
             $table->string('type');
             $table->string('answer')->nullable();
             $table->boolean('is_correct')->nullable();

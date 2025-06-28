@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('username')->unique();
             $table->string('password');
             $table->rememberToken();
-            $table->string('enrollment_id')->nullable()->index();
+            $table->string('enrollment_id')->nullable();
             $table->timestamps();
         });
     }

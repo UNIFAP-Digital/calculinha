@@ -17,7 +17,7 @@ class InviteRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:students,username'],
-            'enrollment_id' => ['required', 'string', 'max:255', 'unique:students,enrollment_id'],
+            'enrollment_id' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed'],
             'invite_code' => ['required', 'string', 'exists:rooms,invite_code'],
         ];
