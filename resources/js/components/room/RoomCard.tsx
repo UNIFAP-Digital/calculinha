@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Room } from '@/models'
-import { Book, Users } from 'lucide-react'
+import { Book, Users, Send } from 'lucide-react'
 
 interface RoomCardProps {
   room: Room
@@ -21,6 +21,10 @@ export default function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
               <div className="mt-1 flex items-center text-sm text-gray-500">
                 <Users className="mr-2 h-3 w-3" />
                 <span>{room.students_count} participantes</span>
+              </div>
+              <div className="mt-1 flex items-center text-sm text-gray-500">
+                <Send className="mr-2 h-3 w-3" />
+                <span>Código de envio: {room.invite_code}</span>
               </div>
             </div>
           </div>

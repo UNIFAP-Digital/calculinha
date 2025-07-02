@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Operation;
+use App\Enums\Type;
 use App\Http\Requests\RoomRequest;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\RoomResource;
+use App\Models\Activity;
 use App\Models\Module;
 use App\Models\Room;
 use App\Models\RoomModule;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\support\facades\gate;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -98,55 +102,49 @@ class RoomController extends Controller
 
         $room = DB::transaction(function () use ($coreModuleIds, $validated) {
             $user = Auth::user();
+
+            do {
+                $inviteCode = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+            } while (Room::where('invite_code', $inviteCode)->exists());
+            $validated['invite_code'] = $inviteCode;
+
             /** @var Room $room */
             $room = $user->rooms()->create($validated);
 
-            // Create Pre‑Test and Post‑Test modules owned by the creator
             $preTestModule = $user->modules()->create([
-                'name'        => 'Pre‑Test',
-                'description' => 'Pre‑assessment automatically generated',
-                'operation'   => \App\Enums\Operation::Addition, // Arbitrary – can contain mixed questions
-                'type'        => \App\Enums\Type::PreTest,
+                'name'        => 'Pré-Teste',
+                'description' => 'Avaliação prévia gerada automaticamente para a sala ' . $room->name,
+                'type'        => Type::PreTest,
+                'operation'   => Operation::All,
             ]);
 
             $postTestModule = $user->modules()->create([
-                'name'        => 'Post‑Test',
-                'description' => 'Post‑assessment automatically generated',
-                'operation'   => \App\Enums\Operation::Addition,
-                'type'        => \App\Enums\Type::PostTest,
+                'name'        => 'Pós-Teste',
+                'description' => 'Avaliação final gerada automaticamente para a sala ' . $room->name,
+                'type'        => Type::PostTest,
+                'operation'   => Operation::All,
             ]);
 
-            // Populate both assessments with 12 random activities
-            $randomActivities = fn() => \App\Models\Activity::query()
-                ->inRandomOrder()
-                ->limit(12)
-                ->pluck('id');
+            $randomActivityIds = Activity::query()->inRandomOrder()->limit(12)->pluck('id');
+            $pivotDataForTests = collect($randomActivityIds)->mapWithKeys(fn($id, $idx) => [
+                $id => ['position' => RoomModule::$initialPosition + ($idx * RoomModule::$positionGap)]
+            ])->all();
+            
+            $preTestModule->activities()->sync($pivotDataForTests);
+            $postTestModule->activities()->sync($pivotDataForTests);
 
-            $position = 1;
-            foreach ([$preTestModule, $postTestModule] as $assessmentModule) {
-                $assessmentModule->activities()->sync(
-                    collect($randomActivities())->mapWithKeys(fn($id, $idx) => [
-                        $id => ['position' => $idx + 1]
-                    ])->all()
-                );
-            }
-
-            // Build pivot data keeping desired order: PRE_TEST, CORE…, POST_TEST
             $pivotData = [];
-            $position = \App\Models\RoomModule::$initialPosition;
-            $gap      = \App\Models\RoomModule::$positionGap;
+            $position = RoomModule::$initialPosition;
+            $gap = RoomModule::$positionGap;
 
-            // 1. Pre‑Test
             $pivotData[$preTestModule->id] = ['position' => $position];
             $position += $gap;
 
-            // 2. Core modules chosen by user
             foreach ($coreModuleIds as $moduleId) {
                 $pivotData[$moduleId] = ['position' => $position];
                 $position += $gap;
             }
 
-            // 3. Post‑Test
             $pivotData[$postTestModule->id] = ['position' => $position];
 
             $room->modules()->sync($pivotData);

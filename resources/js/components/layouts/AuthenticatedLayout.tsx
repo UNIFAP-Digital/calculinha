@@ -24,7 +24,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   }
 
   const handleLogout = () => {
-    router.delete('/sair', {
+    router.post('/sair', {
       onSuccess() {},
     })
   }

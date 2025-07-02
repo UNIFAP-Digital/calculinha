@@ -18,6 +18,8 @@ export default function ActivityManagementPage({
   const [searchTerm, setSearchTerm] = useState('')
   const [isAdding, setIsAdding] = useState(false)
 
+  console.log('Activities:', activities);
+
   const filteredActivities = useMemo(() => {
     return activities.filter(
       (activity) =>

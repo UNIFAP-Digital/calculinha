@@ -14,12 +14,10 @@ class Module extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'room_id',
         'name',
         'icon',
         'description',
         'color',
-        'position',
         'operation',
         'type',
         'owner_id'
@@ -41,6 +39,6 @@ class Module extends Model
 
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

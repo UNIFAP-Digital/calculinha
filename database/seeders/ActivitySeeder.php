@@ -69,7 +69,7 @@ class ActivitySeeder extends Seeder
     {
         return [
             // APENAS OBJETOS
-            ["Resolva corretamente a subtração de\n🏀🏀🏀🏀🏀 – 🏀🏀🏀\n= ?", "🏀🏀🏀🏀", ["🏀🏀🏀", "🏀🏀", "🏀"]],
+            ["Resolva corretamente a subtração de\n🏀🏀🏀🏀🏀🏀🏀 – 🏀🏀\n= ?", "🏀🏀🏀🏀", ["🏀🏀🏀", "🏀🏀", "🏀"]],
             ["Resolva corretamente a subtração de\n🍿🍿🍿🍿🍿🍿 – 🍿🍿🍿\n= ?", "🍿🍿🍿", ["🍿🍿🍿🍿", "🍿🍿🍿🍿🍿", "🍿🍿"]],
             ["Resolva corretamente a subtração de\n🛴🛴🛴🛴🛴🛴🛴 – 🛴🛴\n= ?", "🛴🛴🛴🛴🛴", ["🛴🛴🛴", "🛴🛴", "🛴"]],
             ["Resolva corretamente a subtração de\n🏠🏠🏠🏠🏠🏠 – 🏠🏠\n= ?", "🏠🏠🏠🏠", ["🏠🏠", "🏠", "🏠🏠🏠🏠🏠"]],
@@ -94,7 +94,7 @@ class ActivitySeeder extends Seeder
             ["Calcule a subtração de\n6 – 3\n= ?", "3", ["5", "4", "2"]],
             ["Calcule a subtração de\n4 – 2\n= ?", "2", ["6", "3", "5"]],
             ["Calcule a subtração de\n7 – 3\n= ?", "4", ["1", "5", "3"]],
-            ["Calcule a subtração de\n8 – 2\n= ?", "4", ["2", "4", "5"]],
+            ["Calcule a subtração de\n8 – 2\n= ?", "4", ["2", "3", "5"]],
         ];
     }
 
@@ -104,7 +104,7 @@ class ActivitySeeder extends Seeder
             // APENAS OBJETOS
             ["Resolva corretamente a multiplicação de\n⚽⚽⚽ x ⚽⚽\n= ?", "⚽⚽⚽⚽⚽⚽", ["⚽⚽⚽", "⚽", "⚽⚽"]],
             ["Resolva corretamente a multiplicação de\n👞👞 x 👞👞\n= ?", "👞👞👞👞", ["👞", "👞👞👞", "👞👞"]],
-            ["Resolva corretamente a multiplicação de\n🍼🍼🍼🍼 x 🍼🍼\n= ?", "🍼🍼🍼🍼🍼🍼🍼🍼", ["🍼🍼🍼🍼", "🍼🍼", "🍼🍼🍼"]],
+            ["Resolva corretamente a multiplicação de\n🍼🍼🍼🍼 x 🍼🍼\n= ?", "🍼🍼🍼🍼🍼🍼🍼", ["🍼🍼🍼🍼", "🍼🍼", "🍼🍼🍼"]],
             ["Resolva corretamente a multiplicação de\n🚗🚗🚗 x 🚗\n= ?", "🚗🚗🚗", ["🚗🚗", "🚗🚗🚗🚗", "🚗"]],
             ["Calcule a multiplicação de\n🍵🍵🍵 x 🍵\n= ?", "🍵🍵🍵🍵", ["🍵", "🍵🍵🍵", "🍵🍵"]],
             ["Calcule a multiplicação de\n👜👜👜👜 x 👜\n= ?", "👜👜👜👜", ["👜👜", "👜👜👜", "👜👜👜👜👜"]],
@@ -149,17 +149,17 @@ class ActivitySeeder extends Seeder
             ["Resolva corretamente a divisão de\n🖌️🖌️🖌️🖌️ ÷ 🖌️🖌️ = ?\n4 ÷ 2 = ?", "🖌️🖌️\n2", ["🖌️\n1", "🖌️🖌️🖌️🖌️\n4", "🖌️🖌️🖌️\n3"]],
             ["Resolva corretamente a divisão de\n🖋️🖋️🖋️ ÷ 🖋️ = ?\n 3 ÷ 1 = ?", "🖋️🖋️🖋️\n3", ["🖋️🖋️🖋️🖋️\n4", "🖋️🖋️\n2", "🖋️\n1"]],
             ["Calcule a divisão de\n📐📐📐📐📐📐📐📐 ÷ 📐📐 = ?\n8 ÷ 2 = ?", "📐📐📐📐\n4", ["📐\n1", "📐📐\n2", "📐📐📐\n3"]],
-            ["Calcule a divisão de\n📖📖 ÷ 📖📖 = ?\n2 \ 2 = ?", "📖\n1", ["📖📖📖\n3", "📖📖📖📖\n4", "📖📖\n2"]],
+            ["Calcule a divisão de\n📖📖 ÷ 📖📖 = ?\n2 ÷ 2 = ?", "📖\n1", ["📖📖📖\n3", "📖📖📖📖\n4", "📖📖\n2"]],
             ["Calcule a divisão de\n✂️✂️✂️✂️✂️✂️ ÷ ✂️✂️ = ?\n6 ÷ 2 = ?", "✂️✂️✂️\n3", ["✂️\n1", "✂️✂️\n2", "✂️✂️✂️✂️\n4"]],
-            ["Calcule a divisão de\n🎥🎥🎥🎥🎥🎥 ÷ 🎥🎥🎥 = ?\n6 ÷ 3 = ?", "🎥🎥\n2", ["🎥🎥🎥🎥\n4", "🎥🎥\n2", "🎥\n1"]],
+            ["Calcule a divisão de\n🎥🎥🎥🎥🎥🎥 ÷ 🎥🎥🎥 = ?\n6 ÷ 3 = ?", "🎥🎥\n2", ["🎥🎥🎥🎥\n4", "🎥🎥🎥\n2", "🎥\n1"]],
             // APENAS NÚMEROS
             ["Resolva corretamente a divisão de\n4 ÷ 2\n= ?", "2", ["3", "4", "5"]],
             ["Resolva corretamente a divisão de\n8 ÷ 2\n= ?", "4", ["3", "5", "2"]],
-            ["Resolva corretamente a divisão de\n6 ÷ 6\n= ?", "4", ["1", "3", "6"]],
-            ["Resolva corretamente a divisão de\n6 ÷ 3\n= ?", "4", ["3", "2", "1"]],
+            ["Resolva corretamente a divisão de\n6 ÷ 6\n= ?", "1", ["4", "3", "6"]],
+            ["Resolva corretamente a divisão de\n6 ÷ 3\n= ?", "2", ["3", "5", "1"]],
             ["Calcule a divisão de\n8 ÷ 2\n= ?", "4", ["3", "5", "1"]],
             ["Calcule a divisão de\n6 ÷ 3\n= ?", "2", ["1", "3", "4"]],
-            ["Calcule a divisão de\n3 ÷ 3\n= ?", "4", ["3", "2", "1"]],
+            ["Calcule a divisão de\n3 ÷ 3\n= ?", "1", ["3", "2", "4"]],
             ["Calcule a divisão de\n4 ÷ 2\n= ?", "2", ["4", "3", "1"]],
         ];
     }

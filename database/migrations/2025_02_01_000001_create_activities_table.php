@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('owner_id')->nullable()->constrained('users')->cascadeOnDelete();
 
-            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division']);
+            $table->enum('operation', ['addition', 'subtraction', 'multiplication', 'division', 'all']);
             $table->string('type');
             $table->jsonb('content');
 

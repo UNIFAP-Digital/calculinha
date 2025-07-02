@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\InviteRequest;
 use App\Models\Attempt;
 use App\Models\Room;
+use App\Models\Student;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -16,22 +18,33 @@ class InviteController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('auth/Invite');
+        return Inertia::render('auth/StudentRegister');
     }
 
     /**
      * @throws Throwable
      */
-    public function store(InviteRequest $request)
+    public function store(InviteRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        [$student, $room] = DB::transaction(function () use ($request) {
+            $newStudent = Student::create([
+                'name' => $request->input('name'),
+                'username' => $request->input('username'),
+                'enrollment_id' => $request->input('enrollment_id'),
+                'password' => $request->input('password'),
+            ]);
+
+            $foundRoom = Room::where('invite_code', $request->input('invite_code'))->firstOrFail();
+
+            Attempt::current($foundRoom, $newStudent);
+            
+            return [$newStudent, $foundRoom];
+        });
+
+        Auth::guard('student')->login($student);
+
         $request->session()->regenerate();
-
-        $room = Room::whereInviteCode($request->input('invite_code'))->first();
-        $student = Auth::guard('student')->user();
-
-        DB::transaction(fn() => Attempt::current($room, $student));
-
+        
         return redirect()->route('quiz.index', ['room' => $room->id]);
     }
 }

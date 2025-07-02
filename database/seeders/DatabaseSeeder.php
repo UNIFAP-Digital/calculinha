@@ -15,15 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            ActivitySeeder::class,
-            ModuleSeeder::class,
-        ]);
-
-        $user = User::create([
+                $user = User::create([
             'name'     => 'Calculinha Professor',
             'email'    => 'calculinha@gmail.com',
             'password' => Hash::make('asd'),
+        ]);
+
+        $this->call([
+            ActivitySeeder::class,
+            ModuleSeeder::class, 
         ]);
 
         /** @var Room $room */

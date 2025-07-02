@@ -12,7 +12,7 @@ export interface Module {
   type: Type
   created_at: string
   updated_at: string
-
+  score: number
   activities_count?: number
   activities_completed?: number
   status?: Status

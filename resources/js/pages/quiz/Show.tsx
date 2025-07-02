@@ -8,6 +8,7 @@ import { Module, Room } from '@/models'
 import { httpPost } from '@/utils/api'
 import { Head, usePage } from '@inertiajs/react'
 import { useMachine } from '@xstate/react'
+import { useEffect } from 'react'
 
 
 interface QuizShowPageProps {
@@ -20,14 +21,30 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
   const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
 
-  const handleSaveAnswer = async (activityId: number, answer: string) => {
-    if (!isStudent) return
 
-    await httpPost(route('api.quiz.store'), {
-      activity_id: activityId,
-      answer,
-    })
-  }
+  const handleCompleteQuiz = async () => {
+    if (!isStudent || !state.matches('result')) return;
+
+    console.log("--- ENVIANDO SINAL DE CONCLUSÃO DE QUIZ ---");
+    try {
+      await httpPost(route('api.quiz.complete'), {
+        room_id: room.id,
+        module_id: module.id,
+        score: state.context.hits,
+        total_activities: state.context.totalActivities,
+      });
+      console.log("Sinal de conclusão enviado com sucesso para o servidor.");
+    } catch (error) {
+      console.error("Falha ao enviar sinal de conclusão do quiz:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (state.matches('result')) {
+      handleCompleteQuiz();
+    }
+  }, [state.value]);
+
 
   const handleAnswerSelect = (answer: string) => {
 

@@ -26,11 +26,14 @@ class ModuleResource extends JsonResource
             'updated_at'           => $this->updated_at->toIso8601ZuluString()
         ];
 
-        if ($this->hasAttribute('status'))
+        if ($this->resource->hasAttribute('status')) {
             $data['status'] = $this->status;
+        }
 
         if ($this->resource instanceof AttemptModule) {
             $data['order'] = $this->order;
+    
+            $data['score'] = $this->score;
 
             if ($this->relationLoaded('activities')) {
                 $data['stats'] = [

@@ -60,16 +60,17 @@ export const gameMachine = setup({
       on: {
         'answer-selected': {
           target: 'answered',
-          actions: [
-            assign({
-              selectedAnswer: ({ event }) => event.answer,
-              isCorrectAnswer: ({ context, event }) => context.module.activities[context.currentActivityIndex].correct_answer === event.answer,
-            }),
-            assign({
-              hits: ({ context }) => (context.isCorrectAnswer ? ++context.hits : context.hits),
-              mistakes: ({ context }) => (!context.isCorrectAnswer ? ++context.mistakes : context.mistakes),
-            }),
-          ],
+          // CORREÇÃO: Unificado em uma única ação 'assign' e corrigida a mutação de estado.
+          actions: assign(({ context, event }) => {
+            const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer
+            return {
+              selectedAnswer: event.answer,
+              isCorrectAnswer: isCorrect,
+              // Lógica corrigida: Retorna um novo valor em vez de mutar o contexto.
+              hits: isCorrect ? context.hits + 1 : context.hits,
+              mistakes: !isCorrect ? context.mistakes + 1 : context.mistakes,
+            }
+          }),
         },
       },
     },
