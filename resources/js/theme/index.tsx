@@ -292,7 +292,7 @@ export const ProgressBadge = ({ current, total, moduleTheme }) => (
     }}
   >
     <span className="text-white font-bold text-sm md:text-lg">
-      {current} / {total}
+      {current} de {total}
     </span>
   </div>
 )
