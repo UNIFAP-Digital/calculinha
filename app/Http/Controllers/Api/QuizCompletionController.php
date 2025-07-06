@@ -46,17 +46,6 @@ class QuizCompletionController extends Controller
                 abort(403, 'Acesso não autorizado a este módulo.');
             }
             
-            $currentAttemptModule->score = $score;
-            
-            $passingPercentage = 40;
-            $userPercentage = ($totalActivities > 0) ? ($score / $totalActivities) * 100 : 0;
-
-            if ($userPercentage < $passingPercentage) {
-                $currentAttemptModule->status = Status::Failed;
-                $currentAttemptModule->save();
-                return response()->json(['message' => 'Resultado registado. A pontuação não foi suficiente para avançar.'], 200);
-            }
-            
             $currentAttemptModule->status = Status::Passed;
             $currentAttemptModule->save();
 
