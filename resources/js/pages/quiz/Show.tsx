@@ -29,7 +29,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
     try {
       await httpPost(route('api.quiz.complete'), {
         room_id: room.id,
-        module_id: module.id,
+        attempt_module_id: module.id,
         score: state.context.hits,
         total_activities: state.context.totalActivities,
       });
