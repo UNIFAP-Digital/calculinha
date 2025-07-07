@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Module[] $modules
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany modules()
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany activities()
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Room[] $rooms
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany rooms()
+ */
 class User extends Authenticatable
 {
     use Notifiable;

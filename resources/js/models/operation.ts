@@ -1,1 +1,1 @@
-export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division'
+export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'all'
