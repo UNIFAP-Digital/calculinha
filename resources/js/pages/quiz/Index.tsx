@@ -70,7 +70,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}>
             <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
-              Jornada Matemática
+              Calculinha
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
               Complete cada módulo para desbloquear o próximo e avançar na sua
