@@ -51,6 +51,8 @@ php artisan serve
 A aplicação estará disponível em http://127.0.0.1:8000.
 
 ### Execução em Produção (Docker)
+Neccesário adicionar env.prod
+
 O projeto é containerizado usando Docker e Docker Compose, o que facilita a execução em ambientes de produção. Certifique-se de ter o Docker instalado e rodando em sua máquina.
 
 Construa e inicie os containers da aplicação, do banco de dados e do Nginx:
