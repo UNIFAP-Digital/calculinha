@@ -1,66 +1,60 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### Overview do Projeto
+Este é um projeto Full-Stack desenvolvido utilizando o Laravel no backend e o React no frontend. A aplicação utiliza Inertia.js para uma integração perfeita entre as duas partes, permitindo a construção de uma aplicação de página única (SPA) com as rotas e controladores do Laravel. O projeto também incorpora TypeScript para um desenvolvimento seguro e Tailwind CSS para estilização.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Requisitos Locais
+Para rodar a aplicação localmente, você precisará ter os seguintes requisitos instalados:
 
-## About Laravel
+PHP (Versão 8.2 ou superior recomendada)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Composer
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Node.js (e npm ou yarn)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Banco de Dados (MySQL, PostgreSQL ou SQLite)
 
-## Learning Laravel
+### Instalação e Execução (Desenvolvimento)
+Siga os passos abaixo para configurar e rodar a aplicação em seu ambiente de desenvolvimento.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Configuração do Ambiente
+Crie uma cópia do arquivo de exemplo .env e configure suas variáveis de ambiente, incluindo as credenciais do banco de dados e a chave da aplicação:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+cp .env.example .env
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Instalação das Dependências
+Instale as dependências do PHP e do JavaScript:
 
-## Laravel Sponsors
+Instale as dependências do Laravel com o Composer:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+composer install
 
-### Premium Partners
+Instale as dependências do Node.js (incluindo o React e o Inertia) usando yarn:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+yarn install
 
-## Contributing
+3. Configuração do Banco de Dados
+Rode as migrações para configurar o banco de dados:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+php artisan migrate
 
-## Code of Conduct
+4. Execução da Aplicação
+Inicie o servidor de desenvolvimento do frontend (Vite) e do backend (Laravel):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Inicie o servidor Vite para compilar os assets e habilitar o hot reload:
 
-## Security Vulnerabilities
+yarn dev
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Em um terminal separado, inicie o servidor do Laravel:
 
-## License
+php artisan serve
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+A aplicação estará disponível em http://127.0.0.1:8000.
+
+### Execução em Produção (Docker)
+O projeto é containerizado usando Docker e Docker Compose, o que facilita a execução em ambientes de produção. Certifique-se de ter o Docker instalado e rodando em sua máquina.
+
+Construa e inicie os containers da aplicação, do banco de dados e do Nginx:
+
+docker-compose up --build -d
+
+Após os containers subirem a aplicação deve estar acessível em http://localhost:8000.
