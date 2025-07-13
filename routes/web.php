@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\{
     ActivityController,
     Auth\LoginController,
@@ -8,27 +7,33 @@ use App\Http\Controllers\{
     QuizPlayController,
     RoomController,
 };
+use App\Http\Controllers\Auth\RegisterUserController;
+use Illuminate\Support\Facades\Route;
 
 /* -------------------------------------------------
  |  GUEST
  * -------------------------------------------------*/
-Route::inertia('/', 'Welcome')->name('welcome');
+Route::inertia('/', 'welcome')->name('welcome');
 
 /* -------------------------------------------------
  |  AUTH
  * -------------------------------------------------*/
 Route::middleware('guest')->group(function () {
-    Route::inertia('/login/student',  'Auth/StudentLogin')->name('login.student');
-    Route::inertia('/login/teacher',  'Auth/TeacherLogin')->name('login.teacher');
+    Route::inertia('/login/student', 'auth/student-login')->name('login.student');
+    Route::inertia('/login/teacher', 'auth/teacher-login')->name('login.teacher');
     Route::post('/login/student', [LoginController::class, 'student']);
     Route::post('/login/teacher', [LoginController::class, 'teacher']);
+    Route::inertia('/register/student', 'auth/student-register')->name('register.student');
+    Route::inertia('/register/teacher', 'auth/teacher-register')->name('register.teacher');
+    Route::post('/register/student', [RegisterUserController::class, 'student']);
+    Route::post('/register/teacher', [RegisterUserController::class, 'teacher']);
 });
 
 /* -------------------------------------------------
- |  STUDENT
+ |  STUDENTS
  * -------------------------------------------------*/
 Route::prefix('student')->middleware(['auth:sanctum', 'can:student-only'])->group(function () {
-    Route::inertia('/dashboard', 'Student/Dashboard')->name('student.dashboard');
+    Route::inertia('/dashboard', 'student/dashboard')->name('student.dashboard');
     Route::post('/join', [QuizPlayController::class, 'join'])->name('student.join');
     Route::get('/room/{room}', [QuizPlayController::class, 'status'])->name('student.room');
     Route::post('/answer', [QuizPlayController::class, 'answer'])->name('student.answer');
@@ -39,7 +44,7 @@ Route::prefix('student')->middleware(['auth:sanctum', 'can:student-only'])->grou
  |  TEACHER
  * -------------------------------------------------*/
 Route::prefix('teacher')->middleware(['auth:sanctum', 'can:teacher-only'])->group(function () {
-    Route::inertia('/dashboard', 'Teacher/Dashboard')->name('teacher.dashboard');
+    Route::inertia('/dashboard', 'teacher/dashboard')->name('teacher.dashboard');
 
     /* Rooms */
     Route::resource('rooms', RoomController::class)->except(['show']);
@@ -55,7 +60,4 @@ Route::prefix('teacher')->middleware(['auth:sanctum', 'can:teacher-only'])->grou
     Route::resource('activities', ActivityController::class)->except(['show']);
 });
 
-
-
-
-require __DIR__ . '/auth.php'; 
+require __DIR__ . '/auth.php';

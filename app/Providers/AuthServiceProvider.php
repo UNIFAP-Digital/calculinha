@@ -13,7 +13,8 @@ class AuthServiceProvider extends ServiceProvider
     Room::class     => RoomPolicy::class,
     Module::class   => ModulePolicy::class,
     Activity::class => ActivityPolicy::class,
-];
+    ];
+
     /**
      * Register services.
      */

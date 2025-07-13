@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\{StoreRoomRequest, UpdateRoomRequest};
 use App\Models\Room;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
 class RoomController extends Controller
 {
