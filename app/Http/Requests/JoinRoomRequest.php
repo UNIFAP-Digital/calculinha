@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class InviteRequest extends FormRequest
+class JoinRoomRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,14 +14,7 @@ class InviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-
+            'invite_code' => ['required', 'string', 'max:8'],
         ];
     }
 }

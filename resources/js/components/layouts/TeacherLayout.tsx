@@ -24,7 +24,7 @@ export default function TeacherLayout({ children }: PropsWithChildren) {
   }
 
   const handleLogout = () => {
-    router.post('/sair')
+    router.post('/logout')
   }
 
   return (

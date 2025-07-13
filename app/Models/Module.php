@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\{App\Enums\OperationType, App\Enums\ModuleType};
+use App\Enums\{OperationType, ModuleType};
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany};
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,12 +18,14 @@ class Module extends Model
         'color',
         'operation',
         'type',
+        'no_feedback',
         'owner_id',
     ];
 
     protected $casts = [
         'operation' => OperationType::class,
         'type'      => ModuleType::class,
+        'no_feedback' => 'boolean',
     ];
 
     /* -------------------------------------------------

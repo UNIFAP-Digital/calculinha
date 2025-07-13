@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{StoreRoomRequest, UpdateRoomRequest};
+use App\Http\Requests\RoomRequest;
+use App\Services\RoomModuleService;
 use App\Models\Room;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
 class RoomController extends Controller
 {
+    public function __construct(
+        private readonly RoomModuleService $roomModuleService
+    ) {
+    }
+
     public function index(): JsonResponse
     {
         return response()->json(
@@ -16,19 +22,14 @@ class RoomController extends Controller
         );
     }
 
-    public function store(StoreRoomRequest $request): JsonResponse
+    public function store(RoomRequest $request): JsonResponse
     {
-        $room = $request->user()
-                        ->ownedRooms()
-                        ->create($request->validated());
-
-        // attach modules with positions in one call
-        $room->modules()->sync(
-            collect($request->modules)
-                ->mapWithKeys(fn ($id, $index) => [$id => ['position' => $index + 1]])
+        $room = $this->roomModuleService->createRoomWithAutoModules(
+            $request->validated()['name'],
+            $request->user()
         );
 
-        return response()->json($room->load('modules.activities'), 201);
+        return response()->json($room, 201);
     }
 
     public function show(Room $room): JsonResponse
@@ -36,18 +37,11 @@ class RoomController extends Controller
         return response()->json($room->load('modules.activities'));
     }
 
-    public function update(UpdateRoomRequest $request, Room $room): JsonResponse
+    public function update(RoomRequest $request, Room $room): JsonResponse
     {
         $this->authorize('update', $room);
 
-        $room->update($request->validated());
-
-        if ($request->has('modules')) {
-            $room->modules()->sync(
-                collect($request->modules)
-                    ->mapWithKeys(fn ($id, $index) => [$id => ['position' => $index + 1]])
-            );
-        }
+        $room->update(['name' => $request->validated()['name']]);
 
         return response()->json($room->load('modules.activities'));
     }

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Activity, Attempt, Module, Room, User};
+use App\Http\Requests\JoinRoomRequest;
+use App\Models\{Activity, Attempt, Module, Room};
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
@@ -12,29 +13,23 @@ class QuizPlayController extends Controller
     /* -------------------------------------------------
      |  Join room
      * -------------------------------------------------*/
-    public function join(string $inviteCode): JsonResponse
+    public function join(JoinRoomRequest $request)
     {
-        $room = Room::where('invite_code', $inviteCode)->firstOrFail();
+        $room = Room::where('invite_code', $request->validated()['invite_code'])->firstOrFail();
 
-        /** @var User $student */
-        $student = auth()->user();
         Gate::authorize('join-room', $room);
 
-        $attempt = Attempt::current($student, $room)
-                    ?? Attempt::start($student, $room);
+        $student = auth()->user();
+        $attempt = Attempt::current($student, $room) ?? Attempt::start($student, $room);
 
-        return response()->json([
-            'room'    => $room->load('modules.activities'),
-            'attempt' => $attempt,
-        ]);
+        return redirect()->route('student.room', $room);
     }
 
     /* -------------------------------------------------
      |  Current state
      * -------------------------------------------------*/
-    public function status(Room $room): JsonResponse
+    public function status(Room $room)
     {
-        /** @var User $student */
         $student = auth()->user();
         $attempt = Attempt::current($student, $room);
 
@@ -42,27 +37,21 @@ class QuizPlayController extends Controller
 
         $completedActivityIds = $attempt->completedActivityIds();
 
-        // decorate each module with its status
         $modules = $room->modules()
-                        ->with('activities')
-                        ->orderBy('room_module.position')
-                        ->get()
-                        ->map(function (Module $module) use ($completedActivityIds) {
-                            $total      = $module->activities->count();
-                            $completed  = $module->activities
-                                                 ->filter(fn ($act) => in_array($act->id, $completedActivityIds))
-                                                 ->count();
+            ->with('activities')
+            ->orderBy('room_module.position')
+            ->get()
+            ->map(fn (Module $module) => [
+                ...$module->toArray(),
+                'status' => match (true) {
+                    $module->activities->isEmpty() => 'locked',
+                    $module->activities->every(fn ($act) => in_array($act->id, $completedActivityIds)) => 'completed',
+                    default => 'current',
+                },
+            ]);
 
-                            $module->status = match (true) {
-                                $completed === 0          => 'locked',
-                                $completed < $total       => 'current',
-                                default                   => 'completed',
-                            };
-                            return $module;
-                        });
-
-        return response()->json([
-            'room'    => $room->only('id', 'name'),
+        return inertia('student/room', [
+            'room' => $room->only('id', 'name'),
             'modules' => $modules,
             'attempt' => $attempt->only('id', 'current_activity_id', 'score', 'time_spent', 'finished_at'),
         ]);
@@ -75,18 +64,19 @@ class QuizPlayController extends Controller
     {
         $request->validate([
             'activity_id' => 'required|exists:activities,id',
-            'answer'      => 'required|string',
-            'time_ms'     => 'required|integer|min:0',
+            'answer' => 'required|string',
+            'time_ms' => 'required|integer|min:0',
         ]);
 
-        /** @var User $student */
-        $student = auth()->user();
         $activity = Activity::findOrFail($request->activity_id);
-
+        $student = auth()->user();
         $attempt = Attempt::current($student, $activity->room());
+
         abort_if(!$attempt, 404, 'No active attempt');
 
-        // correctness check (simple string match)
+        $module = $activity->modules()->first();
+        $noFeedback = $module?->no_feedback ?? false;
+
         $correct = ($activity->content['correct_answer'] ?? null) === $request->answer;
 
         $attempt->markAnswer($activity, $correct, $request->time_ms);
@@ -94,9 +84,9 @@ class QuizPlayController extends Controller
         $attempt->advance($next);
 
         return response()->json([
-            'correct'           => $correct,
-            'next_activity_id'  => $next?->id,
-            'finished'          => $attempt->isCompleted(),
+            'next_activity_id' => $next?->id,
+            'finished' => $attempt->isCompleted(),
+            ...(!$noFeedback ? ['correct' => $correct] : []),
         ]);
     }
 
@@ -105,27 +95,44 @@ class QuizPlayController extends Controller
      * -------------------------------------------------*/
     public function retryModule(Module $module): JsonResponse
     {
-        /** @var User $student */
         $student = auth()->user();
-        $room    = $module->rooms()->first();   // module belongs to one room via pivot
+        $room = $module->rooms()->first();
         $attempt = Attempt::current($student, $room);
 
         abort_if(!$attempt, 404, 'No active attempt');
 
-        // remove answers that belong to this module
         $moduleActivityIds = $module->activities->pluck('id')->toArray();
         $answers = collect($attempt->answers)->reject(
             fn ($_, $id) => in_array((int) $id, $moduleActivityIds, true)
         )->toArray();
 
-        $attempt->answers      = $answers;
-        $attempt->score        = collect($answers)->where('correct', true)->count();
-        $attempt->time_spent   = collect($answers)->sum('time');
-
-        // set current to first activity of this module
-        $attempt->current_activity_id = $module->activities->sortBy('pivot.position')->first()->id;
-        $attempt->save();
+        $attempt->update([
+            'answers' => $answers,
+            'score' => collect($answers)->where('correct', true)->count(),
+            'time_spent' => collect($answers)->sum('time'),
+            'current_activity_id' => $module->activities->sortBy('pivot.position')->first()->id,
+        ]);
 
         return response()->json($attempt);
+    }
+
+    /* -------------------------------------------------
+     |  Student dashboard
+     * -------------------------------------------------*/
+    public function dashboard()
+    {
+        $student = auth()->user();
+
+        $rooms = Room::whereHas('attempts', fn ($query) => $query->where('student_id', $student->id))
+            ->with(['attempts' => fn ($query) => $query->where('student_id', $student->id)->latest()])
+            ->get()
+            ->map(fn ($room) => [
+                'id' => $room->id,
+                'name' => $room->name,
+                'invite_code' => $room->invite_code,
+                'progress' => optional($room->attempts->first())->only('score', 'completed', 'time_spent'),
+            ]);
+
+        return inertia('student/dashboard', compact('rooms'));
     }
 }

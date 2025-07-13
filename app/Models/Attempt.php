@@ -68,6 +68,11 @@ class Attempt extends Model
         return $this->finished_at !== null;
     }
 
+    public function completedActivityIds(): array
+    {
+        return array_keys($this->answers ?? []);
+    }
+
     /* -------------------------------------------------
      |  Static constructors
      * -------------------------------------------------*/

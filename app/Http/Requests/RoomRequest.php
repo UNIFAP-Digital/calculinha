@@ -29,17 +29,7 @@ class RoomRequest extends FormRequest
         $uniqueRule = Rule::unique('rooms', 'name')->where('owner_id', $ownerId);
 
         $rules = [
-            'name'       => ['required', 'string', 'min:3', 'max:50'],
-            'module_ids'   => ['required', 'array', 'size:4'],
-            'module_ids.*' => [
-                'required',
-                'integer',
-                Rule::exists('modules', 'id')
-                    ->where(
-                        fn (Builder $query) => $query
-                        ->where('owner_id', $ownerId)
-                        ->orWhereNull('owner_id')
-                    )],
+            'name' => ['required', 'string', 'min:3', 'max:50'],
         ];
 
         if ($isUpdate) {

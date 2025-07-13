@@ -11,29 +11,39 @@ use App\Http\Controllers\Auth\RegisterUserController;
 use Illuminate\Support\Facades\Route;
 
 /* -------------------------------------------------
- |  GUEST
+ |  ROOT - Redirect based on role
  * -------------------------------------------------*/
-Route::inertia('/', 'welcome')->name('welcome');
+Route::get('/', function () {
+    if (auth()->check()) {
+        return match(auth()->user()->role->value) {
+            'student' => redirect()->route('student.dashboard'),
+            'teacher' => redirect()->route('teacher.dashboard'),
+            default => redirect()->route('welcome'),
+        };
+    }
+
+    return inertia('welcome');
+})->name('welcome');
 
 /* -------------------------------------------------
  |  AUTH
  * -------------------------------------------------*/
 Route::middleware('guest')->group(function () {
-    Route::inertia('/login/student', 'auth/student-login')->name('login.student');
-    Route::inertia('/login/teacher', 'auth/teacher-login')->name('login.teacher');
-    Route::post('/login/student', [LoginController::class, 'student']);
-    Route::post('/login/teacher', [LoginController::class, 'teacher']);
-    Route::inertia('/register/student', 'auth/student-register')->name('register.student');
-    Route::inertia('/register/teacher', 'auth/teacher-register')->name('register.teacher');
-    Route::post('/register/student', [RegisterUserController::class, 'student']);
-    Route::post('/register/teacher', [RegisterUserController::class, 'teacher']);
+    Route::inertia('/login/student', 'auth/student-login')->name('student.login');
+    Route::inertia('/login/teacher', 'auth/teacher-login')->name('teacher.login');
+    Route::post('/login/student', [LoginController::class, 'student'])->name('student.login.post');
+    Route::post('/login/teacher', [LoginController::class, 'teacher'])->name('teacher.login.post');
+    Route::inertia('/register/student', 'auth/student-register')->name('student.register');
+    Route::inertia('/register/teacher', 'auth/teacher-register')->name('teacher.register');
+    Route::post('/register/student', [RegisterUserController::class, 'student'])->name('student.register.post');
+    Route::post('/register/teacher', [RegisterUserController::class, 'teacher'])->name('teacher.register.post');
 });
 
 /* -------------------------------------------------
  |  STUDENTS
  * -------------------------------------------------*/
 Route::prefix('student')->middleware(['auth:sanctum', 'can:student-only'])->group(function () {
-    Route::inertia('/dashboard', 'student/dashboard')->name('student.dashboard');
+    Route::get('/dashboard', [QuizPlayController::class, 'dashboard'])->name('student.dashboard');
     Route::post('/join', [QuizPlayController::class, 'join'])->name('student.join');
     Route::get('/room/{room}', [QuizPlayController::class, 'status'])->name('student.room');
     Route::post('/answer', [QuizPlayController::class, 'answer'])->name('student.answer');

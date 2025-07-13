@@ -28,8 +28,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('student-only', fn (User $user) => $user->role === 'student');
-        Gate::define('teacher-only', fn (User $user) => $user->role === 'teacher');
+        Gate::define('student-only', fn (User $user) => $user->role->value === 'student');
+        Gate::define('teacher-only', fn (User $user) => $user->role->value === 'teacher');
     }
 
 

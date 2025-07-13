@@ -100,7 +100,7 @@ export default function StudentLoginPage() {
           </p>
           <p>
             Você é um professor?{' '}
-            <NavLink variant="underline" href={route('login')}>
+            <NavLink variant="underline" href={route('teacher.login')}>
               Entrar por aqui
             </NavLink>
             .

@@ -120,14 +120,14 @@ export default function StudentRegisterPage() {
         <div className="space-y-2 text-center text-sm">
           <p>
             Já tem uma conta?{' '}
-            <NavLink variant="underline" href={route('login.student')}>
+            <NavLink variant="underline" href={route('student.login')}>
               Entrar
             </NavLink>
             .
           </p>
           <p>
             Você é um professor?{' '}
-            <NavLink variant="underline" href={route('login.teacher')}>
+            <NavLink variant="underline" href={route('teacher.login')}>
               Entrar por aqui
             </NavLink>
             .

@@ -148,7 +148,7 @@ export default function TeacherRegisterPage() {
           </p>
           <p>
             Você é um aluno?{' '}
-            <NavLink variant="underline" href={route('login.student')}>
+            <NavLink variant="underline" href={route('student.login')}>
               Entrar por aqui
             </NavLink>
             .
