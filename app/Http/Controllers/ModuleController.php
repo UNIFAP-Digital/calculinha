@@ -2,117 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ModuleRequest;
-use App\Http\Resources\ActivityResource;
-use App\Http\Resources\ModuleResource;
-use App\Models\Activity;
+use App\Http\Requests\{StoreModuleRequest, UpdateModuleRequest};
 use App\Models\Module;
-use App\Models\ModuleActivity;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
-use Throwable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
 class ModuleController extends Controller
 {
-    public function index(Request $request)
+    public function index(): JsonResponse
     {
-        Gate::authorize('viewAny', Module::class);
-
-        $modules = $request
-            ->user()
-            ->modules()
-            ->with('activities')
-            ->orderBy('name')
-            ->orderByDesc('created_at')
-            ->get();
-
-        return Inertia::render('module/Index', [
-            'modules' => ModuleResource::collection($modules)
-        ]);
+        return response()->json(
+            Module::with('activities')->latest()->get()
+        );
     }
 
-    public function create()
+    public function store(StoreModuleRequest $request): JsonResponse
     {
-        $activities = Auth
-            ::user()
-            ->activities()
-            ->union(Activity::whereNull('owner_id'))
-            ->get();
+        $module = $request->user()
+                          ->ownedModules()
+                          ->create($request->validated());
 
-        return Inertia::render('module/Form', [
-            'activities' => ActivityResource::collection($activities)
-        ]);
+        $module->activities()->sync(
+            collect($request->activities)
+                ->mapWithKeys(fn ($id, $index) => [$id => ['position' => $index + 1]])
+        );
+
+        return response()->json($module->load('activities'), 201);
     }
 
-    public function edit(Module $module)
+    public function show(Module $module): JsonResponse
     {
-        $module->load('activities');
-
-        $activities = Auth
-            ::user()
-            ->activities()
-            ->union(Activity::whereNull('owner_id'))
-            ->get();
-
-        return Inertia::render('module/Form', [
-            'module'       => new ModuleResource($module),
-            'activities' => ActivityResource::collection($activities)
-        ]);
+        return response()->json($module->load('activities'));
     }
 
-    /**
-     * @throws Throwable
-     */
-    public function store(ModuleRequest $request)
+    public function update(UpdateModuleRequest $request, Module $module): JsonResponse
     {
-        $validated = $request->validated();
-        $activityIds = $validated['activity_ids'];
-        unset($validated['activity_ids']);
+        $this->authorize('update', $module);
 
-        DB::transaction(function () use ($activityIds, $validated) {
-            $module = Auth::user()->modules()->create($validated);
+        $module->update($request->validated());
 
+        if ($request->has('activities')) {
             $module->activities()->sync(
-                Arr::mapWithKeys($activityIds, fn($activityId, $index) => [
-                    $activityId => ['position' => ModuleActivity::$initialPosition + (ModuleActivity::$positionGap * ($index + 1))]
-                ])
+                collect($request->activities)
+                    ->mapWithKeys(fn ($id, $index) => [$id => ['position' => $index + 1]])
             );
-        });
+        }
 
-        return to_route('modules.index');
+        return response()->json($module->load('activities'));
     }
 
-    /**
-     * @throws Throwable
-     */
-    public function update(ModuleRequest $request, Module $module)
+    public function destroy(Module $module): JsonResponse
     {
-        $validated = $request->validated();
-        $activityIds = $validated['activity_ids'];
-        unset($validated['activity_ids']);
-
-        DB::transaction(function () use ($activityIds, $module, $validated) {
-            $module->update($validated);
-
-            $module->activities()->sync(
-                Arr::mapWithKeys($activityIds, fn($activityId, $index) => [
-                    $activityId => ['position' => ModuleActivity::$initialPosition + (ModuleActivity::$positionGap * ($index + 1))]
-                ])
-            );
-        });
-
-        $module->update($validated);
-        return to_route('modules.index');
-    }
-
-    public function destroy(Module $module)
-    {
-        Gate::authorize('delete', $module);
+        $this->authorize('delete', $module);
         $module->delete();
-        return back();
+
+        return response()->json(null, 204);
+    }
+
+    /* -------------------------------------------------
+     |  Re-order activities
+     * -------------------------------------------------*/
+    public function reorderActivities(Module $module): JsonResponse
+    {
+        $this->authorize('update', $module);
+
+        request()->validate(['order' => 'required|array']);
+        foreach (request('order') as $index => $activityId) {
+            $module->activities()->updateExistingPivot($activityId, ['position' => $index + 1]);
+        }
+
+        return response()->json($module->activities);
     }
 }

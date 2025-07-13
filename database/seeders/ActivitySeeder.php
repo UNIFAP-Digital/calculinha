@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Operation;
+use App\Enums\OperationType;
 use App\Models\Activity;
 use Illuminate\Database\Seeder;
 
@@ -11,10 +11,10 @@ class ActivitySeeder extends Seeder
     public function run(): void
     {
         $operations = [
-            Operation::Addition->value       => $this->getAdditions(),
-            Operation::Subtraction->value    => $this->getSubtractions(),
-            Operation::Multiplication->value => $this->getMultiplications(),
-            Operation::Division->value       => $this->getDivisions()
+            OperationType::Addition->value       => $this->getAdditions(),
+            OperationType::Subtraction->value    => $this->getSubtractions(),
+            OperationType::Multiplication->value => $this->getMultiplications(),
+            OperationType::Division->value       => $this->getDivisions()
         ];
 
         foreach ($operations as $operation => $activities) {

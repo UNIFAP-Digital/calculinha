@@ -2,26 +2,26 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-/**
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Module[] $modules
- * @method \Illuminate\Database\Eloquent\Relations\HasMany modules()
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
- * @method \Illuminate\Database\Eloquent\Relations\HasMany activities()
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Room[] $rooms
- * @method \Illuminate\Database\Eloquent\Relations\HasMany rooms()
- */
 class User extends Authenticatable
 {
+    use HasFactory;
     use Notifiable;
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'role',
+        'enrollment_id',
     ];
 
     protected $hidden = [
@@ -34,21 +34,66 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'role'              => Role::class,
         ];
     }
 
-    public function activities(): HasMany
+    /* -------------------------------------------------
+     |  Scopes
+     * -------------------------------------------------*/
+    public function scopeStudents($query)
+    {
+        return $query->where('role', Role::Student);
+    }
+    public function scopeTeachers($query)
+    {
+        return $query->where('role', Role::Teacher);
+    }
+
+    /* -------------------------------------------------
+     |  Accessors / Mutators
+     * -------------------------------------------------*/
+    protected function isStudent(): Attribute
+    {
+        return Attribute::get(fn () => $this->role === Role::Student);
+    }
+
+    protected function isTeacher(): Attribute
+    {
+        return Attribute::get(fn () => $this->role === Role::Teacher);
+    }
+
+    /* -------------------------------------------------
+     |  Relations
+     * -------------------------------------------------*/
+    // Teacher
+    public function ownedRooms(): HasMany
+    {
+        return $this->hasMany(Room::class, 'owner_id');
+    }
+    public function ownedModules(): HasMany
+    {
+        return $this->hasMany(Module::class, 'owner_id');
+    }
+    public function ownedActivities(): HasMany
     {
         return $this->hasMany(Activity::class, 'owner_id');
     }
 
-    public function modules(): HasMany
+    // Student
+    public function attempts(): HasMany
     {
-        return $this->hasMany(Module::class, 'owner_id');
+        return $this->hasMany(Attempt::class, 'student_id');
     }
-
-    public function rooms(): HasMany
+    public function roomsViaAttempts(): HasManyThrough
     {
-        return $this->hasMany(Room::class, 'owner_id');
+        return $this->hasManyThrough(
+            Room::class,
+            Attempt::class,
+            'student_id',
+            'id',
+            'id',
+            'room_id'
+        );
     }
 }

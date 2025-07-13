@@ -2,11 +2,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\Auth\Guard\StudentSessionGuard;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Session\SessionManager;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,12 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Auth::extend('student-session', function (Application $app, $name, array $config) {
-            $provider = Auth::createUserProvider($config['provider']);
-            $session = $app->make(SessionManager::class)->driver();
-            $request = $app->make('request');
-            return new StudentSessionGuard($provider, $session, $request);
-        });
         JsonResource::withoutWrapping();
         Vite::prefetch(concurrency: 3);
     }

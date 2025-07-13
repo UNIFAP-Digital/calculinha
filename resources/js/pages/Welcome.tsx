@@ -1,6 +1,5 @@
 import ProfileCard from '@/components/ui/ProfileCard'
 import { Head } from '@inertiajs/react'
-import '../../css/welcome.css'
 
 export default function Welcome() {
   return (

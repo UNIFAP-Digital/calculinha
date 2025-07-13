@@ -2,37 +2,27 @@
 
 namespace App\Policies;
 
-use App\Models\Activity;
-use App\Models\Module;
-use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\{Activity, User};
 
 class ActivityPolicy
 {
-    use HandlesAuthorization;
-
-    public function viewAny(User $user, ?Module $module = null): bool
+    public function viewAny(User $user): bool
     {
-        return !$module || $user->can('view', $module);
+        return $user->role === 'teacher';
     }
 
-    public function view(User $user, Activity $activity): bool
+    public function create(User $user): bool
     {
-        return $activity->owner_id === $user->id || $activity->owner_id === null;
-    }
-
-    public function create(): bool
-    {
-        return true;
+        return $user->role === 'teacher';
     }
 
     public function update(User $user, Activity $activity): bool
     {
-        return $activity->owner_id === $user->id;
+        return $user->role === 'teacher' && $user->id === $activity->owner_id;
     }
 
     public function delete(User $user, Activity $activity): bool
     {
-        return $activity->owner_id === $user->id;
+        return $user->role === 'teacher' && $user->id === $activity->owner_id;
     }
 }

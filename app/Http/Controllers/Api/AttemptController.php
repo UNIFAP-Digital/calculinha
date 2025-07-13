@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use App\Http\Requests\AttemptRequest;
-use App\Models\AttemptModuleActivity;
+use App\Models\Attempt;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 

@@ -12,7 +12,9 @@ class RoomModuleRequest extends FormRequest
     {
         $room = $this->route('room');
         $moduleIds = $this->input('module_ids', []);
-        if (empty($moduleIds)) return false;
+        if (empty($moduleIds)) {
+            return false;
+        }
 
         $modules = Module::findOrFail($moduleIds);
 

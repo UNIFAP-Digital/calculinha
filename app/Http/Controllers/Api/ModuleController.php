@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use App\Http\Resources\ModuleResource;
 use App\Models\Module;
 use App\Models\Room;
@@ -17,11 +17,10 @@ class ModuleController extends Controller
         $room = Room::find($validated['room_id']);
         Gate::authorize('viewAny', [Module::class, $room]);
 
-        $modules = Module
-            ::whereNotIn(
-                'id',
-                fn($query) => $query->select('module_id')->from('room_module')->where('room_id', $room->id)
-            )
+        $modules = Module::whereNotIn(
+            'id',
+            fn ($query) => $query->select('module_id')->from('room_module')->where('room_id', $room->id)
+        )
             ->withCount('activities')
             ->get();
 

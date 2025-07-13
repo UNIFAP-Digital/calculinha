@@ -32,7 +32,7 @@ class ModuleResource extends JsonResource
 
         if ($this->resource instanceof AttemptModule) {
             $data['order'] = $this->order;
-    
+
             $data['score'] = $this->score;
 
             if ($this->relationLoaded('activities')) {
@@ -43,7 +43,7 @@ class ModuleResource extends JsonResource
                 ];
             }
         } else {
-            $data['order'] = $this->whenPivotLoaded(new RoomModule, fn() => $this->pivot->position);
+            $data['order'] = $this->whenPivotLoaded(new RoomModule(), fn () => $this->pivot->position);
         }
 
         return $data;

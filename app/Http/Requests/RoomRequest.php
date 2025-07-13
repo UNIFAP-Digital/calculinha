@@ -34,16 +34,19 @@ class RoomRequest extends FormRequest
             'module_ids.*' => [
                 'required',
                 'integer',
-                Rule
-                    ::exists('modules', 'id')
-                    ->where(fn(Builder $query) => $query
+                Rule::exists('modules', 'id')
+                    ->where(
+                        fn (Builder $query) => $query
                         ->where('owner_id', $ownerId)
                         ->orWhereNull('owner_id')
                     )],
         ];
 
-        if ($isUpdate) $rules['name'][] = $uniqueRule->ignore($room);
-        else $rules['name'][] = $uniqueRule;
+        if ($isUpdate) {
+            $rules['name'][] = $uniqueRule->ignore($room);
+        } else {
+            $rules['name'][] = $uniqueRule;
+        }
 
         return $rules;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Operation;
+use App\Enums\OperationType;
 use App\Models\Module;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -37,19 +37,19 @@ class ModuleRequest extends FormRequest
             'activity_ids.*' => [
                 'required',
                 'integer',
-                Rule
-                    ::exists('activities', 'id')
+                Rule::exists('activities', 'id')
                     ->where('operation', $operation)
-                    ->where(fn(Builder $query) => $query
+                    ->where(
+                        fn (Builder $query) => $query
                         ->where('owner_id', $ownerId)
                         ->orWhereNull('owner_id')
                     )],
         ];
 
-        if ($isUpdate)
+        if ($isUpdate) {
             $rules['name'][] = $uniqueRule->ignore($module);
-        else {
-            $rules['operation'] = ['required', Rule::enum(Operation::class)];
+        } else {
+            $rules['operation'] = ['required', Rule::enum(OperationType::class)];
             $rules['name'][] = $uniqueRule;
         }
 

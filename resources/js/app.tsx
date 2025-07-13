@@ -1,24 +1,26 @@
-import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout'
 import GuestLayout from '@/components/layouts/GuestLayout'
+import StudentLayout from '@/components/layouts/StudentLayout'
+import TeacherLayout from '@/components/layouts/TeacherLayout'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import { ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { applyLayout, createLayout, LayoutType, LayoutComponent, PageWithLayout } from '@/utils/layouts'
 import '../css/app.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
+
+
+const layoutComponents: Partial<Record<LayoutType, LayoutComponent>> = {
+  guest: createLayout(GuestLayout),
+  'authenticated-student': createLayout(StudentLayout),
+  'authenticated-teacher': createLayout(TeacherLayout),
+}
 
 createInertiaApp({
   title: (title) => `${title} | ${appName}`,
   resolve: (name) =>
     resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')).then((module) => {
-      const typedModule = module as { default: { layout: (page: ReactNode) => ReactNode } }
-
-      if (name === 'Welcome' || name.startsWith('quiz/')) {
-          /* empty */
-      } else if (name.startsWith('auth/')) typedModule.default.layout = (page) => <GuestLayout>{page}</GuestLayout>
-       else typedModule.default.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>
-      return typedModule
+      return applyLayout(module as PageWithLayout, layoutComponents, name)
     }),
   setup({ el, App, props }) {
     const root = createRoot(el)

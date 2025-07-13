@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\Status;
-use App\Http\Controllers\Controller;
+use App\Enums\ModuleStatusType;
+use Illuminate\Routing\Controller;
 use App\Models\AttemptModule;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class QuizCompletionController extends Controller
         $totalActivities = $validated['total_activities'];
 
         return DB::transaction(function () use ($student, $attemptModuleId, $score, $totalActivities) {
-            
+
             // ALTERAÇÃO 2: Encontra o módulo da tentativa diretamente pelo seu ID.
             $currentAttemptModule = AttemptModule::findOrFail($attemptModuleId);
 
@@ -45,8 +45,8 @@ class QuizCompletionController extends Controller
             if ($currentAttemptModule->attempt->student_id !== $student->id) {
                 abort(403, 'Acesso não autorizado a este módulo.');
             }
-            
-            $currentAttemptModule->status = Status::Passed;
+
+            $currentAttemptModule->status = ModuleStatusType::Passed;
             $currentAttemptModule->save();
 
             // A lógica para avançar a trilha permanece a mesma.
@@ -54,12 +54,12 @@ class QuizCompletionController extends Controller
             $nextAttemptModule = $currentAttemptModule->nextModule();
 
             if ($nextAttemptModule) {
-                if ($nextAttemptModule->status === Status::Locked) {
-                    $nextAttemptModule->status = Status::Current;
+                if ($nextAttemptModule->status === ModuleStatusType::Locked) {
+                    $nextAttemptModule->status = ModuleStatusType::Current;
                     $nextAttemptModule->save();
                 }
             } else {
-                $attempt->status = Status::Completed;
+                $attempt->status = ModuleStatusType::Completed;
                 $attempt->save();
             }
 

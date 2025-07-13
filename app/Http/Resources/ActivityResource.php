@@ -31,7 +31,7 @@ class ActivityResource extends JsonResource
             $data['is_correct'] = $this->is_correct;
             $data['order'] = $this->order;
         } else {
-            $data['order'] = $this->whenPivotLoaded(new ModuleActivity, fn() => $this->pivot->position);
+            $data['order'] = $this->whenPivotLoaded(new ModuleActivity(), fn () => $this->pivot->position);
         }
 
         return $data;

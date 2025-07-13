@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Operation;
+use App\Enums\OperationType;
 use App\Models\Activity;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -44,7 +44,7 @@ class ActivityRequest extends FormRequest
         ];
 
         if ($this->method() === 'POST') {
-            $rules['operation'] = ['required', Rule::enum(Operation::class)];
+            $rules['operation'] = ['required', Rule::enum(OperationType::class)];
         }
 
         return $rules;
@@ -53,7 +53,9 @@ class ActivityRequest extends FormRequest
     public function validated($key = null, $default = null): mixed
     {
         $validated = parent::validated($key, $default);
-        if ($key !== null) return $validated;
+        if ($key !== null) {
+            return $validated;
+        }
 
         $content = [
             'question'       => $validated['question'] ?? null,

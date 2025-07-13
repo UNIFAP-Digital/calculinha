@@ -2,48 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ActivityRequest;
-use App\Http\Resources\ActivityResource;
+use App\Http\Requests\{StoreActivityRequest, UpdateActivityRequest};
 use App\Models\Activity;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
 class ActivityController extends Controller
 {
-    public function index(Request $request)
+    public function index(): JsonResponse
     {
-        Gate::authorize('viewAny', Activity::class);
-
-        $activities = $request
-            ->user()
-            ->activities()
-            ->orderByDesc('created_at')
-            ->get();
-
-        return Inertia::render('ActivityManagement', [
-            'activities' => ActivityResource::collection($activities)
-        ]);
+        return response()->json(Activity::latest()->get());
     }
 
-    public function store(ActivityRequest $request)
+    public function store(StoreActivityRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-        $request->user()->activities()->create($validated);
-        return back();
+        $activity = $request->user()
+                            ->ownedActivities()
+                            ->create($request->validated());
+
+        return response()->json($activity, 201);
     }
 
-    public function update(ActivityRequest $request, Activity $activity)
+    public function show(Activity $activity): JsonResponse
     {
-        $validated = $request->validated();
-        $activity->update($validated);
-        return back();
+        return response()->json($activity);
     }
 
-    public function destroy(Activity $activity)
+    public function update(UpdateActivityRequest $request, Activity $activity): JsonResponse
     {
-        Gate::authorize('delete', $activity);
+        $this->authorize('update', $activity);
+        $activity->update($request->validated());
+
+        return response()->json($activity);
+    }
+
+    public function destroy(Activity $activity): JsonResponse
+    {
+        $this->authorize('delete', $activity);
         $activity->delete();
-        return back();
+
+        return response()->json(null, 204);
     }
 }

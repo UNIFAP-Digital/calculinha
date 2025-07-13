@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Operation;
-use App\Enums\Type;
+use App\Enums\OperationType;
+use App\Enums\ModuleType;
 use App\Models\Module;
 use App\Models\ModuleActivity;
 use App\Models\User;// Importar o modelo User
@@ -33,8 +33,8 @@ class ModuleSeeder extends Seeder
             ::create([
                 'name'        => 'Adição',
                 'description' => 'Aprenda adição de forma simples com objetos e números!',
-                'operation'   => Operation::Addition,
-                'type'        => Type::Exercise,
+                'operation'   => OperationType::Addition,
+                'type'        => ModuleType::Regular,
                 'owner_id'    => $professor->id, // Atribui o módulo ao professor
             ])
             ->activities()
@@ -47,8 +47,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Subtração',
             'description' => 'Aprenda subtração de forma simples com objetos e números!',
-            'operation'   => Operation::Subtraction,
-            'type'        => Type::Exercise,
+            'operation'   => OperationType::Subtraction,
+            'type'        => ModuleType::Regular,
             'owner_id'    => $professor->id, // Atribui o módulo ao professor
         ])
             ->activities()
@@ -61,8 +61,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Multiplicação',
             'description' => 'Aprenda multiplicação de forma simples com objetos e números!',
-            'operation'   => Operation::Multiplication,
-            'type'        => Type::Exercise,
+            'operation'   => OperationType::Multiplication,
+            'type'        => ModuleType::Regular,
             'owner_id'    => $professor->id, // Atribui o módulo ao professor
         ])
             ->activities()
@@ -75,8 +75,8 @@ class ModuleSeeder extends Seeder
         Module::create([
             'name'        => 'Divisão',
             'description' => 'Aprenda divisão de forma simples com objetos e números!',
-            'operation'   => Operation::Division,
-            'type'        => Type::Exercise,
+            'operation'   => OperationType::Division,
+            'type'        => ModuleType::Regular,
             'owner_id'    => $professor->id, // Atribui o módulo ao professor
         ])
             ->activities()

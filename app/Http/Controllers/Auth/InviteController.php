@@ -37,14 +37,14 @@ class InviteController extends Controller
             $foundRoom = Room::where('invite_code', $request->input('invite_code'))->firstOrFail();
 
             Attempt::current($foundRoom, $newStudent);
-            
+
             return [$newStudent, $foundRoom];
         });
 
         Auth::guard('student')->login($student);
 
         $request->session()->regenerate();
-        
+
         return redirect()->route('quiz.index', ['room' => $room->id]);
     }
 }

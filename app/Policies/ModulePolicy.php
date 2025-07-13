@@ -2,37 +2,32 @@
 
 namespace App\Policies;
 
-use App\Models\Module;
-use App\Models\Room;
-use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\{Module, User};
 
 class ModulePolicy
 {
-    use HandlesAuthorization;
-
-    public function viewAny(User $user, ?Room $room = null): bool
+    public function viewAny(User $user): bool
     {
-        return !$room || $user->can('view', $room);
+        return $user->role === 'teacher';
     }
 
-    public function view(User $user, Module $module): bool
+    public function create(User $user): bool
     {
-        return $module->owner_id === $user->id;
-    }
-
-    public function create(): bool
-    {
-        return true;
+        return $user->role === 'teacher';
     }
 
     public function update(User $user, Module $module): bool
     {
-        return $module->owner_id === $user->id;
+        return $user->role === 'teacher' && $user->id === $module->owner_id;
     }
 
     public function delete(User $user, Module $module): bool
     {
-        return $module->owner_id === $user->id;
+        return $user->role === 'teacher' && $user->id === $module->owner_id;
+    }
+
+    public function reorderActivities(User $user, Module $module): bool
+    {
+        return $user->role === 'teacher' && $user->id === $module->owner_id;
     }
 }
