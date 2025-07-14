@@ -48,6 +48,8 @@ Route::prefix('student')->middleware(['auth:sanctum', 'can:student-only'])->grou
     Route::get('/room/{room}', [QuizPlayController::class, 'status'])->name('student.room');
     Route::post('/answer', [QuizPlayController::class, 'answer'])->name('student.answer');
     Route::post('/retry/{module}', [QuizPlayController::class, 'retryModule'])->name('student.retry');
+    Route::get('/student/room/{room}/module/{module}', [QuizPlayController::class, 'show'])
+    ->name('quiz.show');
 });
 
 /* -------------------------------------------------

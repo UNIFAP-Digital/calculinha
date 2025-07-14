@@ -1,87 +1,91 @@
-import QuizLayout from '@/components/layouts/QuizLayout'
-import { quizToast } from '@/components/quiz/QuizFeedback'
-import QuizGame from '@/components/quiz/QuizGame'
+import QuizGame from '@/components/quiz/quiz-game'
 import QuizIntro from '@/components/quiz/QuizIntro'
 import QuizResult from '@/components/quiz/QuizResult'
-import gameMachine from '@/machines/gameMachine'
-import { Module, Room } from '@/models'
-import { httpPost } from '@/utils/api'
-import { Head, usePage } from '@inertiajs/react'
+import quizMachine from '@/machines/quizMachine'
+import { Activity, Module, Room } from '@/models'
+import { Head, router, usePage } from '@inertiajs/react'
 import { useMachine } from '@xstate/react'
 import { useEffect } from 'react'
 
 
 interface QuizShowPageProps {
   room: Room
-  module: Module
+  module: Module & {
+    activities: Activity[]
+  }
 }
 
 export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const isStudent = usePage().props.auth.user?.type === 'student'
-  const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
-  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+  const [state, send] = useMachine(quizMachine, { input: { module } })
+  const { 
+    currentActivityIndex, 
+    selectedAnswer, 
+    isCorrectAnswer, 
+    hits, 
+    mistakes, 
+    totalActivities,
+    module: gameModule 
+  } = state.context
 
 
   const handleCompleteQuiz = async () => {
-    if (!isStudent || !state.matches('result')) return;
+    if (!isStudent || !state.matches('finished')) return;
 
-    console.log("--- ENVIANDO SINAL DE CONCLUSÃO DE QUIZ ---");
     try {
-      await httpPost(route('api.quiz.complete'), {
-        room_id: room.id,
-        attempt_module_id: module.id,
-        score: state.context.hits,
-        total_activities: state.context.totalActivities,
-      });
-      console.log("Sinal de conclusão enviado com sucesso para o servidor.");
+      router.visit(route('student.room', room.id));
+      console.log("Redirecionando para página de status da sala...");
     } catch (error) {
-      console.error("Falha ao enviar sinal de conclusão do quiz:", error);
+      console.error("Falha ao redirecionar:", error);
     }
   };
 
   useEffect(() => {
-    if (state.matches('result')) {
+    if (state.matches('finished')) {
       handleCompleteQuiz();
     }
   }, [state.value]);
 
 
   const handleAnswerSelect = (answer: string) => {
-
-    send({ type: 'answer-selected', answer })
-
+    send({ type: 'select_answer', answer })
   }
 
-  const handleNextActivity = () => {
-    send({ type: 'next-activity' })
+  const handleNextQuestion = () => {
+    send({ type: 'next_question' })
   }
 
   return (
-    <QuizLayout>
-      <Head title="Quiz" />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <Head title="Quiz" />
 
       {state.matches('intro') && <QuizIntro module={gameModule} onStart={() => send({ type: 'start' })} />}
-      {(state.matches('answering') || state.matches('answered')) && (
+      {state.matches('playing') && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
           activity={gameModule.activities[currentActivityIndex]}
           selectedAnswer={selectedAnswer}
+          isCorrectAnswer={isCorrectAnswer}
           onSelectAnswer={handleAnswerSelect}
+          onNextQuestion={handleNextQuestion}
           hits={hits}
           mistakes={mistakes}
           module={module}
           currentQuestionIndex={currentActivityIndex}
-          handleNextActivity={handleNextActivity}
+          isAnswered={state.matches({ playing: 'answered' })}
+          isLastQuestion={currentActivityIndex === totalActivities - 1}
         />
       )}
-      {state.matches('result') && (
+      {state.matches('finished') && (
         <QuizResult
           roomId={room.id}
-          score={state.context.hits}
-          totalActivities={state.context.totalActivities}
+          score={hits}
+          totalActivities={totalActivities}
           startGameAgain={() => send({ type: 'reset' })}
         />
       )}
-    </QuizLayout>
+    </div>
+  </div>
   )
 }

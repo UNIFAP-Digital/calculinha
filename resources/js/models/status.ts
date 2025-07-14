@@ -1,1 +1,1 @@
-export type Status = 'completed' | 'locked' | 'current' | 'failed' | 'passed'
+export type Status = 'completed' | 'locked' | 'current'

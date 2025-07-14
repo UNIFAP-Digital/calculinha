@@ -20,7 +20,7 @@ class ActivitySeeder extends Seeder
         }
 
         // Create activities for testing
-        \App\Models\Activity::factory()->count(50)->create([
+        Activity::factory()->count(50)->create([
             'owner_id' => $teacher->id,
         ]);
     }

@@ -21,7 +21,14 @@ class RoomModuleService
             'icon' => '📝',
         ]);
 
-        $this->generateActivitiesForModule($module, 12);
+        $templates = [
+            ['operation' => 'addition', 'difficulty' => 'medium'],
+            ['operation' => 'subtraction', 'difficulty' => 'medium'],
+            ['operation' => 'multiplication', 'difficulty' => 'medium'],
+            ['operation' => 'division', 'difficulty' => 'medium'],
+        ];
+        
+        $module->generateActivitiesFromTemplates($templates, 3);
 
         return $module;
     }
@@ -39,117 +46,51 @@ class RoomModuleService
             'icon' => '🎯',
         ]);
 
-        $this->generateActivitiesForModule($module, 12);
+        $templates = [
+            ['operation' => 'addition', 'difficulty' => 'medium'],
+            ['operation' => 'subtraction', 'difficulty' => 'medium'],
+            ['operation' => 'multiplication', 'difficulty' => 'medium'],
+            ['operation' => 'division', 'difficulty' => 'medium'],
+        ];
+        
+        $module->generateActivitiesFromTemplates($templates, 3);
 
         return $module;
     }
 
-    private function generateActivitiesForModule(Module $module, int $count): void
+    public function createOperationModule(User $owner, OperationType $operation, string $name, string $description): Module
     {
-        $operations = [
-            OperationType::Addition,
-            OperationType::Subtraction,
-            OperationType::Multiplication,
-            OperationType::Division,
-        ];
+        $color = match($operation) {
+            OperationType::Addition => '#4CAF50',
+            OperationType::Subtraction => '#FF9800',
+            OperationType::Multiplication => '#2196F3',
+            OperationType::Division => '#9C27B0',
+        };
 
-        $activitiesPerOperation = intdiv($count, count($operations));
-        $activities = collect();
+        $icon = match($operation) {
+            OperationType::Addition => '➕',
+            OperationType::Subtraction => '➖',
+            OperationType::Multiplication => '✖️',
+            OperationType::Division => '➗',
+        };
 
-        foreach ($operations as $operation) {
-            for ($i = 0; $i < $activitiesPerOperation; $i++) {
-                $activities->push($this->createActivity($operation, $module->owner_id));
-            }
-        }
-
-        // Attach activities to module with positions
-        $module->activities()->sync(
-            $activities->mapWithKeys(fn ($activity, $index) => [$activity->id => ['position' => $index + 1]])
-        );
-    }
-
-    private function createActivity(OperationType $operation, int $ownerId): Activity
-    {
-        $questionData = $this->generateMultipleChoiceQuestion($operation);
-
-        return Activity::create([
-            'content' => $questionData,
-            'type' => ActivityType::MultipleChoice,
+        $module = Module::create([
+            'name' => $name,
+            'description' => $description,
+            'type' => ModuleType::Regular,
             'operation' => $operation,
-            'owner_id' => $ownerId,
+            'no_feedback' => false,
+            'owner_id' => $owner->id,
+            'color' => $color,
+            'icon' => $icon,
         ]);
+
+        $template = [['operation' => $operation->value, 'difficulty' => 'medium']];
+        $module->generateActivitiesFromTemplates($template, 10);
+
+        return $module;
     }
 
-    private function generateMultipleChoiceQuestion(OperationType $operation): array
-    {
-        [$num1, $num2, $correctAnswer, $question] = $this->generateQuestionData($operation);
-
-        $options = $this->generateOptions($correctAnswer, $operation);
-
-        return [
-            'question' => $question,
-            'options' => $options,
-            'correct_option_index' => array_search($correctAnswer, $options),
-            'correct_answer' => (string) $correctAnswer,
-        ];
-    }
-
-    private function generateQuestionData(OperationType $operation): array
-    {
-        switch ($operation) {
-            case OperationType::Addition:
-                $num1 = rand(1, 50);
-                $num2 = rand(1, 50);
-                $correctAnswer = $num1 + $num2;
-                $question = "Quanto é {$num1} + {$num2}?";
-                break;
-
-            case OperationType::Subtraction:
-                $num1 = rand(10, 100);
-                $num2 = rand(1, $num1);
-                $correctAnswer = $num1 - $num2;
-                $question = "Quanto é {$num1} - {$num2}?";
-                break;
-
-            case OperationType::Multiplication:
-                $num1 = rand(2, 12);
-                $num2 = rand(2, 12);
-                $correctAnswer = $num1 * $num2;
-                $question = "Quanto é {$num1} × {$num2}?";
-                break;
-
-            case OperationType::Division:
-                $num2 = rand(2, 12);
-                $correctAnswer = rand(2, 12);
-                $num1 = $num2 * $correctAnswer;
-                $question = "Quanto é {$num1} ÷ {$num2}?";
-                break;
-
-            default:
-                throw new \InvalidArgumentException("Invalid operation: {$operation->value}");
-        }
-
-        return [$num1, $num2, $correctAnswer, $question];
-    }
-
-    private function generateOptions(int $correctAnswer, OperationType $operation): array
-    {
-        $options = [$correctAnswer];
-
-        // Generate 3 wrong answers close to the correct answer
-        $range = max(5, abs($correctAnswer) * 0.3);
-
-        while (count($options) < 4) {
-            $wrong = $correctAnswer + rand(-$range, $range);
-            if ($wrong > 0 && $wrong !== $correctAnswer && !in_array($wrong, $options)) {
-                $options[] = $wrong;
-            }
-        }
-
-        shuffle($options);
-
-        return array_map('strval', $options);
-    }
 
     public function createRoomWithAutoModules(string $name, User $owner): Room
     {
@@ -166,6 +107,37 @@ class RoomModuleService
             $room->modules()->sync([
                 $preTest->id => ['position' => 1],
                 $postTest->id => ['position' => 2], // Will be updated to last position
+            ]);
+
+            return $room->load('modules.activities');
+        });
+    }
+
+    public function createRoomWithSixModules(string $name, User $owner, string $inviteCode = null): Room
+    {
+        return \DB::transaction(function () use ($name, $owner, $inviteCode) {
+            $room = Room::create([
+                'name' => $name,
+                'owner_id' => $owner->id,
+                'invite_code' => $inviteCode,
+            ]);
+
+            // Create all 6 modules
+            $preTest = $this->createPreTestModule($owner);
+            $additionModule = $this->createOperationModule($owner, OperationType::Addition, 'Adição', 'Módulo de adição com 10 questões');
+            $subtractionModule = $this->createOperationModule($owner, OperationType::Subtraction, 'Subtração', 'Módulo de subtração com 10 questões');
+            $multiplicationModule = $this->createOperationModule($owner, OperationType::Multiplication, 'Multiplicação', 'Módulo de multiplicação com 10 questões');
+            $divisionModule = $this->createOperationModule($owner, OperationType::Division, 'Divisão', 'Módulo de divisão com 10 questões');
+            $postTest = $this->createPostTestModule($owner);
+
+            // Attach modules in order with positions
+            $room->modules()->sync([
+                $preTest->id => ['position' => 1],
+                $additionModule->id => ['position' => 2],
+                $subtractionModule->id => ['position' => 3],
+                $multiplicationModule->id => ['position' => 4],
+                $divisionModule->id => ['position' => 5],
+                $postTest->id => ['position' => 6],
             ]);
 
             return $room->load('modules.activities');

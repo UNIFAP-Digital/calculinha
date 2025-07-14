@@ -57,4 +57,156 @@ class Module extends Model
     {
         $query->where('operation', '!=', OperationType::All);
     }
+
+    /* Factory Methods */
+    public static function createWithActivities(
+        string $name,
+        string $description,
+        ModuleType $type,
+        OperationType $operation,
+        array $activitiesData,
+        int $ownerId
+    ): self {
+        $module = self::create([
+            'name' => $name,
+            'description' => $description,
+            'type' => $type,
+            'operation' => $operation,
+            'owner_id' => $ownerId,
+        ]);
+
+        $module->addActivities($activitiesData);
+
+        return $module;
+    }
+
+    /* Activity Management */
+    public function addActivities(array $activitiesData): void
+    {
+        $activities = collect();
+
+        foreach ($activitiesData as $index => $activityData) {
+            $activity = Activity::createMultipleChoice(
+                $activityData['question'],
+                $activityData['options'],
+                $activityData['correct_index'],
+                $this->operation,
+                $this->owner_id
+            );
+
+            $activities->push($activity);
+        }
+
+        $this->activities()->syncWithPivotValues(
+            $activities->pluck('id'),
+            collect($activities)->mapWithKeys(fn($activity, $index) => [$activity->id => ['position' => $index]])->toArray()
+        );
+    }
+
+    public function generateActivitiesFromTemplates(array $templates, int $count = 10): void
+    {
+        $activities = Activity::generateBatchFromTemplates($templates, $this->owner_id, $count);
+        
+        $this->activities()->syncWithPivotValues(
+            collect($activities)->pluck('id'),
+            collect($activities)->mapWithKeys(fn($activity, $index) => [$activity->id => ['position' => $index]])->toArray()
+        );
+    }
+
+    /* Validation and Business Logic */
+    public function isComplete(): bool
+    {
+        return $this->activities()->count() > 0;
+    }
+
+    public function getProgressForUser(User $user): array
+    {
+        $total = $this->activities()->count();
+        $completed = $this->activities()
+            ->whereHas('attempts', function ($query) use ($user) {
+                $query->where('student_id', $user->id)
+                      ->where('correct', true);
+            })
+            ->count();
+
+        return [
+            'total' => $total,
+            'completed' => $completed,
+            'percentage' => $total > 0 ? round(($completed / $total) * 100) : 0,
+        ];
+    }
+
+    public function isOwner(User $user): bool
+    {
+        return $this->owner_id === $user->id;
+    }
+
+    public function canBeEditedBy(User $user): bool
+    {
+        return $this->isOwner($user);
+    }
+
+    public function canBeDeletedBy(User $user): bool
+    {
+        return $this->isOwner($user) && $this->rooms()->count() === 0;
+    }
+
+    /* Content Analysis */
+    public function getTotalActivitiesCount(): int
+    {
+        return $this->activities()->count();
+    }
+
+    public function getActivitiesList(): array
+    {
+        return $this->activities
+            ->map(function ($activity) {
+                return [
+                    'id' => $activity->id,
+                    'question' => $activity->getQuestion(),
+                    'options' => $activity->getOptions(),
+                    'correct' => $activity->getCorrectAnswer(),
+                ];
+            })
+            ->toArray();
+    }
+
+    public function getDifficultyDistribution(): array
+    {
+        return $this->activities
+            ->groupBy(fn($activity) => $activity->getDifficulty())
+            ->map->count()
+            ->toArray();
+    }
+
+    /* Room Management */
+    public function addToRoom(Room $room, int $position = null): void
+    {
+        if ($position === null) {
+            $position = $room->modules()->count();
+        }
+
+        $room->modules()->attach($this->id, ['position' => $position]);
+    }
+
+    public function removeFromRoom(Room $room): void
+    {
+        $room->modules()->detach($this->id);
+    }
+
+    /* Validation */
+    public function validateModule(): void
+    {
+        if (empty($this->name)) {
+            throw ValidationException::withMessages([
+                'name' => 'Module name is required.'
+            ]);
+        }
+
+        if (empty($this->description)) {
+            throw ValidationException::withMessages([
+                'description' => 'Module description is required.'
+            ]);
+        }
+    }
 }

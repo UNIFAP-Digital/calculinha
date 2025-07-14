@@ -36,8 +36,8 @@ class DatabaseSeeder extends Seeder
         // Create rooms using the RoomModuleService
         $roomModuleService = app(RoomModuleService::class);
 
-        // Create a demo room with pre-test and post-test
-        $room1 = $roomModuleService->createRoomWithAutoModules('Turma Exemplo 2025', $teacher);
+        // Create the first room with 6 modules and invite code 1234
+        $room1 = $roomModuleService->createRoomWithSixModules('Turma Exemplo 2025 - 6 Módulos', $teacher, '1234');
 
         // Create additional rooms for testing
         $room2 = $roomModuleService->createRoomWithAutoModules('Matemática Básica', $teacher);

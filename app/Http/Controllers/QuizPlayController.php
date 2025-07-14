@@ -37,18 +37,25 @@ class QuizPlayController extends Controller
 
         $completedActivityIds = $attempt->completedActivityIds();
 
+
+
         $modules = $room->modules()
-            ->with('activities')
-            ->orderBy('room_module.position')
-            ->get()
-            ->map(fn (Module $module) => [
-                ...$module->toArray(),
-                'status' => match (true) {
-                    $module->activities->isEmpty() => 'locked',
-                    $module->activities->every(fn ($act) => in_array($act->id, $completedActivityIds)) => 'completed',
-                    default => 'current',
-                },
-            ]);
+    ->withCount('activities as activities_count')   // only counts
+    ->orderBy('room_module.position')
+    ->get()
+    ->map(fn (Module $module) => [
+        'id'          => $module->id,
+        'name'        => $module->name,
+        'type'        => $module->type,
+        'operation'   => $module->operation,
+        'status' => match (true) {
+            $module->activities->isEmpty() => 'locked',
+            $module->activities->every(fn ($act) => in_array($act->id, $completedActivityIds)) => 'completed',
+            default => 'current',
+        },
+        'activities_count'     => $module->activities_count,
+        'activities_completed' => $module->activities->every(fn ($act) => in_array($act->id, $completedActivityIds))
+    ]);
 
         return inertia('student/room', [
             'room' => $room->only('id', 'name'),
@@ -134,5 +141,27 @@ class QuizPlayController extends Controller
             ]);
 
         return inertia('student/dashboard', compact('rooms'));
+    }
+
+    public function show(Room $room, Module $module)
+    {
+
+        $activities = $module->activities()
+        ->orderBy('module_activity.position')
+        ->get()
+        ->map(fn ($act) => [
+            'id'       => $act->id,
+            'question' => $act->content['question'],
+            'options'  => $act->content['options'],
+            'correct'  => $act->content['correct_answer'],
+        ]);
+
+        return inertia('quiz/show', [
+            'room'   => $room->only('id', 'name'),
+            'module' => [
+                ...$module->only('id', 'name', 'type', 'operation'),
+                'activities' => $activities,
+            ],
+        ]);
     }
 }

@@ -1,13 +1,9 @@
-import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Activity, Module } from '@/models'
 import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
 import { AnimatePresence, motion } from 'framer-motion'
-import { FlameIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import '../../../css/quiz.css'
+
 
 interface QuizGameProps {
   module: Module
@@ -21,74 +17,23 @@ interface QuizGameProps {
   currentQuestionIndex: number
 }
 
-export function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
-  const { question, wrong_answers, correct_answer } = activity
-
-  const shuffledAnswers = useMemo(() => {
-    const allAnswers = [...wrong_answers]
-    const correctAnswer = correct_answer
-    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
-    allAnswers.splice(randomIndex, 0, correctAnswer)
-    return { answers: allAnswers, correctIndex: randomIndex }
-  }, [wrong_answers, correct_answer])
-
-  return (
-    <div id="grid" className="bg-blue-500 px-2 text-white sm:px-4">
-      <header className="flex items-center justify-between">
-        <div className="flex gap-4">
-          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
-            <FlameIcon fill="red" stroke="orange" />
-            <span>{mistakes}</span>
-          </span>
-          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
-            <span>✅ {hits}</span>
-          </span>
-        </div>
-      </header>
-      <div className="grid">
-        {/* Question Text */}
-        <div className="flex min-h-0 items-center justify-center py-10">
-          <Card className="overmodule-visible relative mx-auto max-h-full max-w-3xl min-w-[75%] text-center">
-            <Badge className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-slate-700 px-3 py-1 tracking-widest">{progress}</Badge>
-            <CardContent className="p-4 px-8 text-slate-950">
-              <h1 className="text-center text-xl whitespace-pre-line sm:text-3xl">{question}</h1>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="resizable-grid grid gap-4" key={activity.id}>
-          <AnimatePresence>
-            {/* Options Cards */}
-            {shuffledAnswers.answers.map((answer, index) => (
-              <QuizOptionCard
-                option={{
-                  id: `option-${index}`,
-                  text: answer,
-                }}
-                index={index}
-                correctIndex={shuffledAnswers.correctIndex}
-                selectedAnswer={selectedAnswer !== null ? shuffledAnswers.answers.indexOf(selectedAnswer) : null}
-                key={`option-${index}`}
-                onClick={() => onSelectAnswer(answer)}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function MathGame({ firstQuestionAnimation = false, selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
-  const [selectedOption, setSelectedOption] = useState("")
-  const [score, setScore] = useState(0)
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
-  const [withoutFeedback, setWithoutFeedback] = useState(false)
-  const { question, wrong_answers, correct_answer } = activity
-
-
-  const answered = selectedAnswer !== null
+export default function QuizGame({ 
+  activity, 
+  isAnswered, 
+  isCorrect, 
+  selectedAnswer, 
+  onSelectAnswer, 
+  onNextQuestion,
+  hits,
+  mistakes,
+  progress,
+  module,
+  currentQuestionIndex,
+  isLastQuestion,
+  withoutFeedback = false 
+}: QuizGameProps) {
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false)
+  const { question, options, correct } = activity.content
 
   const moduleTheme: ModuleTheme = module?.name
     ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
@@ -100,38 +45,37 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   }
 
   const handleOptionSelect = (answer: string) => {
-    if (answered) return
-
-
-    setSelectedOption(answer)
-  }
-
-  const handleAnswer = (index = selectedOption) => {
-    if (answered) return
-
-    const isCorrect = activity.correct_answer === selectedOption
-    setIsCorrect(isCorrect)
-    onSelectAnswer(selectedOption)
-    setShowFeedback(true)
+    if (isAnswered) return
+    onSelectAnswer(answer)
   }
 
   const handleNextQuestion = () => {
-    handleNextActivity?.()
-    setShowFeedback(false)
-    setSelectedOption("")
-
+    setIsFeedbackVisible(false)
+    onNextQuestion?.()
   }
 
+  // Show feedback when answer is selected
+  useEffect(() => {
+    if (selectedAnswer !== null) {
+      setIsFeedbackVisible(true)
+    }
+  }, [selectedAnswer])
+
   const shuffledOptions = useMemo(() => {
-    const allAnswers = [...wrong_answers]
-    const correctAnswer = correct_answer
-    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
-    allAnswers.splice(randomIndex, 0, correctAnswer)
-    return { answers: allAnswers, correctIndex: randomIndex }
-  }, [wrong_answers, correct_answer])
+    const shuffled = [...options]
+    
+    // Fisher-Yates shuffle
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    
+    const correctIndex = shuffled.indexOf(correct)
+    return { answers: shuffled, correctIndex }
+  }, [options, correct])
 
 
-  const isAnswerButtonDisabled = selectedOption === null || answered
+  const isAnswerButtonDisabled = selectedAnswer === null || isAnswered
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
@@ -262,7 +206,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className='w-full md:w-1/2 max-w-xl'>
               <NavigationButton
                 text="Responder"
-                onClick={() => handleAnswer()}
+                onClick={() => handleNextQuestion()}
                 disabled={isAnswerButtonDisabled}
                 moduleTheme={moduleTheme}
               />
@@ -273,7 +217,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
 
       {/* Answer feedback */}
       <AnimatePresence>
-        {showFeedback && (
+        {isFeedbackVisible && (
           <AnswerFeedback
             correct={isCorrect}
             onContinue={handleNextQuestion}
