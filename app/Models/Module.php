@@ -97,20 +97,16 @@ class Module extends Model
             $activities->push($activity);
         }
 
-        $this->activities()->syncWithPivotValues(
-            $activities->pluck('id'),
-            collect($activities)->mapWithKeys(fn($activity, $index) => [$activity->id => ['position' => $index]])->toArray()
-        );
+        $syncData = $activities->pluck('id')->mapWithKeys(fn($id, $index) => [$id => ['position' => $index]])->toArray();
+        $this->activities()->sync($syncData);
     }
 
     public function generateActivitiesFromTemplates(array $templates, int $count = 10): void
     {
         $activities = Activity::generateBatchFromTemplates($templates, $this->owner_id, $count);
         
-        $this->activities()->syncWithPivotValues(
-            collect($activities)->pluck('id'),
-            collect($activities)->mapWithKeys(fn($activity, $index) => [$activity->id => ['position' => $index]])->toArray()
-        );
+        $syncData = collect($activities)->pluck('id')->mapWithKeys(fn($id, $index) => [$id => ['position' => $index]])->toArray();
+        $this->activities()->sync($syncData);
     }
 
     /* Validation and Business Logic */

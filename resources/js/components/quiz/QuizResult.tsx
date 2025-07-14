@@ -1,8 +1,9 @@
-import { Link } from '@inertiajs/react'
 import confetti from 'canvas-confetti'
 import { motion } from 'framer-motion'
 import { Award, BookOpen, Home, RotateCcw, Star, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { ChalkTextureFilter, MathFloatingElements, ChalkDust, NavigationButton, colorThemes, ModuleTheme } from '@/theme'
+import { Module } from '@/models'
 
 type Level = 'excellent' | 'good' | 'average' | 'needsImprovement'
 
@@ -53,7 +54,7 @@ const FEEDBACK_MESSAGES = {
   ],
 }
 
-// Simplified progress bar component
+// Progress bar component for score percentage
 const ProgressBar = ({ percentage, colors }: { percentage: number; colors: string[] }) => {
   return (
     <div className="w-full space-y-2">
@@ -61,29 +62,16 @@ const ProgressBar = ({ percentage, colors }: { percentage: number; colors: strin
         <span className="text-sm font-medium text-white/80">Progresso</span>
         <span className="text-sm font-bold text-white">{percentage.toFixed(0)}%</span>
       </div>
-      <div className="relative h-7 w-full overmodule-hidden rounded-full bg-white/20">
+      <div className="relative h-3 w-full rounded-full bg-white/20">
         <motion.div
-          className="absolute h-full rounded-full border border-white/30"
+          className="absolute h-full rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 1, ease: 'easeOut' }}
           style={{
             background: `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`,
-            boxShadow: 'inset 0px 2px 4px rgba(255, 255, 255, 0.2)',
           }}
-        >
-          {/* Shine effect */}
-          <motion.div
-            className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{
-              repeat: Infinity,
-              duration: 1.5,
-              ease: 'easeInOut',
-              repeatDelay: 0.5,
-            }}
-          />
-        </motion.div>
+        />
       </div>
     </div>
   )
@@ -259,9 +247,10 @@ interface QuizResultProps {
   score: number
   totalActivities: number
   startGameAgain: () => void
+  module?: Module
 }
 
-export default function QuizResult({ roomId, score, totalActivities, startGameAgain }: QuizResultProps) {
+export default function QuizResult({ roomId, score, totalActivities, startGameAgain, module }: QuizResultProps) {
   // Calculate score percentage
   const percentageScore = useMemo(() => {
     const validScore = Math.max(0, Math.min(score, totalActivities))
@@ -276,8 +265,35 @@ export default function QuizResult({ roomId, score, totalActivities, startGameAg
     return 'needsImprovement'
   }, [percentageScore])
 
+  // Get module theme for consistent styling
+  const moduleTheme: ModuleTheme = module?.name
+    ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
+    : colorThemes[0]
+
   // Get theme for current performance level
-  const theme = THEMES[performanceLevel]
+  const performanceTheme = useMemo(() => {
+    switch (performanceLevel) {
+      case 'excellent':
+      case 'good':
+        return {
+          accent: 'text-white',
+   
+          icon: '#4ade80',
+        }
+      case 'average':
+        return {
+          accent: 'text-emerald-300',
+          progress: ['#4ade80', '#10b981'],
+          icon: '#4ade80',
+        }
+      default:
+        return {
+          accent: 'text-gray-300',
+          progress: ['#9ca3af', '#6b7280'],
+          icon: '#9ca3af',
+        }
+    }
+  }, [performanceLevel, moduleTheme])
 
   // Get random feedback message
   const feedbackMessage = useMemo(() => {
@@ -324,95 +340,165 @@ export default function QuizResult({ roomId, score, totalActivities, startGameAg
   }
 
   return (
-    <div className={`fixed inset-0 ${theme.background} z-50 flex flex-col items-center justify-center overmodule-hidden`}>
-      {/* Background elements */}
-      <BackgroundElements />
+    <div className="min-h-screen relative font-nunito fixed inset-0 z-50">
+      {/* Background matching quiz-game */}
+      <div
+        className="absolute inset-0"
+        style={{
+          borderColor: "#8B4513",
+          background: "linear-gradient(135deg, #0e6245 0%, #0d7a56 50%, #0e6245 100%)",
+          boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <ChalkTextureFilter />
 
-      {/* Performance decorations */}
-      <PerformanceDecorations level={performanceLevel} />
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            filter: "url(#chalkTexture)",
+            background: "linear-gradient(to right, #ffffff 0%, transparent 50%, #ffffff 100%)",
+          }}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            boxShadow: "inset 0 0 100px rgba(0, 0, 0, 0.4)",
+          }}
+        />
+
+        <MathFloatingElements />
+        <ChalkDust />
+      </div>
 
       {/* Main content container */}
       <motion.div
-        className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-6 py-8"
+        className="relative z-10 min-h-screen w-full px-4 overflow-scroll flex items-center justify-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Title with animated underline */}
-        <motion.div className="relative mb-8 text-center">
-          <motion.h1
-            className="text-4xl font-bold text-white drop-shadow-lg"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Quiz Concluído!
-          </motion.h1>
-          <motion.div
-            className={`mx-auto mt-3 h-1 rounded-full ${theme.accent}`}
-            initial={{ width: 0 }}
-            animate={{ width: '12rem' }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          />
-        </motion.div>
-
-        {/* Result icon */}
-        <ResultIcon level={performanceLevel} iconColor={theme.icon} />
-
-        {/* Feedback message */}
-        <motion.h2
-          className={`mb-8 text-center text-2xl font-semibold ${theme.accent} drop-shadow-lg`}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          {feedbackMessage}
-        </motion.h2>
-
-        {/* Score card */}
-        <motion.div
-          className={`mb-10 w-full max-w-2xl rounded-xl border border-white/20 ${theme.card} px-8 py-6 shadow-lg backdrop-blur-lg`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <div className="flex flex-col items-center">
-            <p className="mb-4 text-xl font-medium text-white">Sua Pontuação:</p>
-            <div className="mb-6 flex items-center justify-center gap-3">
-              <ScoreCounter
-                score={score}
-                onComplete={() => {
-                  launchConfetti()
+        <div className="max-w-4xl w-full px-6 py-8">
+          {/* Module info header */}
+          {module && (
+            <motion.div
+              className="flex items-center justify-center mb-8"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div
+                className="px-6 py-3 rounded-2xl shadow-lg flex items-center gap-3"
+                style={{
+                  background: moduleTheme.buttonGradient,
+                  boxShadow: `0 3px 0 ${moduleTheme.buttonShadow}, 0 4px 8px rgba(0, 0, 0, 0.2)`,
+                  border: "2px solid rgba(255,255,255,0.5)",
                 }}
-              />
-              <span className="text-4xl font-medium text-white/80">/</span>
-              <span className="text-4xl font-medium text-white/80">{totalActivities}</span>
-            </div>
-
-            {/* Progress bar */}
-            <ProgressBar percentage={percentageScore} colors={theme.progress} />
-          </div>
-        </motion.div>
-
-        {/* Action buttons */}
-        <motion.div
-          className="grid w-full max-w-2xl grid-cols-1 items-start gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <motion.div whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }}>
-            <Link href={route('quiz.index', roomId)} className="block h-full">
-              <button className={`h-14 w-full rounded-xl border border-white/20 ${theme.button} font-semibold text-white shadow-md`}>
-                <div className="flex items-center justify-center gap-2">
-                  <Home className="h-5 w-5" />
-                  <span>Voltar à Sala</span>
+              >
+                <div className="text-white">
+                  <moduleTheme.icon size={24} strokeWidth={3}  />
                 </div>
-              </button>
-            </Link>
+                <span className="text-white font-bold text-xl">{moduleTheme.name}</span>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Title */}
+          <motion.div className="text-center mb-8">
+            <motion.h1
+              className="text-5xl md:text-6xl font-bold text-white drop-shadow-lg"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              Parabéns!
+            </motion.h1>
+            <motion.p
+              className="text-2xl text-white/90 mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Quiz Concluído
+            </motion.p>
           </motion.div>
-        </motion.div>
+
+          {/* Result icon */}
+          <ResultIcon level={performanceLevel} iconColor={performanceTheme.icon} />
+
+          {/* Feedback message */}
+          <motion.h2
+            className={`mb-8 text-center text-2xl font-semibold ${performanceTheme.accent} drop-shadow-lg`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {feedbackMessage}
+          </motion.h2>
+
+          {/* Score card */}
+          <motion.div
+            className={`mb-10 w-full max-w-2xl rounded-2xl border border-white/20  px-8 py-8 shadow-xl backdrop-blur-lg mx-auto`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.5 }}
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <div className="flex flex-col items-center">
+              <p className="mb-4 text-2xl font-medium text-white">Sua Pontuação</p>
+              <div className="mb-6 flex items-center justify-center gap-4">
+                <ScoreCounter
+                  score={score}
+                  onComplete={() => {
+                    launchConfetti()
+                  }}
+                />
+                <span className="text-5xl font-medium text-white/80">de</span>
+                <span className="text-5xl font-medium text-white/80">{totalActivities}</span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-full max-w-xs">
+                <ProgressBar 
+                  percentage={score / totalActivities * 100} 
+                  colors={moduleTheme.baseColor} 
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Action buttons */}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.6 }}
+          >
+            <div className="w-full sm:w-auto">
+              <NavigationButton
+                text="Voltar à Sala"
+                onClick={() => {
+                  window.location.href = route('quiz.index', roomId)
+                }}
+                moduleTheme={moduleTheme}
+              />
+            </div>
+            
+            <div className="w-full sm:w-auto">
+              <NavigationButton
+                text="Tentar Novamente"
+                onClick={startGameAgain}
+                moduleTheme={moduleTheme}
+              />
+            </div>
+          </motion.div>
+        </div>
       </motion.div>
+      <PerformanceDecorations level={performanceLevel} />
     </div>
   )
 }

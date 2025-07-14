@@ -3,6 +3,7 @@ import { OptionButton } from "@/components/quiz/OptionButton"
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState, useEffect } from 'react'
 import '../../../css/quiz.css'
+import { Activity } from '@/models'
 
 
 interface QuizGameProps {
@@ -11,10 +12,15 @@ interface QuizGameProps {
   mistakes: number
   progress: string
   activity: Activity
+  totalActivitiesCount: number
   selectedAnswer: string | null
+  isAnswered: boolean
+  isCorrect: boolean | null
   onSelectAnswer: (answer: string) => void
-  handleNextActivity?: () => void
+  onNextQuestion: () => void
   currentQuestionIndex: number
+  isLastQuestion: boolean
+  withoutFeedback?: boolean
 }
 
 export default function QuizGame({ 
@@ -25,6 +31,7 @@ export default function QuizGame({
   onSelectAnswer, 
   onNextQuestion,
   hits,
+  totalActivitiesCount,
   mistakes,
   progress,
   module,
@@ -32,8 +39,8 @@ export default function QuizGame({
   isLastQuestion,
   withoutFeedback = false 
 }: QuizGameProps) {
-  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false)
-  const { question, options, correct } = activity.content
+  console.warn("activity", activity, totalActivitiesCount)
+  const { question, options, correct_answer_id } = activity.content
 
   const moduleTheme: ModuleTheme = module?.name
     ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
@@ -50,16 +57,8 @@ export default function QuizGame({
   }
 
   const handleNextQuestion = () => {
-    setIsFeedbackVisible(false)
     onNextQuestion?.()
   }
-
-  // Show feedback when answer is selected
-  useEffect(() => {
-    if (selectedAnswer !== null) {
-      setIsFeedbackVisible(true)
-    }
-  }, [selectedAnswer])
 
   const shuffledOptions = useMemo(() => {
     const shuffled = [...options]
@@ -70,12 +69,12 @@ export default function QuizGame({
       ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
     
-    const correctIndex = shuffled.indexOf(correct)
+    const correctIndex = shuffled.indexOf(options[correct_answer_id])
     return { answers: shuffled, correctIndex }
-  }, [options, correct])
+  }, [options, correct_answer_id])
 
 
-  const isAnswerButtonDisabled = selectedAnswer === null || isAnswered
+  const isAnswerButtonDisabled = selectedAnswer === null && !isAnswered
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
@@ -108,7 +107,7 @@ export default function QuizGame({
         <MathFloatingElements />
         <ChalkDust />
 
-        <ProgressBar current={currentQuestionIndex + 1} total={module.stats?.total} moduleTheme={moduleTheme} />
+        <ProgressBar current={currentQuestionIndex + 1} total={totalActivitiesCount} moduleTheme={moduleTheme} />
       </div>
 
       {/* Feedback mode selector */}
@@ -124,19 +123,16 @@ export default function QuizGame({
         </select>
       </div>
 
-      {/* Main content */}
       <div className="relative z-10 min-h-screen w-full px-4 overflow-scroll">
         <div className="flex flex-col h-screen pb-12">
-          {/* Header */}
           <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
-            {/* Tipo de operação no canto direito */}
             <motion.div
               className="flex items-center gap-2"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <ScoreIndicator score={score} />
+              <ScoreIndicator score={hits} />
               <div
                 className="px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
                 style={{
@@ -151,7 +147,6 @@ export default function QuizGame({
             </motion.div>
           </div>
 
-          {/* Question */}
           <div className="flex-1 flex items-center justify-center md:px-8 md:mt-4">
             <motion.div
               className="w-full max-w-4xl rounded-2xl p-6 md:p-8 text-center shadow-xl relative"
@@ -167,17 +162,16 @@ export default function QuizGame({
             >
               <ProgressBadge
                 current={currentQuestionIndex + 1}
-                total={module.stats?.total}
+                total={totalActivitiesCount}
                 moduleTheme={moduleTheme}
               />
 
-              <p className="text-2xl md:text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
+              <p className="text-2xl md:text-3xl whitespace-pre-line text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
                 {question}
               </p>
             </motion.div>
           </div>
 
-          {/* Options Container */}
           <div className="md:px-8 mb-8 md:mb-28 md:mt-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -189,10 +183,10 @@ export default function QuizGame({
                         text: option,
                       }}
                       index={index}
-                      selected={selectedOption === option}
+                      selected={selectedAnswer === option}
                       isCorrectAnswer={shuffledOptions.correctIndex === index}
-                      answered={answered}
-                      onClick={handleOptionSelect}
+                      answered={isAnswered}
+                      onClick={() => handleOptionSelect(option)}
                       moduleTheme={moduleTheme}
                       withoutFeedback={withoutFeedback}
                     />
@@ -205,9 +199,9 @@ export default function QuizGame({
           <div className="md:mb-28 justify-center items-center flex ">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className='w-full md:w-1/2 max-w-xl'>
               <NavigationButton
-                text="Responder"
-                onClick={() => handleNextQuestion()}
-                disabled={isAnswerButtonDisabled}
+                text={isAnswered ? (isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta') : 'Responder'}
+                onClick={isAnswered ? handleNextQuestion : () => {}}
+                disabled={!isAnswered && selectedAnswer === null}
                 moduleTheme={moduleTheme}
               />
             </motion.div>
@@ -215,9 +209,8 @@ export default function QuizGame({
         </div>
       </div>
 
-      {/* Answer feedback */}
       <AnimatePresence>
-        {isFeedbackVisible && (
+        {isAnswered && (
           <AnswerFeedback
             correct={isCorrect}
             onContinue={handleNextQuestion}

@@ -69,7 +69,8 @@ export const quizMachine = setup({
               target: 'answered',
               actions: assign(({ context, event }) => {
                 const currentActivity = context.module.activities[context.currentActivityIndex]
-                const isCorrect = currentActivity.correct === event.answer
+                const correctAnswer = currentActivity.content.options[currentActivity.content.correct_answer_id]
+                const isCorrect = correctAnswer === event.answer
                 return {
                   selectedAnswer: event.answer,
                   isCorrectAnswer: isCorrect,

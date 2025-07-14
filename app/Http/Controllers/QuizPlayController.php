@@ -148,13 +148,7 @@ class QuizPlayController extends Controller
 
         $activities = $module->activities()
         ->orderBy('module_activity.position')
-        ->get()
-        ->map(fn ($act) => [
-            'id'       => $act->id,
-            'question' => $act->content['question'],
-            'options'  => $act->content['options'],
-            'correct'  => $act->content['correct_answer'],
-        ]);
+        ->get();
 
         return inertia('quiz/show', [
             'room'   => $room->only('id', 'name'),

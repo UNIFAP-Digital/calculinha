@@ -65,6 +65,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
           activity={gameModule.activities[currentActivityIndex]}
+          totalActivitiesCount={gameModule.activities.length}
           selectedAnswer={selectedAnswer}
           isCorrectAnswer={isCorrectAnswer}
           onSelectAnswer={handleAnswerSelect}

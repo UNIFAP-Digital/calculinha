@@ -2,9 +2,11 @@ import { Operation } from '@/models/operation'
 
 export interface Activity {
   id: number
-  question: string
-  options: string[]
-  correct: string
+  content: {
+    question: string
+    options: string[]
+    correct_answer_id: number
+  }
   type: string
   operation: Operation
   created_at: string
