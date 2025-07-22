@@ -1,50 +1,43 @@
 import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo, useState, useEffect } from 'react'
 import '../../../css/quiz.css'
-import { Activity } from '@/models'
-
+import { Module } from '@/models'
+import { StateFrom } from 'xstate'
+import quizMachine from '@/machines/quizMachine'
 
 interface QuizGameProps {
+  state: StateFrom<typeof quizMachine>
+  send: (event: any) => void
   module: Module
-  hits: number
-  mistakes: number
-  progress: string
-  activity: Activity
-  totalActivitiesCount: number
-  selectedAnswer: string | null
-  isAnswered: boolean
-  isCorrect: boolean | null
-  onSelectAnswer: (answer: string) => void
-  onNextQuestion: () => void
-  currentQuestionIndex: number
-  isLastQuestion: boolean
-  withoutFeedback?: boolean
+  room: any
 }
 
-export default function QuizGame({ 
-  activity, 
-  isAnswered, 
-  isCorrect, 
-  selectedAnswer, 
-  onSelectAnswer, 
-  onNextQuestion,
-  hits,
-  totalActivitiesCount,
-  mistakes,
-  progress,
-  module,
-  currentQuestionIndex,
-  isLastQuestion,
-  withoutFeedback = false 
-}: QuizGameProps) {
-  console.warn("activity", activity, totalActivitiesCount)
-  const { question, options, correct_answer_id } = activity.content
+export default function QuizGame({ state, send, module, room }: QuizGameProps) {
+  const {
+    currentActivityIndex,
+    selectedAnswer,
+    isCorrectAnswer,
+    hits,
+    mistakes,
+    totalActivities,
+    feedbackMode,
+    shuffledOptions,
+    correctIndices,
+  } = state.context
 
-  const moduleTheme: ModuleTheme = module?.name
-    ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
-    : colorThemes[0];
+  const currentActivity = module.activities?.[currentActivityIndex]
+  const withoutFeedback = feedbackMode === 'none'
+
+  if (!currentActivity) return null
+
+  const { question } = currentActivity.content
+  const options = shuffledOptions[currentActivityIndex] || []
+  const correctIndex = correctIndices[currentActivityIndex] || 0
+
+  const moduleTheme: ModuleTheme = module.name
+    ? colorThemes.find((theme) => theme.name.toLowerCase() === module.name.toLowerCase()) || colorThemes[0]
+    : colorThemes[0]
 
   const typeColor = questionTypeColors[moduleTheme.name] || {
     gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
@@ -52,29 +45,14 @@ export default function QuizGame({
   }
 
   const handleOptionSelect = (answer: string) => {
-    if (isAnswered) return
-    onSelectAnswer(answer)
-  }
-
-  const handleNextQuestion = () => {
-    onNextQuestion?.()
-  }
-
-  const shuffledOptions = useMemo(() => {
-    const shuffled = [...options]
-    
-    // Fisher-Yates shuffle
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    if (state.matches('playing.answering')) {
+      send({ type: 'select_answer', answer })
     }
-    
-    const correctIndex = shuffled.indexOf(options[correct_answer_id])
-    return { answers: shuffled, correctIndex }
-  }, [options, correct_answer_id])
+  }
 
 
-  const isAnswerButtonDisabled = selectedAnswer === null && !isAnswered
+  const isAnswered = state.matches('playing.answered')
+  const isLastQuestion = currentActivityIndex === totalActivities - 1
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
@@ -107,21 +85,9 @@ export default function QuizGame({
         <MathFloatingElements />
         <ChalkDust />
 
-        <ProgressBar current={currentQuestionIndex + 1} total={totalActivitiesCount} moduleTheme={moduleTheme} />
+        <ProgressBar current={currentActivityIndex + 1} total={totalActivities} moduleTheme={moduleTheme} />
       </div>
 
-      {/* Feedback mode selector */}
-      <div className="fixed top-4 left-4 z-30 bg-white rounded-lg shadow-md p-2 flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-700">Modo:</span>
-        <select
-          className="p-1 rounded border text-sm"
-          value={withoutFeedback ? "without" : "with"}
-          onChange={(e) => setWithoutFeedback(e.target.value === "without")}
-        >
-          <option value="with">Com Feedback</option>
-          <option value="without">Sem Feedback</option>
-        </select>
-      </div>
 
       <div className="relative z-10 min-h-screen w-full px-4 overflow-scroll">
         <div className="flex flex-col h-screen pb-12">
@@ -157,12 +123,12 @@ export default function QuizGame({
               }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              key={activity.id}
+              key={currentActivity.id}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <ProgressBadge
-                current={currentQuestionIndex + 1}
-                total={totalActivitiesCount}
+                current={currentActivityIndex + 1}
+                total={totalActivities}
                 moduleTheme={moduleTheme}
               />
 
@@ -175,7 +141,7 @@ export default function QuizGame({
           <div className="md:px-8 mb-8 md:mb-28 md:mt-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {shuffledOptions.answers.map((option, index) => (
+                {options.map((option, index) => (
                   <div key={index} className="h-14 md:h-full">
                     <OptionButton
                       option={{
@@ -184,7 +150,7 @@ export default function QuizGame({
                       }}
                       index={index}
                       selected={selectedAnswer === option}
-                      isCorrectAnswer={shuffledOptions.correctIndex === index}
+                      isCorrectAnswer={correctIndex === index}
                       answered={isAnswered}
                       onClick={() => handleOptionSelect(option)}
                       moduleTheme={moduleTheme}
@@ -200,8 +166,14 @@ export default function QuizGame({
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className='w-full md:w-1/2 max-w-xl'>
               <NavigationButton
                 text={isAnswered ? (isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta') : 'Responder'}
-                onClick={isAnswered ? handleNextQuestion : () => {}}
-                disabled={!isAnswered && selectedAnswer === null}
+                onClick={() => {
+                  if (isAnswered) {
+                    handleNextQuestion()
+                  } else if (selectedAnswer) {
+                    send({ type: 'submit_answer' })
+                  }
+                }}
+                disabled={!selectedAnswer}
                 moduleTheme={moduleTheme}
               />
             </motion.div>
@@ -212,7 +184,7 @@ export default function QuizGame({
       <AnimatePresence>
         {isAnswered && (
           <AnswerFeedback
-            correct={isCorrect}
+            correct={isCorrectAnswer}
             onContinue={handleNextQuestion}
             moduleTheme={moduleTheme}
             withoutFeedback={withoutFeedback}

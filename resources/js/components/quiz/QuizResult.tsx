@@ -244,18 +244,33 @@ const ResultIcon = ({ level, iconColor }: { level: Level; iconColor: string }) =
 
 interface QuizResultProps {
   roomId: number
-  score: number
-  totalActivities: number
-  startGameAgain: () => void
+  results: {
+    totalQuestions: number
+    correctAnswers: number
+    incorrectAnswers: number
+    totalTime: number
+    scorePercentage: number
+    answers: Array<{
+      activityId: number
+      selectedAnswer: string
+      isCorrect: boolean
+      timeSpent: number
+    }>
+  }
+  quizType?: string
+  onRestart: () => void
+  onExit: () => void
   module?: Module
 }
 
-export default function QuizResult({ roomId, score, totalActivities, startGameAgain, module }: QuizResultProps) {
+export default function QuizResult({ roomId, results, quizType, onRestart, onExit, module }: QuizResultProps) {
   // Calculate score percentage
   const percentageScore = useMemo(() => {
-    const validScore = Math.max(0, Math.min(score, totalActivities))
-    return totalActivities > 0 ? (validScore / totalActivities) * 100 : 0
-  }, [score, totalActivities])
+    return results.scorePercentage
+  }, [results])
+
+  const score = results.correctAnswers
+  const totalActivities = results.totalQuestions
 
   // Determine performance level
   const performanceLevel = useMemo(() => {

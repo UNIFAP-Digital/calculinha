@@ -19,4 +19,7 @@ export interface Module {
   order?: number
   activities?: Activity[]
   stats?: Stats
+  no_feedback?: boolean
+  icon?: string | null
+  color?: string | null
 }

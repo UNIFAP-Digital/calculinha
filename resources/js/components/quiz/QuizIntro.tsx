@@ -186,9 +186,11 @@ function LargeDialogueBalloon({
 interface MathModuleIntroProps {
   module: Module;
   onStart: () => void;
+  quizType?: string;
+  feedbackMode?: string;
 }
 
-export default function MathModuleIntro({ module, onStart }: MathModuleIntroProps) {
+export default function MathModuleIntro({ module, onStart, quizType, feedbackMode }: MathModuleIntroProps) {
   const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0)
   const moduleName = module.name || "Adição";
   const moduleTheme = colorThemes.find((theme) => theme.name === moduleName) || colorThemes[0]

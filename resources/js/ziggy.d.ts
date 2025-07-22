@@ -29,10 +29,14 @@ declare module 'ziggy-js' {
     "debugbar.queries.explain": [],
     "sanctum.csrf-cookie": [],
     "welcome": [],
-    "login.student": [],
-    "login.teacher": [],
-    "register.student": [],
-    "register.teacher": [],
+    "student.login": [],
+    "teacher.login": [],
+    "student.login.post": [],
+    "teacher.login.post": [],
+    "student.register": [],
+    "teacher.register": [],
+    "student.register.post": [],
+    "teacher.register.post": [],
     "student.dashboard": [],
     "student.join": [],
     "student.room": [
@@ -44,6 +48,18 @@ declare module 'ziggy-js' {
     ],
     "student.answer": [],
     "student.retry": [
+        {
+            "name": "module",
+            "required": true,
+            "binding": "id"
+        }
+    ],
+    "quiz.show": [
+        {
+            "name": "room",
+            "required": true,
+            "binding": "id"
+        },
         {
             "name": "module",
             "required": true,

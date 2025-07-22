@@ -10,9 +10,6 @@ export interface Activity {
   type: string
   operation: Operation
   created_at: string
-  updated_at?: string
-
-  answer?: string
-  is_correct?: boolean
-  order?: number
+  updated_at: string
+  owner_id: number
 }
