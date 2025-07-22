@@ -35,7 +35,7 @@ class ModuleSeeder extends Seeder
                 'description' => 'Aprenda adição de forma simples com objetos e números!',
                 'operation'   => Operation::Addition,
                 'type'        => Type::Exercise,
-                'owner_id'    => $professor->id, // Atribui o módulo ao professor
+                'owner_id'    => null,
             ])
             ->activities()
             ->attach($activities);
@@ -49,7 +49,7 @@ class ModuleSeeder extends Seeder
             'description' => 'Aprenda subtração de forma simples com objetos e números!',
             'operation'   => Operation::Subtraction,
             'type'        => Type::Exercise,
-            'owner_id'    => $professor->id, // Atribui o módulo ao professor
+            'owner_id'    => null,
         ])
             ->activities()
             ->attach($activities);
@@ -63,7 +63,7 @@ class ModuleSeeder extends Seeder
             'description' => 'Aprenda multiplicação de forma simples com objetos e números!',
             'operation'   => Operation::Multiplication,
             'type'        => Type::Exercise,
-            'owner_id'    => $professor->id, // Atribui o módulo ao professor
+            'owner_id'    => null,
         ])
             ->activities()
             ->attach($activities);
@@ -77,7 +77,7 @@ class ModuleSeeder extends Seeder
             'description' => 'Aprenda divisão de forma simples com objetos e números!',
             'operation'   => Operation::Division,
             'type'        => Type::Exercise,
-            'owner_id'    => $professor->id, // Atribui o módulo ao professor
+            'owner_id'    => null,
         ])
             ->activities()
             ->attach($activities);
