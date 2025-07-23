@@ -48,6 +48,7 @@ class RoomController extends Controller
                 ->latest()
                 ->with(['modules.activities' => fn($q) => $q->orderBy('position')])
                 ->limit(5),
+            'modules' => fn($query) => $query->withCount('activities')->orderBy('position'),
             'modules.activities' => fn($query) => $query->orderBy('position')
         ]);
 

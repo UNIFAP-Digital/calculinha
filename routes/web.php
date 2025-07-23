@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/adicionar', 'create')->name('create');
+            Route::get('/{module}', 'show')->name('show');
             Route::get('/{module}/editar', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
             Route::put('/{module}', 'update')->name('update');
