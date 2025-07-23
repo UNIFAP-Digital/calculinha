@@ -10,12 +10,17 @@ type ParticipantsTabProps = {
 export default function ParticipantsTab({ room }: ParticipantsTabProps) {
   const students = useMemo(() => room.students ?? [], [room.students])
 
+  console.log('Students in ParticipantsTab:', students)
   if (students.length === 0) return <EmptyParticipantsCard room={room} />
 
   return (
     <div className="space-y-2">
       {students.map((participant, index) => (
-        <StudentRanking key={participant.id} student={participant} order={index + 1} />
+        <StudentRanking
+          key={participant.id}
+          student={participant}
+          order={index + 1}
+        />
       ))}
     </div>
   )

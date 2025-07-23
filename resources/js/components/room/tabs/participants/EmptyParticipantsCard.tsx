@@ -13,7 +13,7 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
   }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(route('invite')).then()
+    navigator.clipboard.writeText(window.location.origin).then()
     alert('Link copiado!')
   }
 
@@ -30,7 +30,7 @@ export default function EmptyParticipantsCard({ room }: EmptyParticipantsCardPro
           <div className="text-foreground text-sm">
             1. Acesse:
             <div className="mt-1 flex items-center gap-2">
-              <span className="bg-background flex-1 rounded px-3 py-2 font-mono text-sm break-all">{route('invite')}</span>
+              <span className="bg-background flex-1 rounded px-3 py-2 font-mono text-sm break-all">{window.location.origin}</span>
               <Button variant="outline" size="icon" className="shrink-0" onClick={handleCopyLink}>
                 <Copy className="h-4 w-4" />
               </Button>

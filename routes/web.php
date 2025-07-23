@@ -71,8 +71,9 @@ Route::middleware('auth')->group(function () {
         ->name('rooms.')
         ->prefix('/salas')
         ->group(function () {
+            Route::get('/', 'index')->name('index');
             Route::get('/adicionar', 'create')->name('create');
-            Route::get('/{room?}', 'index')->name('index');
+            Route::get('/{room}', 'show')->name('show');
             Route::get('/{room}/editar', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
             Route::put('/{room}', 'update')->name('update');
