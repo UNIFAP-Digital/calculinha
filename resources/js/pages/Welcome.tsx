@@ -1,6 +1,7 @@
 import ProfileCard from '@/components/ui/ProfileCard'
 import { Head } from '@inertiajs/react'
 import '../../css/welcome.css'
+import { Image } from 'lucide-react'
 
 export default function Welcome() {
   return (
@@ -12,10 +13,10 @@ export default function Welcome() {
       <div className="flex min-h-screen flex-col items-center justify-between bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 text-gray-800 lg:p-6 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950">
         <header className="animate-fade-in w-full max-w-6xl text-center pt-2 sm:pt-4 lg:pt-6">
           <div className="mb-1 flex justify-center sm:mb-2 lg:mb-3">
-            <img 
-              src="/favicon.svg" 
-              alt="Logo Calculinha" 
-              className="h-10 w-10 transition-transform duration-700 hover:rotate-6 sm:h-14 sm:w-14 lg:h-16 lg:w-16" 
+            <img
+              src="/favicon.svg"
+              alt="Logo Calculinha"
+              className="h-10 w-10 transition-transform duration-700 hover:rotate-6 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
             />
           </div>
           <h1 className="font-fredoka mb-0.5 text-2xl font-bold text-blue-600 sm:mb-1 sm:text-3xl lg:mb-2 lg:text-4xl dark:text-blue-400">
@@ -31,27 +32,14 @@ export default function Welcome() {
           {/* Card "Sou Aluno" */}
           <ProfileCard
             title="Sou Aluno"
-            description="Vamos jogar e aprender matemática juntos! Embarque nessa aventura divertida com a Calcuinha."
+            description="Vamos jogar e aprender matemática juntos! Embarque nessa aventura divertida com a Calculinha."
             buttonText="Começar a Jogar!"
             buttonHref={route('student.login')}
             buttonVariant="primary"
             containerClassName="animate-fade-in"
           >
-            {/* Image/Icon area for Aluno */}
-            <div className="overmodule-hidden h-32 bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500 sm:h-36 lg:h-40">
-              {/* Elementos matemáticos decorativos */}
-              <div className="absolute h-full w-full">
-                <span className="animate-wiggle absolute top-3 left-3 text-xl font-bold text-white/30 sm:top-4 sm:left-4 sm:text-2xl lg:top-6 lg:left-6 lg:text-3xl">+</span>
-                <span className="animate-float absolute top-6 right-6 text-2xl font-bold text-white/30 sm:top-8 sm:right-8 sm:text-3xl lg:top-10 lg:right-10 lg:text-4xl">÷</span>
-                <span className="animate-bounce-slow absolute bottom-2 left-10 text-2xl font-bold text-white/30 sm:bottom-3 sm:left-12 sm:text-3xl lg:bottom-4 lg:left-16 lg:text-4xl">×</span>
-                <span className="absolute right-4 bottom-4 animate-pulse text-xl font-bold text-white/30 sm:right-6 sm:bottom-6 sm:text-2xl lg:right-8 lg:bottom-8 lg:text-3xl">−</span>
-                <span className="animate-ping-slow absolute top-10 left-16 text-xl font-bold text-white/30 sm:top-12 sm:left-20 sm:text-2xl lg:top-14 lg:left-24 lg:text-3xl">=</span>
-              </div>
-              <div className="relative flex h-full w-full items-center justify-center mix-blend-luminosity">
-                <div className="relative h-full w-full items-center justify-center  bg-white">
-                  <img src="/material/math_elements.png" alt="Elementos matemáticos" className="object-cover h-full w-full object-center" />
-                </div>
-              </div>
+            <div className="h-32 sm:h-54 lg:h-60">
+              <img className="absolute h-full w-full object-cover object-center opacity-90" src="/welcomeStudent.png" alt="Fundo de quebra-cabeça" />
             </div>
           </ProfileCard>
 
@@ -66,14 +54,19 @@ export default function Welcome() {
           >
             {/* Image/Icon area for Professor */}
             <div className="overmodule-hidden h-32 bg-gradient-to-r from-blue-700 to-indigo-800 sm:h-36 lg:h-40">
-              <div className="absolute h-full w-full">
-                {/* Grade sutil de fundo */}
-                <div className="bg-grid-pattern absolute inset-0 opacity-10"></div>
-              </div>
-              <div className="relative flex h-full w-full items-center justify-center">
-                {/* Ícone de professor - chapéu de formatura */}
-                <div className="relative h-16 w-16 rounded-lg transition-transform duration-300 hover:-translate-y-1 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-                  <img src="material/toga.png" className="h-10 w-10 object-contain sm:h-12 sm:w-12 lg:h-16 lg:w-16" alt="Chapéu de formatura (toga)" />
+              <div className="overmodule-hidden h-32 bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500 sm:h-36 lg:h-40 opacity-50 relative">
+                {/* Elementos matemáticos decorativos */}
+                <div className="absolute h-full w-full  opacity-20">
+                  <span className="animate-wiggle absolute top-3 left-3 text-xl font-bold text-white/30 sm:top-4 sm:left-4 sm:text-2xl lg:top-6 lg:left-6 lg:text-3xl">+</span>
+                  <span className="animate-float absolute top-6 right-6 text-2xl font-bold text-white/30 sm:top-8 sm:right-8 sm:text-3xl lg:top-10 lg:right-10 lg:text-4xl">÷</span>
+                  <span className="animate-bounce-slow absolute bottom-2 left-10 text-2xl font-bold text-white/30 sm:bottom-3 sm:left-12 sm:text-3xl lg:bottom-4 lg:left-16 lg:text-4xl">×</span>
+                  <span className="absolute right-4 bottom-4 animate-pulse text-xl font-bold text-white/30 sm:right-6 sm:bottom-6 sm:text-2xl lg:right-8 lg:bottom-8 lg:text-3xl">−</span>
+                  <span className="animate-ping-slow absolute top-10 left-16 text-xl font-bold text-white/30 sm:top-12 sm:left-20 sm:text-2xl lg:top-14 lg:left-24 lg:text-3xl">=</span>
+                </div>
+                <div className="relative flex h-full w-full items-center justify-center mix-blend-luminosity  opacity-50">
+                  <div className="relative h-full w-full items-center justify-center  bg-white">
+                    <img src="/material/math_elements.png" alt="Elementos matemáticos" className="object-cover h-full w-full object-center" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -82,7 +75,7 @@ export default function Welcome() {
 
         {/* Rodapé da página */}
         <footer className="font-nunito animate-fade-in-delay-long text-center text-xs text-gray-500 py-2 sm:py-3 lg:py-4 dark:text-gray-400">
-          <p>© {new Date().getFullYear()} Calcuinha - Transformando o aprendizado de matemática em diversão</p>
+          <p>© {new Date().getFullYear()} Calculinha - Transformando o aprendizado de matemática em diversão</p>
           <a href="https://www.flaticon.com/free-stickers/homework" title="homework stickers" className="text-[10px] sm:text-xs">
             Imagem do site Stickers - Flaticon
           </a>
