@@ -22,23 +22,44 @@ use Throwable;
 
 class RoomController extends Controller
 {
-    public function index(?Room $room = null)
+    public function index()
     {
-        if ($room) Gate::authorize('view', [Room::class, $room]);
+        $rooms = Auth::user()
+            ->rooms()
+            ->withCount('students')
+            ->orderBy('name')
+            ->get();
 
-        $room?->load([
-            'students.attempts.modules.activities',
-            'modules.activities'
+        return Inertia::render('room/Index', [
+            'rooms' => RoomResource::collection($rooms),
+            'currentRoom' => null
+        ]);
+    }
+
+    public function show(Room $room)
+    {
+        Gate::authorize('view', [$room]);
+
+        $room->load([
+            'students' => fn($query) => $query
+                ->withCount(['attempts as completed_attempts' => fn($q) => $q->where('is_completed', true)])
+                ->orderBy('name'),
+            'students.attempts' => fn($query) => $query
+                ->latest()
+                ->with(['modules.activities' => fn($q) => $q->orderBy('position')])
+                ->limit(5),
+            'modules.activities' => fn($query) => $query->orderBy('position')
         ]);
 
         $rooms = Auth::user()
             ->rooms()
             ->withCount('students')
-            ->orderBy('name');
+            ->orderBy('name')
+            ->get();
 
-        return Inertia::render('room/Index', [
-            'rooms' => fn() => RoomResource::collection($rooms->get()),
-            'room'  => $room ? RoomResource::make($room) : null
+        return Inertia::render('room/Show', [
+            'rooms' => RoomResource::collection($rooms),
+            'currentRoom' => RoomResource::make($room)
         ]);
     }
 

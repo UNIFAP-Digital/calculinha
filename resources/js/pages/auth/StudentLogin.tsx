@@ -21,8 +21,8 @@ export default function StudentLoginPage() {
     password: string
     remember: boolean
   }>({
-    username: '',
-    password: '',
+    username: 'aluno_123',
+    password: '123',
     remember: false,
   })
 
