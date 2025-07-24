@@ -34,7 +34,7 @@ Route::middleware('auth:student')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{module}', 'show')->name('show');
         });
-    });      
+});
 
 Route::middleware('auth')->group(function () {
     Route::controller(ActivityController::class)

@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (Auth::guard('web')->check()) {
-                return '/salas'; // Professor logado vai para a página de salas
+                return route('rooms.index'); // Professor logado vai para a página de salas
             }
 
             return '/'; // Fallback, caso necessário
