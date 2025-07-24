@@ -22,7 +22,7 @@ class AttemptModule extends Model
         'description',
         'icon',
         'color',
-        'order',
+        'position',
         'status',
         'operation',
         'type'
@@ -43,7 +43,7 @@ class AttemptModule extends Model
     {
         return $this
             ->hasMany(AttemptModuleActivity::class)
-            ->orderBy('order');
+            ->orderBy('position');
     }
 
 
@@ -56,8 +56,8 @@ class AttemptModule extends Model
     {
         // Find the next module by order, ensuring robustness
         return $this->attempt->modules()
-                  ->where('order', '>', $this->order)
-                  ->orderBy('order', 'asc')
+                  ->where('position', '>', $this->position)
+                  ->orderBy('position', 'asc')
                   ->first();
     }
 

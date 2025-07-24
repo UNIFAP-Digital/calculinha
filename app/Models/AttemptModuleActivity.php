@@ -19,7 +19,7 @@ class AttemptModuleActivity extends Model
         'type',
         'answer',
         'is_correct',
-        'order',
+        'position',
         'content'
     ];
 

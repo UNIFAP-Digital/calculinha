@@ -1,18 +1,12 @@
-import { QuizOptionCard } from '@/components/quiz/QuizOptionCard'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Activity, Module } from '@/models'
 import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
 import { AnimatePresence, motion } from 'framer-motion'
-import { FlameIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import '../../../css/quiz.css'
 
 interface QuizGameProps {
   module: Module
-  hits: number
-  mistakes: number
   progress: string
   activity: Activity
   selectedAnswer: string | null
@@ -21,65 +15,8 @@ interface QuizGameProps {
   currentQuestionIndex: number
 }
 
-export function QuizGame({ mistakes, hits, progress, activity, selectedAnswer, onSelectAnswer }: QuizGameProps) {
-  const { question, wrong_answers, correct_answer } = activity
 
-  const shuffledAnswers = useMemo(() => {
-    const allAnswers = [...wrong_answers]
-    const correctAnswer = correct_answer
-    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1))
-    allAnswers.splice(randomIndex, 0, correctAnswer)
-    return { answers: allAnswers, correctIndex: randomIndex }
-  }, [wrong_answers, correct_answer])
-
-  return (
-    <div id="grid" className="bg-blue-500 px-2 text-white sm:px-4">
-      <header className="flex items-center justify-between">
-        <div className="flex gap-4">
-          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
-            <FlameIcon fill="red" stroke="orange" />
-            <span>{mistakes}</span>
-          </span>
-          <span className="inline-flex rounded-md bg-blue-600 px-2 py-2 font-bold">
-            <span>✅ {hits}</span>
-          </span>
-        </div>
-      </header>
-      <div className="grid">
-        {/* Question Text */}
-        <div className="flex min-h-0 items-center justify-center py-10">
-          <Card className="overmodule-visible relative mx-auto max-h-full max-w-3xl min-w-[75%] text-center">
-            <Badge className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-slate-700 px-3 py-1 tracking-widest">{progress}</Badge>
-            <CardContent className="p-4 px-8 text-slate-950">
-              <h1 className="text-center text-xl whitespace-pre-line sm:text-3xl">{question}</h1>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="resizable-grid grid gap-4" key={activity.id}>
-          <AnimatePresence>
-            {/* Options Cards */}
-            {shuffledAnswers.answers.map((answer, index) => (
-              <QuizOptionCard
-                option={{
-                  id: `option-${index}`,
-                  text: answer,
-                }}
-                index={index}
-                correctIndex={shuffledAnswers.correctIndex}
-                selectedAnswer={selectedAnswer !== null ? shuffledAnswers.answers.indexOf(selectedAnswer) : null}
-                key={`option-${index}`}
-                onClick={() => onSelectAnswer(answer)}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function MathGame({ firstQuestionAnimation = false, selectedAnswer, onSelectAnswer, activity, hits, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
+export default function MathGame({ selectedAnswer, onSelectAnswer, activity, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
   const [selectedOption, setSelectedOption] = useState("")
   const [score, setScore] = useState(0)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -87,6 +24,15 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   const [withoutFeedback, setWithoutFeedback] = useState(false)
   const { question, wrong_answers, correct_answer } = activity
 
+  const { type } = module;
+
+  useEffect(() => {
+    if (type !== 'exercise') {
+      setWithoutFeedback(true);
+    } else {
+      setWithoutFeedback(false);
+    }
+  }, [type]);
 
   const answered = selectedAnswer !== null
 
@@ -107,7 +53,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   }
 
   const handleAnswer = (index = selectedOption) => {
-    if (answered) return
+    if (answered || !selectedOption) return
 
     const isCorrect = activity.correct_answer === selectedOption
     setIsCorrect(isCorrect)
@@ -131,7 +77,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
   }, [wrong_answers, correct_answer])
 
 
-  const isAnswerButtonDisabled = selectedOption === null || answered
+  const isAnswerButtonDisabled = !selectedOption || answered
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
@@ -166,20 +112,6 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
 
         <ProgressBar current={currentQuestionIndex + 1} total={module.stats?.total} moduleTheme={moduleTheme} />
       </div>
-
-      {/* Feedback mode selector */}
-      <div className="fixed top-4 left-4 z-30 bg-white rounded-lg shadow-md p-2 flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-700">Modo:</span>
-        <select
-          className="p-1 rounded border text-sm"
-          value={withoutFeedback ? "without" : "with"}
-          onChange={(e) => setWithoutFeedback(e.target.value === "without")}
-        >
-          <option value="with">Com Feedback</option>
-          <option value="without">Sem Feedback</option>
-        </select>
-      </div>
-
       {/* Main content */}
       <div className="relative z-10 min-h-screen w-full px-4 overflow-scroll">
         <div className="flex flex-col h-screen pb-12">
@@ -227,7 +159,7 @@ export default function MathGame({ firstQuestionAnimation = false, selectedAnswe
                 moduleTheme={moduleTheme}
               />
 
-              <p className="text-2xl md:text-3xl whitespace-pre-line md:text-4xl text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
+              <p className="text-2xl md:text-3xl whitespace-pre-line text-gray-800 font-bold leading-relaxed tracking-wide md:mt-4">
                 {question}
               </p>
             </motion.div>

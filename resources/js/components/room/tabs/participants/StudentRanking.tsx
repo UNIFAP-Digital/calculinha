@@ -6,10 +6,10 @@ import { useState } from 'react'
 
 type StudentRankingProps = {
   student: Student
-  order: number
+  position: number
 }
 
-export function StudentRanking({ student, order }: StudentRankingProps) {
+export function StudentRanking({ student, position: order }: StudentRankingProps) {
   const [openModules, setOpenModules] = useState<{ [key: string]: boolean }>({})
 
   const toggleModule = (moduleId: string) => {

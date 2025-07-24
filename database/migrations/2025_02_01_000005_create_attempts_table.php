@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['completed', 'current', 'passed', 'failed']); 
             $table->integer('number');
-
+             $table->boolean('is_completed')->default(false);
             $table->timestamps();
         });
 
@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('module_id')->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            $table->integer('order');
+            $table->integer('position');
             $table->enum('status', ['completed', 'current', 'locked', 'passed', 'failed']); // Adicionado os novos status
             
             // CORREÇÃO: Adicionada a coluna 'score' que estava a causar o erro.
@@ -37,7 +37,7 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            $table->unique(['attempt_id', 'order']);
+            $table->unique(['attempt_id', 'position']);
         });
 
         Schema::create('attempt_module_activities', function (Blueprint $table) {
@@ -49,12 +49,12 @@ return new class extends Migration {
             $table->string('type');
             $table->string('answer')->nullable();
             $table->boolean('is_correct')->nullable();
-            $table->integer('order');
+            $table->integer('position');
             $table->jsonb('content');
 
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['attempt_module_id', 'order']);
+            $table->unique(['attempt_module_id', 'position']);
         });
     }
 

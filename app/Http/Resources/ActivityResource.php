@@ -29,9 +29,9 @@ class ActivityResource extends JsonResource
         if ($this->resource instanceof AttemptModuleActivity) {
             $data['answer'] = $this->answer;
             $data['is_correct'] = $this->is_correct;
-            $data['order'] = $this->order;
+            $data['position'] = $this->position;
         } else {
-            $data['order'] = $this->whenPivotLoaded(new ModuleActivity, fn() => $this->pivot->position);
+            $data['position'] = $this->whenPivotLoaded(new ModuleActivity, fn() => $this->pivot->position);
         }
 
         return $data;

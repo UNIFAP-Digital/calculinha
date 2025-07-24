@@ -19,7 +19,7 @@ export default function ParticipantsTab({ room }: ParticipantsTabProps) {
         <StudentRanking
           key={participant.id}
           student={participant}
-          order={index + 1}
+          position={index + 1}
         />
       ))}
     </div>
