@@ -1,9 +1,23 @@
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/utils/ui'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@headlessui/react'
 import { Link, router, usePage } from '@inertiajs/react'
-import { GroupIcon, LogOutIcon, MenuIcon, Monitor, Moon, ShapesIcon, Sun, WorkflowIcon, XIcon } from 'lucide-react'
+import {
+  GroupIcon,
+  LogOutIcon,
+  MenuIcon,
+  Monitor,
+  Moon,
+  ShapesIcon,
+  Sun,
+  WorkflowIcon,
+  XIcon,
+} from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { PropsWithChildren } from 'react'
 
@@ -38,7 +52,11 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
               <div className="flex">
                 {/* APPLICATION LOGO */}
                 <div className="flex shrink-0 items-center">
-                  <img alt="Calculinha" src="/material/icon.png" className="block h-8 w-auto" />
+                  <img
+                    alt="Calculinha"
+                    src="/material/icon.png"
+                    className="block h-8 w-auto"
+                  />
                 </div>
 
                 {/* MENU */}
@@ -47,9 +65,13 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                     <Link
                       key={item.name}
                       href={route(item.route)}
-                      aria-current={route().current() == item.route ? 'page' : undefined}
+                      aria-current={
+                        route().current() === item.route ? 'page' : undefined
+                      }
                       className={cn(
-                        route().current() == item.route ? 'border-primary text-primary' : 'text-muted-foreground hover:text-primary border-transparent',
+                        route().current() === item.route
+                          ? 'border-primary text-primary'
+                          : 'text-muted-foreground hover:text-primary border-transparent',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                       )}
                     >
@@ -62,13 +84,32 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <div className="me-3 flex flex-col items-end">
-                  <span className="text-foreground text-base font-medium">{user.name}</span>
-                  <span className="text-muted-foreground text-sm font-medium">{user.email}</span>
+                  <span className="text-foreground text-base font-medium">
+                    {user.name}
+                  </span>
+                  <span className="text-muted-foreground text-sm font-medium">
+                    {user.email}
+                  </span>
                 </div>
 
-                <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="mr-2">
-                  {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
-                  <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleToggleTheme}
+                  className="mr-2"
+                >
+                  {theme === 'light' ? (
+                    <Sun className="h-5 w-5" />
+                  ) : theme === 'dark' ? (
+                    <Moon className="h-5 w-5" />
+                  ) : (
+                    <Monitor className="h-5 w-5" />
+                  )}
+                  <span className="sr-only">
+                    {theme === 'system'
+                      ? 'Usar tema do sistema'
+                      : `Usar tema ${theme}`}
+                  </span>
                 </Button>
 
                 <Button variant="ghost" size="icon" onClick={handleLogout}>
@@ -79,15 +120,41 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
 
               {/* MOBILE MENU BUTTON */}
               <div className="flex items-center sm:hidden">
-                <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="mr-2">
-                  {theme === 'light' ? <Sun className="h-5 w-5" /> : theme === 'dark' ? <Moon className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
-                  <span className="sr-only">{theme === 'system' ? 'Usar tema do sistema' : `Usar tema ${theme}`}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleToggleTheme}
+                  className="mr-2"
+                >
+                  {theme === 'light' ? (
+                    <Sun className="h-5 w-5" />
+                  ) : theme === 'dark' ? (
+                    <Moon className="h-5 w-5" />
+                  ) : (
+                    <Monitor className="h-5 w-5" />
+                  )}
+                  <span className="sr-only">
+                    {theme === 'system'
+                      ? 'Usar tema do sistema'
+                      : `Usar tema ${theme}`}
+                  </span>
                 </Button>
 
-                <DisclosureButton as={Button} variant="ghost" size="icon" className="group">
+                <DisclosureButton
+                  as={Button}
+                  variant="ghost"
+                  size="icon"
+                  className="group"
+                >
                   <span className="sr-only">Abrir menu principal</span>
-                  <MenuIcon aria-hidden="true" className="block group-data-open:hidden" />
-                  <XIcon aria-hidden="true" className="hidden group-data-open:block" />
+                  <MenuIcon
+                    aria-hidden="true"
+                    className="block group-data-open:hidden"
+                  />
+                  <XIcon
+                    aria-hidden="true"
+                    className="hidden group-data-open:block"
+                  />
                 </DisclosureButton>
               </div>
             </div>
@@ -101,9 +168,13 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                   key={item.name}
                   as={Link}
                   href={route(item.route)}
-                  aria-current={route().current() == item.route ? 'page' : undefined}
+                  aria-current={
+                    route().current() === item.route ? 'page' : undefined
+                  }
                   className={cn(
-                    route().current() == item.route ? 'border-primary bg-muted text-primary' : 'text-muted-foreground hover:text-primary border-transparent',
+                    route().current() === item.route
+                      ? 'border-primary bg-muted text-primary'
+                      : 'text-muted-foreground hover:text-primary border-transparent',
                     'block border-l-4 py-2 pr-4 pl-3 text-base font-medium',
                   )}
                 >
@@ -113,12 +184,19 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
             </div>
             <div className="border-t border-gray-200 pt-4 pb-3">
               <div className="px-4">
-                <div className="text-foreground text-base font-medium">{user.name}</div>
-                <div className="text-muted-foreground text-sm font-medium">{user.email}</div>
+                <div className="text-foreground text-base font-medium">
+                  {user.name}
+                </div>
+                <div className="text-muted-foreground text-sm font-medium">
+                  {user.email}
+                </div>
               </div>
 
               <div className="mt-3 space-y-1">
-                <DisclosureButton onClick={handleLogout} className="text-muted-foreground hover:text-primary block px-4 py-2 text-base font-medium">
+                <DisclosureButton
+                  onClick={handleLogout}
+                  className="text-muted-foreground hover:text-primary block px-4 py-2 text-base font-medium"
+                >
                   Sair
                 </DisclosureButton>
               </div>

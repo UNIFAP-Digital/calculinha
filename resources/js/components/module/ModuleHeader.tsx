@@ -1,5 +1,6 @@
 import { Module } from '@/models'
 import { getTheme } from '@/theme'
+import { HelpCircle } from 'lucide-react'
 
 interface ModuleHeaderProps {
   module: Module
@@ -8,7 +9,7 @@ interface ModuleHeaderProps {
 }
 
 export function ModuleHeader({ module, order, onClick }: ModuleHeaderProps) {
-  const OperationIcon = getTheme(module.operation!).icon
+  const OperationIcon = getTheme(module.operation || 'default')?.icon || HelpCircle
 
   return (
     <div
@@ -36,16 +37,7 @@ export function ModuleHeader({ module, order, onClick }: ModuleHeaderProps) {
       </div>
       <div className="self-center">
         <div className="bg-muted text-muted-foreground flex items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-          {module.activities_count
-            ? module.activities_count
-            : (module.activities?.length ?? 0)}{' '}
-          {(
-            module.activities_count
-              ? module.activities_count
-              : module.activities?.length === 1
-          )
-            ? 'atividade'
-            : 'atividades'}
+          {(module.activities_count ?? module.activities?.length ?? 0)} {((module.activities_count ?? module.activities?.length ?? 0) === 1 ? 'atividade' : 'atividades')}
         </div>
       </div>
     </div>

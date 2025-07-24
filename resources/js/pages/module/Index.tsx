@@ -25,6 +25,10 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
     router.visit(route('modules.edit', module.id))
   }
 
+  const handleSelect = (module: Module) => {
+    router.visit(route('modules.show', module.id))
+  }
+
   const handleDelete = (module: Module) => {
     router.delete(route('modules.destroy', module.id), {
       preserveScroll: true,
@@ -59,7 +63,13 @@ export default function ModuleManagementPage({ modules }: ModuleManagementPagePr
         }>
         <div className="space-y-4">
           {filteredModules.map((module) => (
-            <ModuleCard key={module.id} module={module} onDelete={handleDelete} onEdit={handleEdit}>
+            <ModuleCard 
+              key={module.id} 
+              module={module} 
+              onClick={() => handleSelect(module)}
+              onDelete={handleDelete} 
+              onEdit={handleEdit}
+            >
               <ModuleActivityList module={module} activities={module.activities ?? []} />
             </ModuleCard>
           ))}
