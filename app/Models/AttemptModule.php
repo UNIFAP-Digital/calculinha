@@ -25,7 +25,8 @@ class AttemptModule extends Model
         'position',
         'status',
         'operation',
-        'type'
+        'type',
+        'score'
     ];
 
     protected $casts = [

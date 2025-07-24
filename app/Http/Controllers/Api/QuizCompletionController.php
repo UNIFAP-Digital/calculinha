@@ -23,7 +23,8 @@ class QuizCompletionController extends Controller
      */
     public function store(Request $request)
     {
-        // ALTERAÇÃO 1: A validação agora espera o ID da cópia do módulo do aluno.
+        // ALTERAÇÃO 1: A validação agora espera apenas o ID da cópia do módulo do aluno.
+        // Score e total_activities são calculados no backend a partir dos dados salvos.
         $validated = $request->validate([
             'attempt_module_id' => 'required|integer|exists:attempt_modules,id',
             'score'             => 'required|integer|min:0',
@@ -34,9 +35,8 @@ class QuizCompletionController extends Controller
         $student = $request->user();
         $attemptModuleId = $validated['attempt_module_id'];
         $score = $validated['score'];
-        $totalActivities = $validated['total_activities'];
 
-        return DB::transaction(function () use ($student, $attemptModuleId, $score, $totalActivities) {
+        return DB::transaction(function () use ($student, $attemptModuleId, $score) {
             
             // ALTERAÇÃO 2: Encontra o módulo da tentativa diretamente pelo seu ID.
             $currentAttemptModule = AttemptModule::findOrFail($attemptModuleId);
@@ -45,9 +45,41 @@ class QuizCompletionController extends Controller
             if ($currentAttemptModule->attempt->student_id !== $student->id) {
                 abort(403, 'Acesso não autorizado a este módulo.');
             }
-            
+
+            // ALTERAÇÃO 4: Calcula o score a partir das atividades salvas
+            $currentAttemptModule->load(['activities']);
+            $totalActivities = $currentAttemptModule->activities->count();
+            $correctAnswers = $currentAttemptModule->activities->where('is_correct', true)->count();
+
+            // Log detalhado para debug
+            \Log::info("Quiz completion calculated", [
+                'attempt_module_id' => $attemptModuleId,
+                'student_id' => $student->id,
+                'total_activities' => $totalActivities,
+                'correct_answers' => $correctAnswers,
+                'score' => $score,
+                'activities_detail' => $currentAttemptModule->activities->map(function($activity) {
+                    return [
+                        'id' => $activity->id,
+                        'answer' => $activity->answer,
+                        'is_correct' => $activity->is_correct,
+                        'position' => $activity->position
+                    ];
+                })
+            ]);
+
+            // ALTERAÇÃO 5: Marca o módulo como concluído com o score calculado do backend
             $currentAttemptModule->status = Status::Passed;
+            $currentAttemptModule->score = $score;
             $currentAttemptModule->save();
+
+            \Log::info("Quiz completion saved", [
+                'attempt_module_id' => $attemptModuleId,
+                'student_id' => $student->id,
+                'score_saved' => $currentAttemptModule->score,
+                'status' => $currentAttemptModule->status->value
+            ]);
+
 
             // A lógica para avançar a trilha permanece a mesma.
             $attempt = $currentAttemptModule->attempt;
@@ -62,8 +94,10 @@ class QuizCompletionController extends Controller
                 $attempt->status = Status::Completed;
                 $attempt->save();
             }
-
+            
             return response()->json(['message' => 'Quiz concluído e progresso atualizado!'], 200);
+
         });
     }
+
 }
