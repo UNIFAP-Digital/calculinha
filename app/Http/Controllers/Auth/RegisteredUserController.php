@@ -38,6 +38,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('salas', absolute: false));
+        return redirect(route('rooms.index', absolute: false));
     }
 }

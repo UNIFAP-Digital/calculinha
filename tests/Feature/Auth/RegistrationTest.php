@@ -15,5 +15,5 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('salas', absolute: false));
+    $response->assertRedirect(route('rooms.index', absolute: false));
 });
