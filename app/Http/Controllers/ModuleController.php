@@ -25,13 +25,34 @@ class ModuleController extends Controller
         $modules = $request
             ->user()
             ->modules()
-            ->with('activities')
+            ->withCount('activities')
             ->orderBy('name')
             ->orderByDesc('created_at')
             ->get();
 
         return Inertia::render('module/Index', [
             'modules' => ModuleResource::collection($modules)
+        ]);
+    }
+
+    public function show(Module $module)
+    {
+        Gate::authorize('view', [$module]);
+
+        $module->load([
+            'activities' => fn($query) => $query->orderBy('position'),
+            'activities.owner'
+        ]);
+
+        $modules = Auth::user()
+            ->modules()
+            ->withCount('activities')
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('module/Show', [
+            'modules' => ModuleResource::collection($modules),
+            'currentModule' => ModuleResource::make($module)
         ]);
     }
 

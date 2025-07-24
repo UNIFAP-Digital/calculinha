@@ -26,7 +26,7 @@ class Attempt extends Model
     {
         return $this
             ->hasMany(AttemptModule::class)
-            ->orderBy('order');
+            ->orderBy('position');
     }
 
     public function student(): BelongsTo
@@ -69,7 +69,7 @@ class Attempt extends Model
                 'operation'   => $module->operation,
                 'name'        => $module->name,
                 'description' => $module->description,
-                'order'       => $module->pivot->position,
+                'position'       => $module->pivot->position,
                 'status'      => $module->pivot->position === ($roomModules->first()->pivot->position ?? null)
                                     ? Status::Current
                                     : Status::Locked,
@@ -84,7 +84,7 @@ class Attempt extends Model
                     'type'              => $activity->type,
                     'operation'         => $activity->operation,
                     'content'           => $activity->content,
-                    'order'             => $idx + 1,
+                    'position'             => $idx + 1,
                     'answer'            => null,
                     'is_correct'        => null,
                 ]);
@@ -124,8 +124,8 @@ class Attempt extends Model
 
         // Find the next module in sequence using the order field
         $nextModule = $this->modules()
-                            ->where('order', '>', $currentModule->order)
-                            ->orderBy('order', 'asc')
+                            ->where('position', '>', $currentModule->position)
+                            ->orderBy('position', 'asc')
                             ->first();
 
         if ($nextModule) {

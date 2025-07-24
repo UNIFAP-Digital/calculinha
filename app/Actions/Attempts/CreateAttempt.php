@@ -58,7 +58,7 @@ class CreateAttempt
                     // Convert enum to its string value explicitly
                     'operation'   => $activity?->operation?->value, // Access enum's value property
                     'content'     => $activity?->content,
-                    'order'       => $idx + 1
+                    'position'       => $idx + 1
                 ])
                 ->filter() // <-- IMPORTANT: Remove any null/false results from map
                 ->values() // <-- Optional: Reset keys to 0, 1, 2...
@@ -72,7 +72,7 @@ class CreateAttempt
                 // Consider snapshotting 'icon', 'color' if needed historically
                 // 'icon'        => $module->icon,
                 // 'color'       => $module->color,
-                'order'       => $module->pivot->position, // Use position from room_module pivot for sequence
+                'position'       => $module->pivot->position, // Use position from room_module pivot for sequence
                 'status'      => $module->pivot->position === $firstModulePosition
                                     ? Status::Current      // Unlock only the first module
                                     : Status::Locked,
@@ -101,7 +101,7 @@ class CreateAttempt
                         }
                         
                         $attemptModuleActivity->content = $activityData['content'];
-                        $attemptModuleActivity->order = $activityData['order'];
+                        $attemptModuleActivity->position = $activityData['position'];
                         
                         // Save using the relationship to ensure proper association
                         $attemptModule->activities()->save($attemptModuleActivity);

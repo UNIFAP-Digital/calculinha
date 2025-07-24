@@ -12,5 +12,5 @@ export interface Activity {
 
   answer?: string
   is_correct?: boolean
-  order?: number
+  position?: number
 }
