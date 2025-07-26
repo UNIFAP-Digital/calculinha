@@ -17,8 +17,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('description')->nullable();
             $table->enum('operation', ['addition', 'subtraction', 'multiplication','division', 'all',]);
-            $table->enum('type', ['pre-test', 'exercise','post-test']);
-
+            $table->enum('type', ['pre-test', 'exercise', 'post-test'])->default('exercise');
             $table->timestamps();
             $table->softDeletes();
         });
