@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Enums\Operation;
 use App\Enums\Type;
-use App\Models\Activity;
 use App\Models\Room;
 use App\Models\RoomModule;
 use App\Models\User; // Assuming User model is accessible for creating modules
@@ -50,7 +49,7 @@ class RoomSeeder extends Seeder
                 'operation'   => Operation::All,
             ]);
 
-            $randomActivityIds = Activity::query()->inRandomOrder()->limit(12)->pluck('id');
+            $randomActivityIds = $user->activities()->inRandomOrder()->limit(12)->pluck('id');
 
             $pivotDataForTests = collect($randomActivityIds)->mapWithKeys(fn($id, $idx) => [
                 $id => ['position' => RoomModule::$initialPosition + ($idx * RoomModule::$positionGap)]
@@ -66,10 +65,20 @@ class RoomSeeder extends Seeder
             $pivotData[$preTestModule->id] = ['position' => $position];
             $position += $gap;
 
-            $coreModuleIds = [1, 2, 3, 4];
+            // Get the user's core modules (copied from defaults) by operation
+            $coreModules = $user->modules()
+                ->whereIn('operation', [
+                    Operation::Addition,
+                    Operation::Subtraction,
+                    Operation::Multiplication,
+                    Operation::Division
+                ])
+                ->where('type', Type::Exercise)
+                ->orderBy('operation')
+                ->get();
 
-            foreach ($coreModuleIds as $moduleId) {
-                $pivotData[$moduleId] = ['position' => $position];
+            foreach ($coreModules as $module) {
+                $pivotData[$module->id] = ['position' => $position];
                 $position += $gap;
             }
 

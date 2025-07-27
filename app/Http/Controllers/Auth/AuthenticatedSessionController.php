@@ -21,6 +21,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         return redirect()->intended(route('rooms.index', absolute: false));
     }
@@ -33,6 +34,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Força uma atualização completa da página para garantir que o novo token CSRF seja carregado
+        return redirect('/')
+            ->withHeaders([
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ]);
     }
 }

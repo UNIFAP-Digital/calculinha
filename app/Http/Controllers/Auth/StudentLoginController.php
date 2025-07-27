@@ -40,6 +40,9 @@ class StudentLoginController extends Controller
 
         $request->session()->regenerate();
 
+        // Força a regeneração do token CSRF para evitar conflitos entre guards
+        $request->session()->regenerateToken();
+
         return redirect()->intended(route('student.dashboard'));
     }
 
@@ -53,6 +56,12 @@ class StudentLoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Força uma atualização completa da página para garantir que o novo token CSRF seja carregado
+        return redirect('/')
+            ->withHeaders([
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ]);
     }
 }

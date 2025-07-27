@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Type;
 use App\Http\Requests\ModuleRequest;
 use App\Http\Resources\ActivityResource;
 use App\Http\Resources\ModuleResource;
@@ -28,6 +29,7 @@ class ModuleController extends Controller
             ->withCount('activities')
             ->orderBy('name')
             ->orderByDesc('created_at')
+            ->where('type', Type::Exercise)
             ->get();
 
         return Inertia::render('module/Index', [

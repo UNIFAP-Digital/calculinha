@@ -1,4 +1,3 @@
-
 export const httpGet = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, {
     method: 'GET',
@@ -18,7 +17,6 @@ export const httpGet = async <T>(url: string): Promise<T> => {
 
 /**
  * Realiza um pedido POST para a URL especificada com proteção CSRF.
- * Esta versão é robusta contra trocas de sessão.
  */
 export const httpPost = async <T, R = undefined>(
   url: string,
@@ -33,7 +31,7 @@ export const httpPost = async <T, R = undefined>(
     'X-Requested-With': 'XMLHttpRequest',
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    'X-CSRF-TOKEN': csrfToken, 
+    'X-CSRF-TOKEN': csrfToken,
   }
 
   const response = await fetch(url, {

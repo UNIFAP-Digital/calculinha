@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityController;
-use App\Http\Controllers\Api\AttemptController;
 use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\QuizCompletionController;
 use Illuminate\Support\Facades\Route;

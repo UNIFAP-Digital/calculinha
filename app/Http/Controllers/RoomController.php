@@ -67,15 +67,11 @@ class RoomController extends Controller
     public function create(): Response
     {
 
-        $userModules = Auth::user()->modules()->withoutAllOperation(); 
+        $userModules = Auth::user()->modules()->withoutAllOperation()->get();
 
-        $publicModules = Module::whereNull('owner_id')
-            ->withoutAllOperation(); 
-
-        $modules = $userModules->union($publicModules)->get();
 
         return Inertia::render('room/Form', [
-            'modules' => ModuleResource::collection($modules)
+            'modules' => ModuleResource::collection($userModules)
         ]);
     }
 

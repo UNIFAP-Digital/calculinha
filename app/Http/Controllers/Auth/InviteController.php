@@ -44,7 +44,8 @@ class InviteController extends Controller
         Auth::guard('student')->login($student);
 
         $request->session()->regenerate();
-        
+        $request->session()->regenerateToken();
+
         return redirect()->route('quiz.index', ['room' => $room->id]);
     }
 }
