@@ -9,19 +9,20 @@ export interface ModuleCardProps {
   order?: number
   isFirst?: boolean
   isLast?: boolean
+  isSelected?: boolean
   onClick?: () => void
   onEdit?: (module: Module) => void
   onDelete?: (module: Module) => void
   onMove?: (module: Module, direction: 'up' | 'down') => void
-  children: ReactNode
+  children?: ReactNode
 }
 
-export default function ModuleCard({ module, order, isFirst, isLast, onClick, onEdit, onDelete, onMove, children }: ModuleCardProps) {
+export default function ModuleCard({ module, order, isFirst, isLast, isSelected, onClick, onEdit, onDelete, onMove, children }: ModuleCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <>
-      <div className="bg-card rounded-lg border cursor-pointer" onClick={onClick}>
+      <div className={`bg-card rounded-lg border cursor-pointer transition-all ${isSelected ? 'border-primary shadow-sm' : 'hover:border-gray-300'}`} onClick={onClick}>
         <div className="flex items-center justify-between">
           <ModuleHeader module={module} order={order} onClick={() => setIsExpanded(!isExpanded)} />
 
@@ -39,7 +40,7 @@ export default function ModuleCard({ module, order, isFirst, isLast, onClick, on
           </div>
         </div>
 
-        {isExpanded && (
+        {isExpanded && children && (
           <>
             <Separator />
             {children}

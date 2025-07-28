@@ -11,7 +11,7 @@ interface ModuleActivitiesListProps {
 }
 
 export default function ModuleActivitiesList({ module }: ModuleActivitiesListProps) {
-  const [items, setItems] = useState<Activity[]>(module.activities!)
+  const [items, setItems] = useState<Activity[]>(module.activities || [])
 
   const handleReposition = (activity: Activity, newPosition: number) => {
     router.post(
@@ -41,6 +41,11 @@ export default function ModuleActivitiesList({ module }: ModuleActivitiesListPro
       // Chama o backend para reposicionar o item
       handleReposition(movedActivity, movedItemIndex)
     }
+  }
+
+  // Se não há atividades, não renderiza nada
+  if (!items || items.length === 0) {
+    return null
   }
 
   return (

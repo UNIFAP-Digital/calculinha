@@ -12,13 +12,23 @@ type ModuleShowProps = {
 }
 
 export default function ModuleShowPage({ modules, currentModule }: ModuleShowProps) {
+  // Verificar se os dados foram carregados corretamente
+  if (!currentModule || !modules) {
+    return <div>Carregando...</div>
+  }
+
   const handleCreate = () => {
     router.visit(route('modules.create'))
   }
 
   const handleSelect = (module: Module) => {
     if (module.id === currentModule.id) return
-    router.visit(route('modules.show', module.id))
+    // Forçar uma requisição HTTP normal em vez de AJAX para evitar problemas de carregamento
+    router.visit(route('modules.show', module.id), {
+      method: 'get',
+      preserveState: false,
+      preserveScroll: false,
+    })
   }
 
   const handleEdit = (module: Module) => {
@@ -42,20 +52,20 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
           {/* Sidebar de Módulos */}
           <div className="md:w-80">
             <div className="space-y-3">
-              <Button 
-                onClick={handleCreate} 
-                variant="outline" 
+              <Button
+                onClick={handleCreate}
+                variant="outline"
                 className="w-full justify-start"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Criar Nova Trilha
               </Button>
-              
-              {modules.map((module) => (
+
+              {modules && modules.length > 0 && modules.map((module) => (
                 <ModuleCard
                   key={module.id}
                   module={module}
-                  isSelected={currentModule.id === module.id}
+                  isSelected={currentModule?.id === module.id}
                   onClick={() => handleSelect(module)}
                 />
               ))}
@@ -75,7 +85,7 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
                   <Button variant="outline" onClick={() => handleEdit(currentModule)}>
                     Editar
                   </Button>
-                  <Button 
+                  <Button
                     variant="destructive"
                     onClick={() => handleDelete(currentModule)}
                   >
@@ -102,15 +112,15 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
                   </div>
                   <div>
                     <span className="font-medium">Atividades:</span>
-                    <span className="ml-2">{currentModule.activities?.length || 0}</span>
+                    <span className="ml-2">{currentModule?.activities?.length || 0}</span>
                   </div>
                 </div>
               </div>
 
               {/* Atividades */}
               <div className="bg-background rounded-lg p-6 shadow-xs">
-                <h2 className="text-lg font-semibold mb-4">Atividades ({currentModule.activities?.length || 0})</h2>
-                {currentModule.activities && currentModule.activities.length > 0 ? (
+                <h2 className="text-lg font-semibold mb-4">Atividades ({currentModule?.activities?.length || 0})</h2>
+                {currentModule?.activities && currentModule.activities.length > 0 ? (
                   <div className="space-y-2">
                     {currentModule.activities.map((activity, index) => (
                       <div key={activity.id} className="flex items-center justify-between rounded-lg border p-3">

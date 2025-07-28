@@ -79,6 +79,7 @@ export default function Welcome() {
           <a href="https://www.flaticon.com/free-stickers/homework" title="homework stickers" className="text-[10px] sm:text-xs">
             Imagem do site Stickers - Flaticon
           </a>
+          <p>3.0</p>
         </footer>
       </div>
     </>

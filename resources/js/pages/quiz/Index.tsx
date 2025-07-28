@@ -17,6 +17,7 @@ import {
   ClipboardCheck,
   Divide,
   LockIcon as LockClosed,
+  LogOut,
   LucideIcon,
   Minus,
   Plus,
@@ -41,11 +42,22 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
     router.visit(route('quiz.show', [room.id, moduleId]))
   }
 
+  function handleLogout() {
+    router.post(route('student.logout'))
+  }
+
   if (attempt.modules.length === 0) {
     return (
       <>
         <Head title="Jogar" />
         <div className="flex min-h-screen items-center justify-center p-8">
+          <button
+            onClick={handleLogout}
+            className="absolute top-4 right-4 flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Sair</span>
+          </button>
+
           <div className="text-center">
             <h1 className="mb-4 text-4xl font-extrabold text-[#4B4B4B]">
               Nenhuma operação disponível
@@ -64,19 +76,35 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
       <Head title="Jogar" />
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          <motion.header
-            className="mb-12 text-center"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}>
-            <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
-              Calculinha
-            </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
-              Complete cada módulo para desbloquear o próximo e avançar na sua
-              jornada de aprendizado.
-            </p>
-          </motion.header>
+          {/* Header com botão de logout */}
+          <div className="mb-12 flex items-center justify-between">
+            <motion.header
+              className="flex-1 text-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}>
+              <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
+                Calculinha
+              </h1>
+              <p className="mx-auto max-w-2xl text-xl text-gray-600">
+                Complete cada módulo para desbloquear o próximo e avançar na sua
+                jornada de aprendizado.
+              </p>
+            </motion.header>
+
+            {/* Botão de logout */}
+            <motion.button
+              onClick={handleLogout}
+              className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Sair</span>
+            </motion.button>
+          </div>
 
           <div className="mx-auto max-w-3xl">
             {attempt.modules.map((module, index) => (

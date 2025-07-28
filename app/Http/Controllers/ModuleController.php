@@ -41,11 +41,12 @@ class ModuleController extends Controller
     {
         Gate::authorize('view', [$module]);
 
+        // Carrega as atividades com eager loading otimizado
         $module->load([
-            'activities' => fn($query) => $query->orderBy('position'),
-            'activities.owner'
+            'activities' => fn($query) => $query->orderBy('position')
         ]);
 
+        // Carrega todos os módulos do usuário de uma vez
         $modules = Auth::user()
             ->modules()
             ->withCount('activities')
