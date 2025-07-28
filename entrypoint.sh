@@ -25,7 +25,7 @@ echo "PostgreSQL is up and running!"
 # Executa as migrações do Laravel.
 # Alterado: migrate:fresh para migrate. Não apagamos dados de produção.
 echo "Running Laravel migrations..."
-php artisan migrate --seed --force
+php artisan migrate:fresh --seed --force
 
 # Nota: Se você precisar de seeding em produção, use php artisan migrate --seed --force
 # Se o seeding for feito, certifique-se de que os seeders são seguros para produção.
