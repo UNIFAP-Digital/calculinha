@@ -1,7 +1,7 @@
 import ProfileCard from '@/components/ui/ProfileCard'
 import { Head } from '@inertiajs/react'
 import '../../css/welcome.css'
-import { Image } from 'lucide-react'
+import { AppLogo } from '@/components/ui/AppLogo'
 
 export default function Welcome() {
   return (
@@ -12,24 +12,15 @@ export default function Welcome() {
       </Head>
       <div className="flex min-h-screen flex-col items-center justify-between bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 text-gray-800 lg:p-6 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950">
         <header className="animate-fade-in w-full max-w-6xl text-center pt-2 sm:pt-4 lg:pt-6">
-          <div className="mb-1 flex justify-center sm:mb-2 lg:mb-3">
-            <img
-              src="/favicon.svg"
-              alt="Logo Calculinha"
-              className="h-10 w-10 transition-transform duration-700 hover:rotate-6 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
-            />
+          <div className="mb-2 flex justify-center sm:mb-3 lg:mb-4">
+            <AppLogo iconSize="lg" textSize="xl" />
           </div>
-          <h1 className="font-fredoka mb-0.5 text-2xl font-bold text-blue-600 sm:mb-1 sm:text-3xl lg:mb-2 lg:text-4xl dark:text-blue-400">
-            Calculinha
-          </h1>
           <p className="font-nunito text-base text-gray-600 sm:text-lg lg:text-xl dark:text-gray-300">
             Escolha seu perfil para continuar
           </p>
         </header>
 
-        {/* Container principal dos cards */}
         <div className="flex w-full max-w-5xl flex-col justify-center gap-4 py-2 sm:gap-6 md:flex-row md:gap-4 lg:gap-8 xl:gap-10">
-          {/* Card "Sou Aluno" */}
           <ProfileCard
             title="Sou Aluno"
             description="Vamos jogar e aprender matemática juntos! Embarque nessa aventura divertida com a Calculinha."
@@ -43,7 +34,6 @@ export default function Welcome() {
             </div>
           </ProfileCard>
 
-          {/* Card "Sou Professor" */}
           <ProfileCard
             title="Sou Professor"
             description="Acesse o painel de controle para gerenciar turmas, criar quizzes e acompanhar o progresso dos seus alunos."
@@ -52,10 +42,8 @@ export default function Welcome() {
             buttonVariant="secondary"
             containerClassName="animate-fade-in-delay"
           >
-            {/* Image/Icon area for Professor */}
             <div className="overmodule-hidden h-32 bg-gradient-to-r from-blue-700 to-indigo-800 sm:h-36 lg:h-40">
               <div className="overmodule-hidden h-32 bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500 sm:h-36 lg:h-40 opacity-50 relative">
-                {/* Elementos matemáticos decorativos */}
                 <div className="absolute h-full w-full  opacity-20">
                   <span className="animate-wiggle absolute top-3 left-3 text-xl font-bold text-white/30 sm:top-4 sm:left-4 sm:text-2xl lg:top-6 lg:left-6 lg:text-3xl">+</span>
                   <span className="animate-float absolute top-6 right-6 text-2xl font-bold text-white/30 sm:top-8 sm:right-8 sm:text-3xl lg:top-10 lg:right-10 lg:text-4xl">÷</span>
@@ -73,7 +61,6 @@ export default function Welcome() {
           </ProfileCard>
         </div>
 
-        {/* Rodapé da página */}
         <footer className="font-nunito animate-fade-in-delay-long text-center text-xs text-gray-500 py-2 sm:py-3 lg:py-4 dark:text-gray-400">
           <p>© {new Date().getFullYear()} Calculinha - Transformando o aprendizado de matemática em diversão</p>
           <a href="https://www.flaticon.com/free-stickers/homework" title="homework stickers" className="text-[10px] sm:text-xs">
@@ -85,3 +72,5 @@ export default function Welcome() {
     </>
   )
 }
+
+

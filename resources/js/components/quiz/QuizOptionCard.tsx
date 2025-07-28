@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useShakeAnimation } from '@/hooks/useShakeAnimation'
 import { cn } from '@/utils/ui'
 import confetti from 'canvas-confetti'
-import { motion } from 'motion/react'
+import motion from 'motion/react'
 import { SyntheticEvent } from 'react'
 
 const FEEDBACK_COLORS = {

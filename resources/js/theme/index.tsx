@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 
 import { Plus, Minus, X, Divide, ChevronRight, LucideIcon, ClipboardCheck, Award } from 'lucide-react'
-import { motion } from 'framer-motion'
+import motion from 'motion'
 import { DisplayModuleName } from '@/lib/constants'
 import { Operation } from '@/models'
 

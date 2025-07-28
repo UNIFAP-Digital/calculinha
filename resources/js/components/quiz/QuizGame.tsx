@@ -1,7 +1,7 @@
 import { Activity, Module } from '@/models'
 import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion'
 import { useEffect, useMemo, useState } from 'react'
 import '../../../css/quiz.css'
 

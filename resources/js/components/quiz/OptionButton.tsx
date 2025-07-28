@@ -15,14 +15,13 @@ interface OptionButtonProps {
 }
 
 import { useState, useRef, useEffect } from "react"
-import { motion, useAnimation } from "framer-motion"
+import { motion, useAnimation }  from "motion/react"
 
 function OptionButton2({ option, index, selected, correct, answered, onClick, moduleTheme, withoutFeedback }) {
   const [pressed, setIsPressed] = useState(false)
   const holdTimerRef = useRef(null)
   const controls = useAnimation()
 
-  // Determinar cores baseadas no estado
   let buttonGradient = "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)"
   let buttonBaseColor = "#d0d0d0"
   let textColor = "#333333"

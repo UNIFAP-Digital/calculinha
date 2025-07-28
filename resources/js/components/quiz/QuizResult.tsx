@@ -3,9 +3,10 @@
 import { colorThemes } from '@/theme'
 import { Character, characters } from '@/utils/characters'
 import { Link } from '@inertiajs/react'
-import { motion } from 'framer-motion'
+import motion from 'motion'
 import { Coins, Home, RotateCcw } from 'lucide-react'
 import { useMemo } from 'react'
+import { AppLogo } from '@/components/ui/AppLogo'
 
 // Mensagens sempre positivas e encorajadoras para crianças
 const FEEDBACK_MESSAGES = [
@@ -166,6 +167,10 @@ export default function QuizResult({
 
       {/* Main content - Fixed height layout */}
       <main className="relative z-10 flex h-full flex-col">
+        <div className="flex justify-center pt-4 pb-2">
+          <AppLogo iconSize="md" textSize="lg" variant="white" />
+        </div>
+        
         <div className="flex flex-1 flex-col items-center justify-center px-4 py-6">
           <div className="flex w-full max-w-lg flex-col items-center">
             {/* 1. Title */}
@@ -271,3 +276,5 @@ export default function QuizResult({
     </div>
   )
 }
+
+

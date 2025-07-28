@@ -1,3 +1,4 @@
+import { AppLogo } from '@/components/ui/AppLogo'
 import {
   Attempt,
   Module,
@@ -9,7 +10,7 @@ import {
 } from '@/models'
 import { isLightColor } from '@/utils/color'
 import { Head, router } from '@inertiajs/react'
-import { motion } from 'framer-motion'
+import motion from 'motion'
 import {
   ArrowRight,
   Award,
@@ -21,11 +22,11 @@ import {
   LucideIcon,
   Minus,
   Plus,
-  RotateCcw, Star, // NOVO: Ícone para "Tentar Novamente"
+  RotateCcw, Star, 
   X,
-  XCircle, // NOVO: Ícone alternativo para "Reprovado"
 } from 'lucide-react'
 import { useState } from 'react'
+
 
 type CardConfig = {
   name: string
@@ -83,9 +84,9 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}>
-              <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
-                Calculinha
-              </h1>
+              <div className="mb-4 flex justify-center">
+                <AppLogo iconSize="lg" textSize="xl" />
+              </div>
               <p className="mx-auto max-w-2xl text-xl text-gray-600">
                 Complete cada módulo para desbloquear o próximo e avançar na sua
                 jornada de aprendizado.
@@ -369,3 +370,4 @@ function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'curre
     </div>
   )
 }
+

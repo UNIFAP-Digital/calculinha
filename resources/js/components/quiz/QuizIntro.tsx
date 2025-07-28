@@ -4,7 +4,7 @@ import { ShinyButton } from '@/components/magicui/shiny-button'
 import { Module } from '@/models'
 import { colorThemes } from '@/theme'
 import { Character, characters, DialogueLine } from '@/utils/characters'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion'
 import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 
