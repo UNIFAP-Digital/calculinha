@@ -49,7 +49,6 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
       <Head title={`Trilha ${currentModule.name}`} />
       <Container>
         <div className="flex flex-col md:flex-row">
-          {/* Sidebar de Módulos */}
           <div className="md:w-80">
             <div className="space-y-3">
               <Button
@@ -72,10 +71,8 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
             </div>
           </div>
 
-          {/* Conteúdo Principal */}
           <div className="ms-0 mt-4 flex-1 md:ms-4 md:mt-0">
             <div className="space-y-6">
-              {/* Header */}
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-bold">{currentModule.name}</h1>
@@ -94,7 +91,6 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
                 </div>
               </div>
 
-              {/* Informações da Trilha */}
               <div className="bg-background rounded-lg p-6 shadow-xs">
                 <h2 className="text-lg font-semibold mb-4">Informações da Trilha</h2>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -117,7 +113,6 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
                 </div>
               </div>
 
-              {/* Atividades */}
               <div className="bg-background rounded-lg p-6 shadow-xs">
                 <h2 className="text-lg font-semibold mb-4">Atividades ({currentModule?.activities?.length || 0})</h2>
                 {currentModule?.activities && currentModule.activities.length > 0 ? (

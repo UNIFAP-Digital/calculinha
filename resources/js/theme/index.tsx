@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 
 import { Plus, Minus, X, Divide, ChevronRight, LucideIcon, ClipboardCheck, Award } from 'lucide-react'
-import motion from 'motion'
+import {motion} from "motion/react"
 import { DisplayModuleName } from '@/lib/constants'
 import { Operation } from '@/models'
 
@@ -172,7 +172,6 @@ export const FatIcon = ({ icon: Icon, color, size = 24, className = "" }) => (
     className={`relative flex items-center justify-center ${className}`}
     style={{ filter: "drop-shadow(0px 2px 3px rgba(0,0,0,0.2))" }}
   >
-    {/* Base shadow for 3D effect */}
     <div
       className="absolute rounded-full"
       style={{
@@ -185,7 +184,6 @@ export const FatIcon = ({ icon: Icon, color, size = 24, className = "" }) => (
       }}
     />
 
-    {/* Icon background */}
     <div
       className="absolute rounded-full"
       style={{
@@ -195,7 +193,6 @@ export const FatIcon = ({ icon: Icon, color, size = 24, className = "" }) => (
       }}
     />
 
-    {/* Icon itself */}
     <div className="relative z-10">
       <Icon size={size} strokeWidth={3} color="white" />
     </div>
@@ -219,7 +216,6 @@ export const FatPlayButton = ({ color, baseColor, onClick, text = "COMEÇAR!" })
       onClick={onClick}
       aria-label={text}
     >
-      {/* Button shadow/glow effect */}
       <div
         className={`absolute inset-0 rounded-full blur-xl transition-all duration-300 ${isHovered ? "opacity-70 scale-110" : "opacity-50 scale-100"}`}
         style={{
@@ -229,7 +225,6 @@ export const FatPlayButton = ({ color, baseColor, onClick, text = "COMEÇAR!" })
         }}
       />
 
-      {/* Button base - thicker for 3D effect */}
       <div
         className={`absolute rounded-full transition-all duration-300 ${isPressed ? "scale-95" : isHovered ? "scale-105" : "scale-100"}`}
         style={{
@@ -241,7 +236,6 @@ export const FatPlayButton = ({ color, baseColor, onClick, text = "COMEÇAR!" })
         }}
       />
 
-      {/* Button top surface */}
       <div
         className={`relative flex items-center justify-center h-[60px] rounded-full transition-all duration-300 ${isPressed ? "scale-95" : isHovered ? "scale-105" : "scale-100"}`}
         style={{

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import motion from 'motion'
+import {motion} from 'motion/react'
 import { ComponentProps, PropsWithChildren } from 'react'
 
 interface QuizCardProps {

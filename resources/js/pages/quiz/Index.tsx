@@ -10,7 +10,7 @@ import {
 } from '@/models'
 import { isLightColor } from '@/utils/color'
 import { Head, router } from '@inertiajs/react'
-import motion from 'motion'
+import {motion} from "motion/react"
 import {
   ArrowRight,
   Award,
@@ -77,7 +77,6 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
       <Head title="Jogar" />
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          {/* Header com botão de logout */}
           <div className="mb-12 flex items-center justify-between">
             <motion.header
               className="flex-1 text-center"
@@ -93,7 +92,6 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
               </p>
             </motion.header>
 
-            {/* Botão de logout */}
             <motion.button
               onClick={handleLogout}
               className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"

@@ -204,7 +204,6 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
                   </div>
                 </CollapsibleTrigger>
 
-                {/* Atividades do Module */}
                 <CollapsibleContent>
                   <div className="border-t pl-12">
                     <div className="divide-y">
@@ -220,13 +219,7 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
                             <div className="flex-1">
                               <p className="text-sm">{activity.question}</p>
                                 aki
-                              {/*{attemptInfo?.lastAttempt && (*/}
-                              {/*  <p className="text-muted-foreground text-xs">*/}
-                              {/*    Última tentativa: {truncateText(attemptInfo.lastAttempt.answer)}*/}
-                              {/*    {attemptInfo.totalAttempts > 1 && ` (${attemptInfo.correctAttempts}/${attemptInfo.totalAttempts} corretas)`}*/}
-                              {/*  </p>*/}
-                              {/*)}*/}
-                            </div>
+                              </div>
 
                             <div>
                               {attemptInfo ? (

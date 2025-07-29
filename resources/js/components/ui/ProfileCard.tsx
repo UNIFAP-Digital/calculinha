@@ -51,8 +51,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     return (
         <div className={`card-profile overflow-hidden overmodule-hidden flex w-full max-w-md flex-col rounded-xl bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800 ${containerClassName}`}>
             <div className="relative">
-                {children} {/* Render the image/icon area passed as children */}
-            </div>
+                {children} </div>
 
             <div className="flex flex-1 flex-col p-3 text-center sm:p-4 lg:p-6">
                 <h2 className={`font-fredoka mb-1.5 text-lg font-bold sm:mb-2 sm:text-xl lg:mb-3 lg:text-2xl ${buttonVariant === 'primary' ? 'text-blue-600 dark:text-blue-400' : 'text-blue-800 dark:text-blue-400'}`}>

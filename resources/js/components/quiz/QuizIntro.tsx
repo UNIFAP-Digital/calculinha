@@ -4,7 +4,7 @@ import { ShinyButton } from '@/components/magicui/shiny-button'
 import { Module } from '@/models'
 import { colorThemes } from '@/theme'
 import { Character, characters, DialogueLine } from '@/utils/characters'
-import { AnimatePresence, motion } from 'motion'
+import { AnimatePresence, motion } from "motion/react"
 import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 
@@ -72,9 +72,7 @@ function LargeDialogueBalloon({
           exit={{ opacity: 0, x: -30, scale: 0.9 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-          {/* Balão de Diálogo MUITO MAIOR */}
           <div className="relative">
-            {/* Cauda do Balão - Responsiva */}
             <div
               className="absolute top-1/2 -left-4 z-10 -translate-y-1/2 transform sm:-left-6 md:-left-8"
               style={{
@@ -96,7 +94,6 @@ function LargeDialogueBalloon({
               }}
             />
 
-            {/* Caixa de Texto Responsiva */}
             <div
               className="relative flex min-h-[300px] w-full max-w-[90vw] flex-col justify-between rounded-2xl p-6 shadow-2xl backdrop-blur-sm sm:min-h-[400px] sm:max-w-[600px] sm:p-8 md:min-h-[450px] md:max-w-[650px] md:p-12 lg:min-h-[500px] lg:max-w-[700px] lg:p-16"
               style={{
@@ -105,7 +102,6 @@ function LargeDialogueBalloon({
                 boxShadow: `0 20px 40px rgba(0,0,0,0.25)`,
               }}
             >
-              {/* Texto da Fala com Tipografia Fredoka Otimizada */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -264,7 +260,6 @@ export default function MathModuleIntro({
       role="main"
       aria-label="Introdução ao módulo matemático"
     >
-      {/* Background Image Responsivo */}
       <div className="absolute inset-0 z-0">
         <img
           src="/math-background.jpeg"
@@ -275,7 +270,6 @@ export default function MathModuleIntro({
           }}
           aria-hidden="true"
         />
-        {/* Overlay para melhor contraste */}
         <div
           className="absolute inset-0"
           style={{
@@ -285,7 +279,6 @@ export default function MathModuleIntro({
         />
       </div>
 
-      {/* Header Responsivo */}
       <header className="relative z-20 flex flex-col items-center pt-4 pb-2 sm:pt-6 sm:pb-3 md:pt-8 md:pb-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -316,15 +309,12 @@ export default function MathModuleIntro({
         </motion.div>
       </header>
 
-      {/* Conteúdo Principal Responsivo */}
       <section className="relative z-10 flex flex-1 items-center justify-center px-4 sm:px-6 md:px-8">
         <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-4 sm:gap-6 md:flex-row md:gap-8 lg:gap-12">
-          {/* Avatar Responsivo */}
           <div className="order-2 flex-shrink-0 md:order-1">
             <GiantStaticAvatar character={character} />
           </div>
 
-          {/* Diálogo Responsivo */}
           <div className="order-1 flex w-full items-center justify-center md:order-2 md:w-auto">
             <LargeDialogueBalloon
               line={currentDialogue}

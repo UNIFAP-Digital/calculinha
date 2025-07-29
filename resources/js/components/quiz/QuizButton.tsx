@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import motion from 'motion'
+import motion from "motion/react"
 import { ButtonHTMLAttributes, useState } from 'react'
 
 interface QuizButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
