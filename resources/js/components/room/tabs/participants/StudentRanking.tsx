@@ -69,7 +69,6 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
     return totalPoints
   }
 
-  // Obter todos os módulos únicos de todas as tentativas
   const getAllModules = () => {
     if (!student.attempts || student.attempts.length === 0) return []
 
@@ -78,7 +77,6 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
     student.attempts.forEach((attempt) => {
       attempt.modules?.forEach((module) => {
         if (!modulesMap.has(module.id)) {
-          // Adiciona o módulo com suas atividades
           const moduleWithStats = {
             ...module,
             stats: calculateModuleStats(module),
@@ -103,49 +101,47 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
     return { total, correct, percentage }
   }
 
-  const truncateText = (text: string, maxLength: number = 25) => {
-    if (!text) return ''
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
-  }
 
   const getActivityAnswer = (moduleId: number, activityId: number) => {
-    if (!student.attempts || student.attempts.length === 0) return null
+  if (!student.attempts || student.attempts.length === 0) return null
 
-    // Encontra todas as tentativas para esta atividade específica
-    const activityAttempts: Activity[] = []
+  const activityAttempts: Activity[] = []
 
-    student.attempts.forEach((attempt) => {
-      attempt.modules?.forEach((module) => {
-        if (module.id === moduleId) {
-          module.activities?.forEach((activity) => {
-            if (activity.id === activityId) {
-              activityAttempts.push({
-                ...activity,
-                answer: activity.answer,
-                is_correct: activity.is_correct,
-                created_at: attempt.created_at,
-              })
-            }
-          })
-        }
-      })
+  student.attempts.forEach((attempt) => {
+    attempt.modules?.forEach((module) => {
+      if (module.id === moduleId) {
+        module.activities?.forEach((activity) => {
+          if (activity.id === activityId || activity.activity_id === activityId) {
+            activityAttempts.push({
+              ...activity,
+              answer: activity.answer,
+              is_correct: activity.is_correct,
+              created_at: attempt.created_at,
+            })
+          }
+        })
+      }
     })
+  })
 
-    if (activityAttempts.length === 0) return null
+  if (activityAttempts.length === 0) return null
 
-    // Ordena por data de criação (mais recente primeiro)
-    activityAttempts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  activityAttempts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-    return {
-      lastAttempt: activityAttempts[0],
-      totalAttempts: activityAttempts.length,
-      correctAttempts: activityAttempts.filter((att) => att.is_correct).length,
-      hasCorrectAttempt: activityAttempts.some((att) => att.is_correct),
-    }
+  return {
+    lastAttempt: activityAttempts[0],
+    totalAttempts: activityAttempts.length,
+    correctAttempts: activityAttempts.filter((att) => att.is_correct).length,
+    hasCorrectAttempt: activityAttempts.some((att) => att.is_correct),
   }
+}
 
   const modules = getAllModules()
   const points = calculateStudentPoints()
+
+  console.log()
+
+  console.log()
 
   return (
     <Collapsible className="overmodule-hidden rounded-lg border shadow-xs">

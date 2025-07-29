@@ -1,5 +1,4 @@
 import QuizLayout from '@/components/layouts/QuizLayout'
-import { quizToast } from '@/components/quiz/QuizFeedback'
 import QuizGame from '@/components/quiz/QuizGame'
 import QuizIntro from '@/components/quiz/QuizIntro'
 import QuizResult from '@/components/quiz/QuizResult'
@@ -25,7 +24,6 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const handleCompleteQuiz = async () => {
     if (!isStudent || !state.matches('result')) return;
 
-    console.log("--- ENVIANDO SINAL DE CONCLUSÃO DE QUIZ ---");
     try {
       await httpPost(route('api.quiz.complete'), {
         room_id: room.id,
@@ -47,7 +45,6 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
 
 
   const handleAnswerSelect = (answer: string) => {
-
     send({ type: 'answer-selected', answer })
 
   }
@@ -61,7 +58,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
       <Head title="Quiz" />
 
       {state.matches('intro') && <QuizIntro module={gameModule} onStart={() => send({ type: 'start' })} />}
-      {(state.matches('answering') || state.matches('answered')) && (
+      {state.matches('playing') && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
           activity={gameModule.activities[currentActivityIndex]}

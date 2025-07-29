@@ -8,7 +8,6 @@ import { Coins, Home, RotateCcw } from 'lucide-react'
 import { useMemo } from 'react'
 import { AppLogo } from '@/components/ui/AppLogo'
 
-// Mensagens sempre positivas e encorajadoras para crianças
 const FEEDBACK_MESSAGES = [
   'Parabéns!',
   'Muito bem!',
@@ -20,7 +19,6 @@ const FEEDBACK_MESSAGES = [
   'Você conseguiu!',
 ]
 
-// Chalk texture and effects components (from quiz game)
 const ChalkTextureFilter = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <defs>
@@ -86,7 +84,6 @@ const MathFloatingElements = () => {
   )
 }
 
-// Static character avatar
 function StaticCharacterAvatar({ character }: { character: Character }) {
   return (
     <div className="flex items-center justify-center">
@@ -117,16 +114,13 @@ export default function QuizResult({
   startGameAgain,
   module,
 }: QuizResultProps) {
-  // Get module theme (same as introduction and quiz game)
   const moduleName = module?.name || 'Adição'
   const moduleTheme =
     colorThemes.find((theme) => theme.name === moduleName) || colorThemes[0]
 
-  // Get character (same as introduction)
   const character =
     characters[module?.operation || 'addition'] || characters.addition
 
-  // Get random positive feedback message
   const feedbackMessage = useMemo(() => {
     return FEEDBACK_MESSAGES[
       Math.floor(Math.random() * FEEDBACK_MESSAGES.length)
