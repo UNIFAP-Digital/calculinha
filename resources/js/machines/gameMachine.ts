@@ -15,7 +15,11 @@ export interface GameMachineContext {
   mistakes: number
 }
 
-type GameMachineEvents = { type: 'start' } | { type: 'answer-selected'; answer: string } | { type: 'next-activity' } | { type: 'reset' }
+type GameMachineEvents = 
+  | { type: 'start' } 
+  | { type: 'answerSelected'; answer: string } 
+  | { type: 'nextActivity' } 
+  | { type: 'reset' }
 
 const defaultGameMachineContext = (module: GameModule): GameMachineContext => ({
   module: module,
@@ -42,13 +46,14 @@ export const gameMachine = setup({
     finishedModule: ({ context }) => context.currentActivityIndex === context.module.activities.length - 1,
   },
 }).createMachine({
+  id: 'gameMachine',
   initial: 'intro',
   context: ({ input }) => defaultGameMachineContext(input.module),
   states: {
     intro: {
       on: {
         start: {
-          target: 'playing.answering',
+          target: 'playing',
         },
       },
     },
@@ -61,7 +66,7 @@ export const gameMachine = setup({
             currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
           }),
           on: {
-            'answer-selected': {
+            answerSelected: {
               target: 'answered',
               actions: assign(({ context, event }) => {
                 const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer
@@ -81,16 +86,16 @@ export const gameMachine = setup({
             isCorrectAnswer: null,
           }),
           on: {
-            'next-activity': [
+            nextActivity: [
               {
-                guard: { type: 'hasMoreActivities' },
-                target: '#gameMachine.playing.answering',
+                guard: 'hasMoreActivities',
+                target: 'answering',
                 actions: assign({
                   currentActivityIndex: ({ context }) => context.currentActivityIndex + 1,
                 }),
               },
               {
-                guard: { type: 'finishedModule' },
+                guard: 'finishedModule',
                 target: '#gameMachine.result',
               },
             ],
@@ -108,5 +113,3 @@ export const gameMachine = setup({
     },
   },
 })
-
-export default gameMachine
