@@ -45,7 +45,7 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
     }
   }
 
-  // Funções utilitárias para lidar com as tentativas e estatísticas
+  
   const hasPlayed = () => {
     return student.attempts && student.attempts.length > 0
   }
@@ -53,14 +53,14 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
   const calculateStudentPoints = () => {
     if (!student.attempts || student.attempts.length === 0) return 0
 
-    // Calcula pontos baseado nas atividades corretas de todos os módulos de todas as tentativas
+    
     let totalPoints = 0
 
     student.attempts.forEach((attempt) => {
       attempt.modules?.forEach((module) => {
         module.activities?.forEach((activity) => {
           if (activity.is_correct) {
-            totalPoints += 1 // ou qualquer lógica de pontuação que você queira implementar
+            totalPoints += 1 
           }
         })
       })

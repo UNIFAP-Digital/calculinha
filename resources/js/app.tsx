@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client'
 import { usePage } from '@inertiajs/react'
 import '../css/app.css'
 
-// Componente para atualizar o token CSRF automaticamente
+
 function CSRFTokenUpdater() {
   const { props } = usePage()
   const csrfToken = (props as any).csrf_token

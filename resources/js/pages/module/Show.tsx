@@ -12,7 +12,7 @@ type ModuleShowProps = {
 }
 
 export default function ModuleShowPage({ modules, currentModule }: ModuleShowProps) {
-  // Verificar se os dados foram carregados corretamente
+  
   if (!currentModule || !modules) {
     return <div>Carregando...</div>
   }
@@ -23,7 +23,7 @@ export default function ModuleShowPage({ modules, currentModule }: ModuleShowPro
 
   const handleSelect = (module: Module) => {
     if (module.id === currentModule.id) return
-    // Forçar uma requisição HTTP normal em vez de AJAX para evitar problemas de carregamento
+    
     router.visit(route('modules.show', module.id), {
       method: 'get',
       preserveState: false,
