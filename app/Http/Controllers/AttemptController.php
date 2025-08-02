@@ -6,6 +6,7 @@ use App\Http\Resources\AttemptResource;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\RoomResource;
 use App\Http\Resources\StudentResource;
+use App\Http\Resources\AttemptModuleResource;
 use App\Models\Attempt;
 use App\Models\AttemptModule;
 use App\Models\Module;
@@ -41,25 +42,44 @@ class AttemptController extends Controller
             'student' => $user instanceof Student ? StudentResource::make($user) : null,
         ]);
     }
-
-    public function show(Room $room, int $moduleId)
+ public function show(Room $room, int $moduleId)
     {
         Gate::authorize('view', [Attempt::class, $room]);
         $user = Auth::user();
 
-        if ($user instanceof Student) {
-            $module = AttemptModule::findOrFail($moduleId);
-            $attempt = Attempt::current($room, $user);
-            $attempt->modules()->findOrFail($module->id);
-        } else {
-            $module = Module::findOrFail($moduleId);
-        }
+        $moduleData = null;
 
-        $module->load('activities');
+        if ($user instanceof Student) {
+            // LÓGICA ATUALIZADA: Baseado no seu exemplo, esta consulta agora carrega
+            // o módulo da tentativa atual do aluno, incluindo suas atividades específicas.
+            $attempt = Attempt::current($room, $user)->load([
+                // Carregamos o módulo específico da tentativa (AttemptModule)
+                // e, dentro dele, suas atividades (AttemptModuleActivity)
+                'modules' => fn($query) => $query->where('id', $moduleId),
+                'modules.activities' => fn($query) => $query->orderBy('position'),
+            ]);
+
+            // Pegamos o primeiro (e único) módulo carregado que corresponde ao ID.
+            $module = $attempt->modules->first();
+            
+            if (!$module) {
+                // Se o módulo não pertence a esta tentativa, retorna um erro.
+                abort(404, 'Módulo não encontrado nesta tentativa.');
+            }
+
+            // Usamos o AttemptModuleResource para garantir que os IDs corretos
+            // da tabela 'attempt_module_activities' sejam enviados para o frontend.
+            $moduleData = AttemptModuleResource::make($module);
+
+        } else {
+            // Para professores/admins, a lógica original de carregar o template do módulo permanece.
+            $module = Module::with('activities')->findOrFail($moduleId);
+            $moduleData = ModuleResource::make($module);
+        }
 
         return Inertia::render('quiz/Show', [
             'room'    => RoomResource::make($room),
-            'module'  => ModuleResource::make($module),
+            'module'  => $moduleData, // Envia os dados formatados corretamente
             'student' => $user instanceof Student ? StudentResource::make($user) : null
         ]);
     }

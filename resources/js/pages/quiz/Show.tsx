@@ -30,6 +30,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
         attempt_module_id: module.id,
         score: state.context.hits,
         total_activities: state.context.totalActivities,
+        answers: state.context.answers,
       });
       console.log("Sinal de conclusão enviado com sucesso para o servidor.");
     } catch (error) {
@@ -51,6 +52,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const handleNextActivity = () => {
     send({ type: 'nextActivity' }) 
   }
+  console.log('state.context.answers', state.context.answers)
 
   return (
     <QuizLayout>

@@ -1,7 +1,8 @@
 import { Module } from '@/models'
 import { assign, setup } from 'xstate'
 
-export type GameModule = Omit<Module, 'activities'> & Required<Pick<Module, 'activities'>>
+export type GameModule = Omit<Module, 'activities'> &
+  Required<Pick<Module, 'activities'>>
 
 export interface GameMachineContext {
   module: GameModule
@@ -13,12 +14,17 @@ export interface GameMachineContext {
   totalActivities: number
   hits: number
   mistakes: number
+  answers: Array<{
+    id: number
+    isCorrect: boolean
+  }>
 }
 
-type GameMachineEvents = 
-  | { type: 'start' } 
-  | { type: 'commitAnswer'; answer: string } 
-  | { type: 'nextActivity' } 
+
+type GameMachineEvents =
+  | { type: 'start' }
+  | { type: 'commitAnswer'; answer: string }
+  | { type: 'nextActivity' }
   | { type: 'reset' }
 
 const defaultGameMachineContext = (module: GameModule): GameMachineContext => ({
@@ -31,6 +37,7 @@ const defaultGameMachineContext = (module: GameModule): GameMachineContext => ({
   hits: 0,
   mistakes: 0,
   totalActivities: module.activities.length,
+  answers: [],
 })
 
 export const gameMachine = setup({
@@ -42,8 +49,10 @@ export const gameMachine = setup({
     },
   },
   guards: {
-    hasMoreActivities: ({ context }) => context.currentActivityIndex < context.module.activities.length - 1,
-    finishedModule: ({ context }) => context.currentActivityIndex === context.module.activities.length - 1,
+    hasMoreActivities: ({ context }) =>
+      context.currentActivityIndex < context.module.activities.length - 1,
+    finishedModule: ({ context }) =>
+      context.currentActivityIndex === context.module.activities.length - 1,
   },
 }).createMachine({
   id: 'gameMachine',
@@ -62,19 +71,32 @@ export const gameMachine = setup({
       states: {
         answering: {
           entry: assign({
-            correctAnswer: ({ context }) => context.module.activities[context.currentActivityIndex].correct_answer,
-            currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
+            correctAnswer: ({ context }) =>
+              context.module.activities[context.currentActivityIndex]
+                .correct_answer,
+            currentActivityId: ({ context }) =>
+              context.module.activities[context.currentActivityIndex].id,
           }),
           on: {
             commitAnswer: {
               target: 'answered',
               actions: assign(({ context, event }) => {
-                const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer
+                const isCorrect =
+                  context.module.activities[context.currentActivityIndex]
+                    .correct_answer === event.answer
+                const newAnswer = {
+                    id: context.currentActivityIndex,
+                    isCorrect: isCorrect,
+                }
+                const newAnswers = [...context.answers, newAnswer]
                 return {
                   selectedAnswer: event.answer,
                   isCorrectAnswer: isCorrect,
                   hits: isCorrect ? context.hits + 1 : context.hits,
-                  mistakes: !isCorrect ? context.mistakes + 1 : context.mistakes,
+                  answers: newAnswers,
+                  mistakes: !isCorrect
+                    ? context.mistakes + 1
+                    : context.mistakes,
                 }
               }),
             },
@@ -91,7 +113,8 @@ export const gameMachine = setup({
                 guard: 'hasMoreActivities',
                 target: 'answering',
                 actions: assign({
-                  currentActivityIndex: ({ context }) => context.currentActivityIndex + 1,
+                  currentActivityIndex: ({ context }) =>
+                    context.currentActivityIndex + 1,
                 }),
               },
               {
@@ -107,7 +130,9 @@ export const gameMachine = setup({
       on: {
         reset: {
           target: 'intro',
-          actions: assign(({ context }) => defaultGameMachineContext(context.module)),
+          actions: assign(({ context }) =>
+            defaultGameMachineContext(context.module),
+          ),
         },
       },
     },
