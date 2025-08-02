@@ -18,7 +18,7 @@ interface QuizShowPageProps {
 export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const isStudent = usePage().props.auth.user?.type === 'student'
   const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
-  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities, isCorrectAnswer } = state.context
 
 
   const handleCompleteQuiz = async () => {
@@ -44,13 +44,12 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   }, [state.value]);
 
 
-  const handleAnswerSelect = (answer: string) => {
-    send({ type: 'answer-selected', answer })
-
+  const handleCommitAnswer = (answer: string) => {
+    send({ type: 'commitAnswer', answer }) 
   }
 
   const handleNextActivity = () => {
-    send({ type: 'next-activity' })
+    send({ type: 'nextActivity' }) 
   }
 
   return (
@@ -62,13 +61,13 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
           activity={gameModule.activities[currentActivityIndex]}
-          selectedAnswer={selectedAnswer}
-          onSelectAnswer={handleAnswerSelect}
-          hits={hits}
-          mistakes={mistakes}
+          selectedAnswer={selectedAnswer} // From machine context
+          isCorrectAnswer={isCorrectAnswer} // From machine context
+          onCommitAnswer={handleCommitAnswer}
           module={module}
           currentQuestionIndex={currentActivityIndex}
           handleNextActivity={handleNextActivity}
+          score={hits} // Pass hits from machine context
         />
       )}
       {state.matches('result') && (

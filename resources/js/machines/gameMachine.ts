@@ -17,7 +17,7 @@ export interface GameMachineContext {
 
 type GameMachineEvents = 
   | { type: 'start' } 
-  | { type: 'answerSelected'; answer: string } 
+  | { type: 'commitAnswer'; answer: string } 
   | { type: 'nextActivity' } 
   | { type: 'reset' }
 
@@ -66,7 +66,7 @@ export const gameMachine = setup({
             currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
           }),
           on: {
-            answerSelected: {
+            commitAnswer: {
               target: 'answered',
               actions: assign(({ context, event }) => {
                 const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer

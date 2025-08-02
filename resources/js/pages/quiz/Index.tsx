@@ -75,8 +75,8 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   return (
     <>
       <Head title="Jogar" />
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 overflow-y-auto">
-        <div className="container mx-auto px-4 py-8 md:py-12 overflow-visible">
+      <div className="min-h-screen grid place-items-center bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="lg:max-w-4xl px-4 py-8 md:py-12">
           <div className="mb-12 flex items-center justify-between">
             <motion.header
               className="flex-1 text-center"
@@ -86,7 +86,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
               <div className="mb-4 flex justify-center">
                 <AppLogo iconSize="lg" textSize="xl" />
               </div>
-              <p className="mx-auto max-w-2xl text-xl text-gray-600">
+              <p className="text-xl px-12 text-gray-600">
                 Complete cada módulo para desbloquear o próximo e avançar na sua
                 jornada de aprendizado.
               </p>
@@ -105,7 +105,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
             </motion.button>
           </div>
 
-          <div className="mx-auto max-w-3xl overflow-visible">
+          <div>
             {attempt.modules.map((module, index) => (
               <ModuleIntroCard
                 key={module.id}
@@ -122,7 +122,6 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
 }
 
 function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
-  console.log('ModuleIntroCard', module);
   const [isHovered, setIsHovered] = useState(false)
   const status = module.status!
   const completedActivities = module.activities_completed!

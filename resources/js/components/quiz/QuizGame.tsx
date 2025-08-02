@@ -11,62 +11,63 @@ interface QuizGameProps {
   progress: string
   activity: Activity
   selectedAnswer: string | null
-  onSelectAnswer: (answer: string) => void
+  isCorrectAnswer: boolean | null
+  onCommitAnswer: (answer: string) => void
   handleNextActivity?: () => void
   currentQuestionIndex: number
+  score: number
 }
 
 
-export default function MathGame({ selectedAnswer, onSelectAnswer, activity, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
-  const [selectedOption, setSelectedOption] = useState("")
-  const [score, setScore] = useState(0)
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
+export default function MathGame({ selectedAnswer, isCorrectAnswer, onCommitAnswer: onSelectAnswer, activity, progress, module, currentQuestionIndex, handleNextActivity, score }: QuizGameProps) {
   const [withoutFeedback, setWithoutFeedback] = useState(false)
+  const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(null)
   const { question, wrong_answers, correct_answer } = activity
-
   const { type } = module;
 
   useEffect(() => {
-    if (type !== 'exercise') {
-      setWithoutFeedback(true);
-    } else {
-      setWithoutFeedback(false);
-    }
+    setWithoutFeedback(type !== 'exercise');
   }, [type]);
 
+  useEffect(() => {
+    setLocalSelectedAnswer(null)
+  }, [activity.id]);
+
   const answered = selectedAnswer !== null
+
+  // auto go to question if without feedback
+  useEffect(() => {
+    if (withoutFeedback && answered) {
+      const timer = setTimeout(() => {
+        handleNextActivity?.()
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [withoutFeedback, answered, handleNextActivity]);
 
   const moduleTheme: ModuleTheme = module?.name
     ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
     : colorThemes[0];
 
-  const typeColor = questionTypeColors[moduleTheme.name] || {
+  const typeColor = questionTypeColors[moduleTheme.name as keyof typeof questionTypeColors] || {
     gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
     shadow: "#059669",
   }
 
   const handleOptionSelect = (answer: string) => {
     if (answered) return
-
-
-    setSelectedOption(answer)
+    setLocalSelectedAnswer(answer)
   }
 
-  const handleAnswer = (index = selectedOption) => {
-    if (answered || !selectedOption) return
+  const handleAnswer = () => {
+    if (!localSelectedAnswer || answered) return
 
-    const isCorrect = activity.correct_answer === selectedOption
-    setIsCorrect(isCorrect)
-    onSelectAnswer(selectedOption)
-    setShowFeedback(true)
+    onSelectAnswer(localSelectedAnswer)
   }
 
   const handleNextQuestion = () => {
     handleNextActivity?.()
-    setShowFeedback(false)
-    setSelectedOption("")
-
   }
 
   const shuffledOptions = useMemo(() => {
@@ -77,8 +78,7 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
     return { answers: allAnswers, correctIndex: randomIndex }
   }, [wrong_answers, correct_answer])
 
-
-  const isAnswerButtonDisabled = !selectedOption || answered
+  const isAnswerButtonDisabled = !localSelectedAnswer || answered
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
@@ -126,7 +126,9 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <ScoreIndicator score={score} />
+                <div>
+                  {withoutFeedback ? null : <ScoreIndicator score={score * 10} />}
+                </div>
                 <div
                   className="px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
                   style={{
@@ -178,7 +180,7 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
                         text: option,
                       }}
                       index={index}
-                      selected={selectedOption === option}
+                      selected={localSelectedAnswer === option} 
                       isCorrectAnswer={shuffledOptions.correctIndex === index}
                       answered={answered}
                       onClick={handleOptionSelect}
@@ -205,12 +207,11 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
       </div>
 
       <AnimatePresence>
-        {showFeedback && (
+        {answered && !withoutFeedback && (
           <AnswerFeedback
-            correct={isCorrect}
+            correct={isCorrectAnswer}
             onContinue={handleNextQuestion}
             moduleTheme={moduleTheme}
-            withoutFeedback={withoutFeedback}
           />
         )}
       </AnimatePresence>
