@@ -15,14 +15,13 @@ interface OptionButtonProps {
 }
 
 import { useState, useRef, useEffect } from "react"
-import { motion, useAnimation } from "framer-motion"
+import { motion, useAnimation }  from "motion/react"
 
 function OptionButton2({ option, index, selected, correct, answered, onClick, moduleTheme, withoutFeedback }) {
   const [pressed, setIsPressed] = useState(false)
   const holdTimerRef = useRef(null)
   const controls = useAnimation()
 
-  // Determinar cores baseadas no estado
   let buttonGradient = "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)"
   let buttonBaseColor = "#d0d0d0"
   let textColor = "#333333"
@@ -186,7 +185,6 @@ export function OptionButton({ option, index, selected, isCorrectAnswer, answere
   const holdTimerRef = useRef(null)
   const controls = useAnimation()
 
-  // Determinar cores baseadas no estado
   let buttonGradient = "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)"
   let buttonBaseColor = "#d0d0d0"
   let textColor = "#333333"
@@ -376,20 +374,6 @@ export function OptionButton({ option, index, selected, isCorrectAnswer, answere
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 ) : null}
-              </div>
-            )}
-
-            {answered && withoutFeedback && selected && (
-              <div className="ml-2 flex-shrink-0">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
               </div>
             )}
           </div>

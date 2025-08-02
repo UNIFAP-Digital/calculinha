@@ -10,7 +10,6 @@ type ParticipantsTabProps = {
 export default function ParticipantsTab({ room }: ParticipantsTabProps) {
   const students = useMemo(() => room.students ?? [], [room.students])
 
-  console.log('Students in ParticipantsTab:', students)
   if (students.length === 0) return <EmptyParticipantsCard room={room} />
 
   return (

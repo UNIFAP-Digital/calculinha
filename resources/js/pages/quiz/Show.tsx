@@ -1,9 +1,8 @@
 import QuizLayout from '@/components/layouts/QuizLayout'
-import { quizToast } from '@/components/quiz/QuizFeedback'
 import QuizGame from '@/components/quiz/QuizGame'
 import QuizIntro from '@/components/quiz/QuizIntro'
 import QuizResult from '@/components/quiz/QuizResult'
-import gameMachine from '@/machines/gameMachine'
+import { gameMachine } from '@/machines/gameMachine'
 import { Module, Room } from '@/models'
 import { httpPost } from '@/utils/api'
 import { Head, usePage } from '@inertiajs/react'
@@ -19,13 +18,12 @@ interface QuizShowPageProps {
 export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   const isStudent = usePage().props.auth.user?.type === 'student'
   const [state, send] = useMachine(gameMachine, { input: { module: { ...module, activities: module.activities ?? [] } } })
-  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities } = state.context
+  const { selectedAnswer, module: gameModule, currentActivityIndex, hits, mistakes, correctAnswer, totalActivities, isCorrectAnswer } = state.context
 
 
   const handleCompleteQuiz = async () => {
     if (!isStudent || !state.matches('result')) return;
 
-    console.log("--- ENVIANDO SINAL DE CONCLUSÃO DE QUIZ ---");
     try {
       await httpPost(route('api.quiz.complete'), {
         room_id: room.id,
@@ -46,14 +44,12 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
   }, [state.value]);
 
 
-  const handleAnswerSelect = (answer: string) => {
-
-    send({ type: 'answer-selected', answer })
-
+  const handleCommitAnswer = (answer: string) => {
+    send({ type: 'commitAnswer', answer }) 
   }
 
   const handleNextActivity = () => {
-    send({ type: 'next-activity' })
+    send({ type: 'nextActivity' }) 
   }
 
   return (
@@ -61,17 +57,17 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
       <Head title="Quiz" />
 
       {state.matches('intro') && <QuizIntro module={gameModule} onStart={() => send({ type: 'start' })} />}
-      {(state.matches('answering') || state.matches('answered')) && (
+      {state.matches('playing') && (
         <QuizGame
           progress={`${currentActivityIndex + 1}/${totalActivities}`}
           activity={gameModule.activities[currentActivityIndex]}
-          selectedAnswer={selectedAnswer}
-          onSelectAnswer={handleAnswerSelect}
-          hits={hits}
-          mistakes={mistakes}
+          selectedAnswer={selectedAnswer} // From machine context
+          isCorrectAnswer={isCorrectAnswer} // From machine context
+          onCommitAnswer={handleCommitAnswer}
           module={module}
           currentQuestionIndex={currentActivityIndex}
           handleNextActivity={handleNextActivity}
+          score={hits} // Pass hits from machine context
         />
       )}
       {state.matches('result') && (

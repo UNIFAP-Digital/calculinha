@@ -22,7 +22,6 @@ const StudentWelcomeCard: React.FC<StudentCardProps> = ({ href }) => {
           <div className="text-center mb-6">
             <div className="relative mb-6">
               <div className="w-full h-72 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 rounded-2xl flex items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                {/* Elementos matemáticos decorativos de fundo */}
                 <div className="absolute inset-0">
                   <span className="absolute top-6 left-6 text-3xl font-bold text-white/30 animate-bounce">+</span>
                   <span className="absolute top-8 right-8 text-4xl font-bold text-white/30 animate-pulse">÷</span>
@@ -46,18 +45,14 @@ const StudentWelcomeCard: React.FC<StudentCardProps> = ({ href }) => {
                   </span>
                 </div>
 
-                {/* Círculo mágico de fundo */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-56 h-56 bg-white/20 rounded-full backdrop-blur-sm border-2 border-white/40 animate-pulse"></div>
                 </div>
 
-                {/* Avatar Principal - Unicórnio */}
                 <div className="relative z-10 avatar-container">
                   <div className="relative">
-                    {/* Halo mágico */}
                     <div className="absolute -inset-4 bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full opacity-30 animate-ping"></div>
 
-                    {/* Container do avatar */}
                     <div className="relative w-32 h-32 bg-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-500 group-hover:scale-110 animate-float">
                       <img
                         src="/unicorn-avatar.png"
@@ -66,7 +61,6 @@ const StudentWelcomeCard: React.FC<StudentCardProps> = ({ href }) => {
                       />
                     </div>
 
-                    {/* Sparkles ao redor */}
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-pink-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 animate-bounce">
                       <Sparkles className="w-4 h-4 text-white" />
                     </div>
@@ -83,12 +77,10 @@ const StudentWelcomeCard: React.FC<StudentCardProps> = ({ href }) => {
                       <Heart className="w-2 h-2 text-white fill-current" />
                     </div>
 
-                    {/* Nome do personagem */}
                     <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-100 to-purple-100 px-4 py-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <span className="text-sm font-bold text-purple-700">Luna ✨</span>
                     </div>
 
-                    {/* Balão de fala */}
                     <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 border-pink-200">
                       <span className="text-xs font-medium text-gray-700">Vamos aprender juntos!</span>
                       <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
@@ -96,7 +88,6 @@ const StudentWelcomeCard: React.FC<StudentCardProps> = ({ href }) => {
                   </div>
                 </div>
 
-                {/* Partículas mágicas flutuantes */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div
                     className="absolute top-12 left-12 w-3 h-3 bg-pink-300 rounded-full animate-ping"

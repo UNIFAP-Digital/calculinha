@@ -1,71 +1,73 @@
 import { Activity, Module } from '@/models'
 import { AnswerFeedback, ChalkDust, ChalkTextureFilter, ChibiIcon, colorThemes, MathFloatingElements, ModuleTheme, NavigationButton, ProgressBadge, ProgressBar, questionTypeColors, ScoreIndicator } from '@/theme'
 import { OptionButton } from "@/components/quiz/OptionButton"
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from "motion/react"
 import { useEffect, useMemo, useState } from 'react'
 import '../../../css/quiz.css'
+import { AppLogo } from '../ui/AppLogo'
 
 interface QuizGameProps {
   module: Module
   progress: string
   activity: Activity
   selectedAnswer: string | null
-  onSelectAnswer: (answer: string) => void
+  isCorrectAnswer: boolean | null
+  onCommitAnswer: (answer: string) => void
   handleNextActivity?: () => void
   currentQuestionIndex: number
+  score: number
 }
 
 
-export default function MathGame({ selectedAnswer, onSelectAnswer, activity, progress, module, currentQuestionIndex, handleNextActivity }: QuizGameProps) {
-  const [selectedOption, setSelectedOption] = useState("")
-  const [score, setScore] = useState(0)
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
+export default function MathGame({ selectedAnswer, isCorrectAnswer, onCommitAnswer: onSelectAnswer, activity, progress, module, currentQuestionIndex, handleNextActivity, score }: QuizGameProps) {
   const [withoutFeedback, setWithoutFeedback] = useState(false)
+  const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(null)
   const { question, wrong_answers, correct_answer } = activity
-
   const { type } = module;
 
   useEffect(() => {
-    if (type !== 'exercise') {
-      setWithoutFeedback(true);
-    } else {
-      setWithoutFeedback(false);
-    }
+    setWithoutFeedback(type !== 'exercise');
   }, [type]);
 
+  useEffect(() => {
+    setLocalSelectedAnswer(null)
+  }, [activity.id]);
+
   const answered = selectedAnswer !== null
+
+  // auto go to question if without feedback
+  useEffect(() => {
+    if (withoutFeedback && answered) {
+      const timer = setTimeout(() => {
+        handleNextActivity?.()
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [withoutFeedback, answered, handleNextActivity]);
 
   const moduleTheme: ModuleTheme = module?.name
     ? colorThemes.find((theme) => theme.name.toLowerCase() === module?.name?.toLowerCase()) || colorThemes[0]
     : colorThemes[0];
 
-  const typeColor = questionTypeColors[moduleTheme.name] || {
+  const typeColor = questionTypeColors[moduleTheme.name as keyof typeof questionTypeColors] || {
     gradient: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
     shadow: "#059669",
   }
 
   const handleOptionSelect = (answer: string) => {
     if (answered) return
-
-
-    setSelectedOption(answer)
+    setLocalSelectedAnswer(answer)
   }
 
-  const handleAnswer = (index = selectedOption) => {
-    if (answered || !selectedOption) return
+  const handleAnswer = () => {
+    if (!localSelectedAnswer || answered) return
 
-    const isCorrect = activity.correct_answer === selectedOption
-    setIsCorrect(isCorrect)
-    onSelectAnswer(selectedOption)
-    setShowFeedback(true)
+    onSelectAnswer(localSelectedAnswer)
   }
 
   const handleNextQuestion = () => {
     handleNextActivity?.()
-    setShowFeedback(false)
-    setSelectedOption("")
-
   }
 
   const shuffledOptions = useMemo(() => {
@@ -76,12 +78,10 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
     return { answers: allAnswers, correctIndex: randomIndex }
   }, [wrong_answers, correct_answer])
 
-
-  const isAnswerButtonDisabled = !selectedOption || answered
+  const isAnswerButtonDisabled = !localSelectedAnswer || answered
 
   return (
     <div className={`min-h-screen relative font-nunito `}>
-      {/* Background */}
       <div
         className="absolute inset-0"
         style={{
@@ -111,35 +111,39 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
         <ChalkDust />
 
         <ProgressBar current={currentQuestionIndex + 1} total={module.stats?.total} moduleTheme={moduleTheme} />
+
       </div>
-      {/* Main content */}
       <div className="relative z-10 min-h-screen w-full px-4 overflow-scroll">
+
         <div className="flex flex-col h-screen pb-12">
-          {/* Header */}
-          <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
-            {/* Tipo de operação no canto direito */}
-            <motion.div
-              className="flex items-center gap-2"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <ScoreIndicator score={score} />
-              <div
-                className="px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
-                style={{
-                  background: typeColor.gradient,
-                  boxShadow: `0 3px 0 ${typeColor.shadow}, 0 4px 8px rgba(0, 0, 0, 0.2)`,
-                  border: "2px solid rgba(255,255,255,0.5)",
-                }}
+          <div className='flex justify-between'>
+            <AppLogo variant='white' />
+            <div className="flex items-start justify-end pt-4 xl:pt-10 px-4 md:px-8 relative">
+
+              <motion.div
+                className="flex items-center gap-2"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <ChibiIcon icon={moduleTheme.icon} color={typeColor.shadow} size={20} />
-                <span className="text-white font-bold text-lg">{moduleTheme.name}</span>
-              </div>
-            </motion.div>
+                <div>
+                  {withoutFeedback ? null : <ScoreIndicator score={score * 10} />}
+                </div>
+                <div
+                  className="px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
+                  style={{
+                    background: typeColor.gradient,
+                    boxShadow: `0 3px 0 ${typeColor.shadow}, 0 4px 8px rgba(0, 0, 0, 0.2)`,
+                    border: "2px solid rgba(255,255,255,0.5)",
+                  }}
+                >
+                  <ChibiIcon icon={moduleTheme.icon} color={typeColor.shadow} size={20} />
+                  <span className="text-white font-bold text-lg">{moduleTheme.name}</span>
+                </div>
+              </motion.div>
+            </div>
           </div>
 
-          {/* Question */}
           <div className="flex-1 flex items-center justify-center md:px-8 md:mt-4">
             <motion.div
               className="w-full max-w-4xl rounded-2xl p-6 md:p-8 text-center shadow-xl relative"
@@ -165,7 +169,6 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
             </motion.div>
           </div>
 
-          {/* Options Container */}
           <div className="md:px-8 mb-8 md:mb-28 md:mt-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -177,7 +180,7 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
                         text: option,
                       }}
                       index={index}
-                      selected={selectedOption === option}
+                      selected={localSelectedAnswer === option} 
                       isCorrectAnswer={shuffledOptions.correctIndex === index}
                       answered={answered}
                       onClick={handleOptionSelect}
@@ -203,14 +206,12 @@ export default function MathGame({ selectedAnswer, onSelectAnswer, activity, pro
         </div>
       </div>
 
-      {/* Answer feedback */}
       <AnimatePresence>
-        {showFeedback && (
+        {answered && !withoutFeedback && (
           <AnswerFeedback
-            correct={isCorrect}
+            correct={isCorrectAnswer}
             onContinue={handleNextQuestion}
             moduleTheme={moduleTheme}
-            withoutFeedback={withoutFeedback}
           />
         )}
       </AnimatePresence>

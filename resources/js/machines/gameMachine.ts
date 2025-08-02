@@ -15,7 +15,11 @@ export interface GameMachineContext {
   mistakes: number
 }
 
-type GameMachineEvents = { type: 'start' } | { type: 'answer-selected'; answer: string } | { type: 'next-activity' } | { type: 'reset' }
+type GameMachineEvents = 
+  | { type: 'start' } 
+  | { type: 'commitAnswer'; answer: string } 
+  | { type: 'nextActivity' } 
+  | { type: 'reset' }
 
 const defaultGameMachineContext = (module: GameModule): GameMachineContext => ({
   module: module,
@@ -42,57 +46,61 @@ export const gameMachine = setup({
     finishedModule: ({ context }) => context.currentActivityIndex === context.module.activities.length - 1,
   },
 }).createMachine({
+  id: 'gameMachine',
   initial: 'intro',
   context: ({ input }) => defaultGameMachineContext(input.module),
   states: {
     intro: {
       on: {
         start: {
-          target: 'answering',
+          target: 'playing',
         },
       },
     },
-    answering: {
-      entry: assign({
-        correctAnswer: ({ context }) => context.module.activities[context.currentActivityIndex].correct_answer,
-        currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
-      }),
-      on: {
-        'answer-selected': {
-          target: 'answered',
-          // CORREÇÃO: Unificado em uma única ação 'assign' e corrigida a mutação de estado.
-          actions: assign(({ context, event }) => {
-            const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer
-            return {
-              selectedAnswer: event.answer,
-              isCorrectAnswer: isCorrect,
-              // Lógica corrigida: Retorna um novo valor em vez de mutar o contexto.
-              hits: isCorrect ? context.hits + 1 : context.hits,
-              mistakes: !isCorrect ? context.mistakes + 1 : context.mistakes,
-            }
+    playing: {
+      initial: 'answering',
+      states: {
+        answering: {
+          entry: assign({
+            correctAnswer: ({ context }) => context.module.activities[context.currentActivityIndex].correct_answer,
+            currentActivityId: ({ context }) => context.module.activities[context.currentActivityIndex].id,
           }),
+          on: {
+            commitAnswer: {
+              target: 'answered',
+              actions: assign(({ context, event }) => {
+                const isCorrect = context.module.activities[context.currentActivityIndex].correct_answer === event.answer
+                return {
+                  selectedAnswer: event.answer,
+                  isCorrectAnswer: isCorrect,
+                  hits: isCorrect ? context.hits + 1 : context.hits,
+                  mistakes: !isCorrect ? context.mistakes + 1 : context.mistakes,
+                }
+              }),
+            },
+          },
         },
-      },
-    },
-    answered: {
-      exit: assign({
-        selectedAnswer: null,
-        isCorrectAnswer: null,
-      }),
-      on: {
-        'next-activity': [
-          {
-            guard: { type: 'hasMoreActivities' },
-            target: 'answering',
-            actions: assign({
-              currentActivityIndex: ({ context }) => context.currentActivityIndex + 1,
-            }),
+        answered: {
+          exit: assign({
+            selectedAnswer: null,
+            isCorrectAnswer: null,
+          }),
+          on: {
+            nextActivity: [
+              {
+                guard: 'hasMoreActivities',
+                target: 'answering',
+                actions: assign({
+                  currentActivityIndex: ({ context }) => context.currentActivityIndex + 1,
+                }),
+              },
+              {
+                guard: 'finishedModule',
+                target: '#gameMachine.result',
+              },
+            ],
           },
-          {
-            guard: { type: 'finishedModule' },
-            target: 'result',
-          },
-        ],
+        },
       },
     },
     result: {
@@ -105,5 +113,3 @@ export const gameMachine = setup({
     },
   },
 })
-
-export default gameMachine

@@ -84,7 +84,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
         aria-label={`Play with ${colorTheme.name} button`}
         tabIndex={0}
       >
-        {/* Button shadow/glow effect */}
         <div
           className={`absolute inset-0 rounded-full blur-xl transition-all duration-300 ${isHovered || isFocused ? 'scale-110 opacity-70' : 'scale-100 opacity-50'}`}
           style={{
@@ -92,7 +91,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
           }}
         />
 
-        {/* Button base - thicker for 3D effect */}
         <div
           className={`absolute rounded-full transition-all duration-300 ${isPressed ? 'scale-95' : isHovered || isFocused ? 'scale-105' : 'scale-100'}`}
           style={{
@@ -104,7 +102,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
           }}
         />
 
-        {/* Button top surface - smoother with better gradient */}
         <div
           className={`relative flex h-22 w-22 items-center justify-center rounded-full transition-all duration-300 ${isPressed ? 'scale-95' : isHovered || isFocused ? 'scale-105' : 'scale-100'}`}
           style={{
@@ -120,7 +117,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
             transform: `${isPressed ? 'translateY(2px)' : 'translateY(0)'}`,
           }}
         >
-          {/* Play icon */}
           <div
             className="ml-3 h-0 w-0 border-t-[14px] border-b-[14px] border-l-[22px] border-t-transparent border-b-transparent border-l-white"
             style={{
@@ -128,7 +124,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
             }}
           />
 
-          {/* Shine effect - cleaner without white noise */}
           <div
             className="absolute top-[5%] right-[10%] left-[10%] h-[30%] rounded-t-full opacity-20"
             style={{
@@ -137,7 +132,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
           />
         </div>
 
-        {/* Button shadow on chalkboard */}
         <div className="absolute -bottom-4 left-1/2 h-2 w-16 -translate-x-1/2 rounded-full bg-black opacity-20 blur-md" />
       </button>
       <span className="mt-1 text-xs font-medium text-gray-700">{colorTheme.name}</span>
@@ -149,9 +143,7 @@ export default function ChalkboardPlayButtonColors() {
   return (
     <div className="flex min-h-[400px] items-center justify-center bg-gray-100 p-6">
       <div className="relative w-full max-w-5xl">
-        {/* Chalkboard with wooden frame */}
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-xl">
-          {/* Improved wooden frame */}
           <div
             className="absolute inset-0 rounded-lg border-[20px]"
             style={{
@@ -163,7 +155,6 @@ export default function ChalkboardPlayButtonColors() {
             }}
           />
 
-          {/* Chalkboard surface without rounded corners */}
           <div
             className="absolute inset-[20px]"
             style={{
@@ -171,7 +162,6 @@ export default function ChalkboardPlayButtonColors() {
               boxShadow: 'inset 0 0 60px rgba(0, 0, 0, 0.3)',
             }}
           >
-            {/* Improved chalk texture with SVG filter */}
             <svg width="0" height="0">
               <filter id="chalkTexture">
                 <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" seed="3" />
@@ -189,7 +179,6 @@ export default function ChalkboardPlayButtonColors() {
               }}
             />
 
-            {/* Subtle vignette effect */}
             <div
               className="absolute inset-0"
               style={{
@@ -197,7 +186,6 @@ export default function ChalkboardPlayButtonColors() {
               }}
             />
 
-            {/* Color buttons grid */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="grid grid-cols-2 gap-x-12 gap-y-16 p-8 md:grid-cols-4">
                 {colorThemes.map((theme, index) => (

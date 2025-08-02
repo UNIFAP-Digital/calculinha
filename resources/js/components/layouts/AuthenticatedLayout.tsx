@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { PropsWithChildren } from 'react'
+import { AppLogo } from '@/components/ui/AppLogo'
 
 const navigation = [
   { name: 'Salas', route: 'rooms.index', icon: GroupIcon },
@@ -50,16 +51,10 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
               <div className="flex">
-                {/* APPLICATION LOGO */}
                 <div className="flex shrink-0 items-center">
-                  <img
-                    alt="Calculinha"
-                    src="/material/icon.png"
-                    className="block h-8 w-auto"
-                  />
+                  <AppLogo iconSize="sm" textSize="sm" />
                 </div>
 
-                {/* MENU */}
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
                     <Link
@@ -118,7 +113,6 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                 </Button>
               </div>
 
-              {/* MOBILE MENU BUTTON */}
               <div className="flex items-center sm:hidden">
                 <Button
                   variant="ghost"
@@ -160,7 +154,6 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
             </div>
           </div>
 
-          {/* MOBILE MENU */}
           <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 pt-2 pb-3">
               {navigation.map((item) => (
@@ -210,3 +203,4 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
     </>
   )
 }
+
