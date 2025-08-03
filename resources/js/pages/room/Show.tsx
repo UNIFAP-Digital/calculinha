@@ -14,6 +14,7 @@ type RoomShowProps = {
 export default function RoomShowPage({ rooms, currentRoom }: RoomShowProps) {
   const { setActiveTab, activeTab } = useRoomTabs()
 
+
   const handleCreate = () => {
     router.visit(route('rooms.create'))
   }
