@@ -50,29 +50,25 @@ class AttemptController extends Controller
         $moduleData = null;
 
         if ($user instanceof Student) {
-            // LÓGICA ATUALIZADA: Baseado no seu exemplo, esta consulta agora carrega
-            // o módulo da tentativa atual do aluno, incluindo suas atividades específicas.
-            $attempt = Attempt::current($room, $user)->load([
-                // Carregamos o módulo específico da tentativa (AttemptModule)
-                // e, dentro dele, suas atividades (AttemptModuleActivity)
-                'modules' => fn($query) => $query->where('id', $moduleId),
-                'modules.activities' => fn($query) => $query->orderBy('position'),
-            ]);
+            // Para alunos: $moduleId é o ID do AttemptModule
+            // Carregamos diretamente o AttemptModule com suas atividades
+            $attemptModule = AttemptModule::with([
+                'activities' => fn($query) => $query->orderBy('position'),
+                'activities.originalActivity' // Carrega a atividade original para acessar o conteúdo
+            ])->findOrFail($moduleId);
 
-            // Pegamos o primeiro (e único) módulo carregado que corresponde ao ID.
-            $module = $attempt->modules->first();
-            
-            if (!$module) {
-                // Se o módulo não pertence a esta tentativa, retorna um erro.
-                abort(404, 'Módulo não encontrado nesta tentativa.');
+            // Verificar se o AttemptModule pertence ao aluno atual
+            $attempt = Attempt::current($room, $user);
+            if ($attemptModule->attempt_id !== $attempt->id) {
+                abort(403, 'Este módulo não pertence à sua tentativa atual.');
             }
 
             // Usamos o AttemptModuleResource para garantir que os IDs corretos
             // da tabela 'attempt_module_activities' sejam enviados para o frontend.
-            $moduleData = AttemptModuleResource::make($module);
+            $moduleData = ModuleResource::make($attemptModule);
 
         } else {
-            // Para professores/admins, a lógica original de carregar o template do módulo permanece.
+            // Para professores/admins: $moduleId é o ID do Module original
             $module = Module::with('activities')->findOrFail($moduleId);
             $moduleData = ModuleResource::make($module);
         }

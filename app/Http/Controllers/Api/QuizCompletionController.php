@@ -27,7 +27,8 @@ class QuizCompletionController extends Controller
             'attempt_module_id' => 'required|integer|exists:attempt_modules,id',
             'answers'           => 'required|array',
             'answers.*.id' =>   'required|integer',
-            'answers.*.isCorrect' => 'required|boolean', 
+            'answers.*.isCorrect' => 'required|boolean',
+            'answers.*.answer' => 'nullable|string', 
         ]);
 
         /** @var Student $student */
@@ -43,9 +44,16 @@ class QuizCompletionController extends Controller
                 abort(403, 'Acesso não autorizado a este módulo.');
             }
             foreach ($answers as $answer) {
+                $updateData = ['is_correct' => $answer['isCorrect']];
+
+                // Se a resposta do aluno foi fornecida, salva também
+                if (isset($answer['answer'])) {
+                    $updateData['answer'] = $answer['answer'];
+                }
+
                 AttemptModuleActivity::where('id', $answer['id'])
-                    ->where('attempt_module_id', $currentAttemptModule->id) 
-                    ->update(['is_correct' => $answer['isCorrect']]);
+                    ->where('attempt_module_id', $currentAttemptModule->id)
+                    ->update($updateData);
             }
 
             $score = collect($answers)->where('isCorrect', true)->count();

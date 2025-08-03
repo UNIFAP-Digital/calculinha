@@ -45,7 +45,7 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
     }
   }
 
-  
+
   const hasPlayed = () => {
     return student.attempts && student.attempts.length > 0
   }
@@ -53,20 +53,20 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
   const calculateStudentPoints = () => {
     if (!student.attempts || student.attempts.length === 0) return 0
 
-    
+
     let totalPoints = 0
 
     student.attempts.forEach((attempt) => {
       attempt.modules?.forEach((module) => {
         module.activities?.forEach((activity) => {
           if (activity.is_correct) {
-            totalPoints += 1 
+            totalPoints += 1
           }
         })
       })
     })
 
-    return totalPoints
+    return totalPoints * 10
   }
 
   const getAllModules = () => {
@@ -103,38 +103,38 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
 
 
   const getActivityAnswer = (moduleId: number, activityId: number) => {
-  if (!student.attempts || student.attempts.length === 0) return null
+    if (!student.attempts || student.attempts.length === 0) return null
 
-  const activityAttempts: Activity[] = []
+    const activityAttempts: Activity[] = []
 
-  student.attempts.forEach((attempt) => {
-    attempt.modules?.forEach((module) => {
-      if (module.id === moduleId) {
-        module.activities?.forEach((activity) => {
-          if (activity.id === activityId || activity.activity_id === activityId) {
-            activityAttempts.push({
-              ...activity,
-              answer: activity.answer,
-              is_correct: activity.is_correct,
-              created_at: attempt.created_at,
-            })
-          }
-        })
-      }
+    student.attempts.forEach((attempt) => {
+      attempt.modules?.forEach((module) => {
+        if (module.id === moduleId) {
+          module.activities?.forEach((activity) => {
+            if (activity.id === activityId || activity.activity_id === activityId) {
+              activityAttempts.push({
+                ...activity,
+                answer: activity.answer,
+                is_correct: activity.is_correct,
+                created_at: attempt.created_at,
+              })
+            }
+          })
+        }
+      })
     })
-  })
 
-  if (activityAttempts.length === 0) return null
+    if (activityAttempts.length === 0) return null
 
-  activityAttempts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    activityAttempts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-  return {
-    lastAttempt: activityAttempts[0],
-    totalAttempts: activityAttempts.length,
-    correctAttempts: activityAttempts.filter((att) => att.is_correct).length,
-    hasCorrectAttempt: activityAttempts.some((att) => att.is_correct),
+    return {
+      lastAttempt: activityAttempts[0],
+      totalAttempts: activityAttempts.length,
+      correctAttempts: activityAttempts.filter((att) => att.is_correct).length,
+      hasCorrectAttempt: activityAttempts.some((att) => att.is_correct),
+    }
   }
-}
 
   const modules = getAllModules()
   const points = calculateStudentPoints()
@@ -162,7 +162,7 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
                 <>
                   <div className="text-end">
                     <p className="text-foreground text-lg font-semibold">{points}</p>
-                    <p className="text-muted-foreground text-sm">pontos</p>
+                    <p className="text-muted-foreground text-sm">Pontuação</p>
                   </div>
                   <ChevronDown className="ui-expanded:rotate-180 h-5 w-5 transition-all" />
                 </>
@@ -214,8 +214,11 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
 
                             <div className="flex-1">
                               <p className="text-sm">{activity.question}</p>
-                                aki
+                              <div className='flex flex-row justify-between'>
+                                <p className="text-sm">Resposta correta: {activity.correct_answer}</p>
+                                <p className="text-sm"> {activity.answer ? `Resposta do aluno: ${activity.answer}` : "Não respondida"} </p>
                               </div>
+                            </div>
 
                             <div>
                               {attemptInfo ? (

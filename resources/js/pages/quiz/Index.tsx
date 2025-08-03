@@ -124,8 +124,6 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
 function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const status = module.status!
-  const completedActivities = module.activities_completed!
-  const progressPercentage = (completedActivities / module.activities_count!) * 100
 
   const { color, baseColor, icon: IconComponent, gradientStart, name, description } = getConfig(module.type, module.operation)
 
@@ -254,24 +252,6 @@ function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
             </div>
           </motion.div>
         </motion.div>
-        <div className="mt-2 px-1 overflow-visible" style={{ gridArea: 'bar' }}>
-          <div className="flex items-center gap-3">
-            <div className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${!isInteractive ? 'opacity-50' : ''}`}>
-              <motion.div
-                className="h-full rounded-full"
-                style={{ background: cardColor }}
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 0.8, delay: index * 0.05, ease: "easeOut" }}
-              />
-            </div>
-            <div
-              className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${!isInteractive ? 'opacity-50' : ''}`}
-              style={{ backgroundColor: cardColor, color: textColor }}>
-              {completedActivities} de {module.activities_count}
-            </div>
-          </div>
-        </div>
       </div>
 
       {module.type === 'pre-test' && (
