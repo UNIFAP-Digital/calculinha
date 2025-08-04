@@ -63,12 +63,6 @@
 }
 
 @layer base {
-    html,
-    body,
-    #app {
-        height: 100%;
-    }
-
     * {
         @apply border-border outline-ring/50;
     }

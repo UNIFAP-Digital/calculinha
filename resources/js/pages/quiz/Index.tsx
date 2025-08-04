@@ -1,3 +1,4 @@
+import StudentLayout from '@/components/layouts/StudentLayout'
 import { AppLogo } from '@/components/ui/AppLogo'
 import {
   Attempt,
@@ -73,37 +74,23 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   }
 
   return (
-    <>
+    <StudentLayout>
       <Head title="Jogar" />
       <div className="min-h-screen grid place-items-center bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="lg:max-w-4xl px-4 py-8 md:py-12">
-          <div className="mb-12 flex items-center justify-between">
-            <motion.header
-              className="flex-1 text-center"
-              initial={{ opacity: 0.5, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}>
-              <div className="mb-4 flex justify-center">
-                <AppLogo iconSize="lg" textSize="xl" />
-              </div>
-              <p className="text-xl px-12 text-gray-600">
-                Complete cada módulo para desbloquear o próximo e avançar na sua
-                jornada de aprendizado.
-              </p>
-            </motion.header>
-
-            <motion.button
-              onClick={handleLogout}
-              className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              initial={{ opacity: 0.5, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}>
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Sair</span>
-            </motion.button>
-          </div>
+          <motion.header
+            className="text-center mb-12"
+            initial={{ opacity: 0.5, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}>
+            <div className="mb-4 flex justify-center">
+              <AppLogo iconSize="lg" textSize="xl" />
+            </div>
+            <p className="text-xl px-12 text-gray-600">
+              Complete cada módulo para desbloquear o próximo e avançar na sua
+              jornada de aprendizado.
+            </p>
+          </motion.header>
 
           <div>
             {attempt.modules.map((module, index) => (
@@ -117,7 +104,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
           </div>
         </div>
       </div>
-    </>
+    </StudentLayout>
   )
 }
 

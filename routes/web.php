@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Auth;
 
 Route::inertia('/', 'Welcome')->name('index');
 
+use App\Http\Controllers\Student\JoinRoomController;
+
 Route::middleware('auth:student')->group(function () {
     Route::get('/student/dashboard', function () {
         $student = Auth::user();
+
+        if (!$student->room) {
+            return redirect()->route('student.join-room.create');
+        }
 
         $lastAttempt = $student->attempts()->latest()->first();
 
@@ -23,9 +29,11 @@ Route::middleware('auth:student')->group(function () {
             return redirect()->route('quiz.index', ['room' => $lastAttempt->room_id]);
         }
 
-        return redirect()->route('index');
-
+        return redirect()->route('quiz.index', ['room' => $student->room_id]);
     })->name('student.dashboard');
+
+    Route::get('/student/join-room', [JoinRoomController::class, 'create'])->name('student.join-room.create');
+    Route::post('/student/join-room', [JoinRoomController::class, 'store'])->name('student.join-room.store');
 
     Route::controller(AttemptController::class)
         ->name('quiz.')
