@@ -1,11 +1,9 @@
 import Container from '@/components/Container'
 import RoomContent from '@/components/room/RoomContent'
 import RoomSelector from '@/components/room/RoomSelector'
-import { Button } from '@/components/ui/button'
 import { useRoomTabs } from '@/hooks/useRoomTabs'
 import { Room } from '@/models'
-import { Head, Link, router } from '@inertiajs/react'
-import { GroupIcon, Plus } from 'lucide-react'
+import { Head, router } from '@inertiajs/react'
 import { toast } from 'sonner'
 
 type RoomShowProps = {
@@ -15,6 +13,7 @@ type RoomShowProps = {
 
 export default function RoomShowPage({ rooms, currentRoom }: RoomShowProps) {
   const { setActiveTab, activeTab } = useRoomTabs()
+
 
   const handleCreate = () => {
     router.visit(route('rooms.create'))

@@ -1,3 +1,5 @@
+import StudentLayout from '@/components/layouts/StudentLayout'
+import { AppLogo } from '@/components/ui/AppLogo'
 import {
   Attempt,
   Module,
@@ -9,7 +11,7 @@ import {
 } from '@/models'
 import { isLightColor } from '@/utils/color'
 import { Head, router } from '@inertiajs/react'
-import { motion } from 'framer-motion'
+import {motion} from "motion/react"
 import {
   ArrowRight,
   Award,
@@ -21,11 +23,11 @@ import {
   LucideIcon,
   Minus,
   Plus,
-  RotateCcw, Star, // NOVO: Ícone para "Tentar Novamente"
+  RotateCcw, Star, 
   X,
-  XCircle, // NOVO: Ícone alternativo para "Reprovado"
 } from 'lucide-react'
 import { useState } from 'react'
+
 
 type CardConfig = {
   name: string
@@ -50,7 +52,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
     return (
       <>
         <Head title="Jogar" />
-        <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="flex min-h-screen items-center justify-center p-8 overflow-y-auto">
           <button
             onClick={handleLogout}
             className="absolute top-4 right-4 flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
@@ -72,41 +74,25 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
   }
 
   return (
-    <>
+    <StudentLayout>
       <Head title="Jogar" />
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          {/* Header com botão de logout */}
-          <div className="mb-12 flex items-center justify-between">
-            <motion.header
-              className="flex-1 text-center"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}>
-              <h1 className="mb-4 text-4xl font-extrabold text-gray-800 md:text-5xl">
-                Calculinha
-              </h1>
-              <p className="mx-auto max-w-2xl text-xl text-gray-600">
-                Complete cada módulo para desbloquear o próximo e avançar na sua
-                jornada de aprendizado.
-              </p>
-            </motion.header>
+      <div className="min-h-screen grid place-items-center bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="lg:max-w-4xl px-4 py-8 md:py-12">
+          <motion.header
+            className="text-center mb-12"
+            initial={{ opacity: 0.5, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}>
+            <div className="mb-4 flex justify-center">
+              <AppLogo iconSize="lg" textSize="xl" />
+            </div>
+            <p className="text-xl px-12 text-gray-600">
+              Complete cada módulo para desbloquear o próximo e avançar na sua
+              jornada de aprendizado.
+            </p>
+          </motion.header>
 
-            {/* Botão de logout */}
-            <motion.button
-              onClick={handleLogout}
-              className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}>
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Sair</span>
-            </motion.button>
-          </div>
-
-          <div className="mx-auto max-w-3xl">
+          <div>
             {attempt.modules.map((module, index) => (
               <ModuleIntroCard
                 key={module.id}
@@ -118,7 +104,154 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
           </div>
         </div>
       </div>
-    </>
+    </StudentLayout>
+  )
+}
+
+function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const status = module.status!
+
+  const { color, baseColor, icon: IconComponent, gradientStart, name, description } = getConfig(module.type, module.operation)
+
+  const isInteractive = status === 'current' || status === 'failed' || status === 'passed'
+
+  let cardColor = color
+  let cardGradientStart = gradientStart
+  let cardGradientEnd = baseColor
+  let textColor = isLightColor(baseColor) ? '#000000' : '#FFFFFF'
+
+  if (status === 'locked') {
+    cardColor = '#9CA3AF'
+    cardGradientStart = '#9CA3AF'
+    cardGradientEnd = '#6B7280'
+    textColor = '#FFFFFF'
+  } else if (status === 'failed') {
+    cardColor = '#FF8A80' 
+    cardGradientStart = '#FF8A80'
+    cardGradientEnd = '#FF5252' 
+    textColor = '#FFFFFF'
+  }
+
+  const StatusInfo = {
+    current: { icon: ArrowRight, text: 'Em andamento' },
+    locked: { icon: LockClosed, text: 'Bloqueado' },
+    passed: { icon: CheckCircle, text: 'Aprovado' },
+    failed: { icon: RotateCcw, text: 'Tente Novamente' },
+    completed: { icon: CheckCircle, text: 'Completado' }, 
+  }
+
+  const { icon: StatusIcon, text: statusText } = StatusInfo[status] || StatusInfo.completed;
+
+  const isExercise = module.type !== 'exercise'
+
+  return (
+    <motion.div
+      className={`mb-8 overflow-visible ${isExercise ? 'relative z-10' : ''}`}
+      initial={{ opacity: 0.3, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.4, ease: "easeOut" }}>
+      {module.type === 'post-test' && (
+        <div className="relative mt-12 mb-8">
+          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
+          <div className="relative flex justify-center">
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              AVALIAÇÃO FINAL
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div
+        className="mb-2 grid overflow-visible"
+        style={{
+          gridTemplateColumns: '70px 1fr',
+          gridTemplateAreas: `"number card" "______ bar"`,
+        }}>
+        <div
+          className="relative mr-4 self-center overflow-visible"
+          style={{ gridArea: 'number' }}>
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${status === 'locked' ? 'opacity-60' : ''
+              } ${status === 'passed' ? 'opacity-80' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
+            style={{
+              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
+              color: textColor,
+              boxShadow: isExercise ? '0 0 0 4px rgba(0,0,0,0.05)' : '0 4px 6px rgba(0,0,0,0.1)',
+            }}>
+            {index + 1}
+          </div>
+        </div>
+        <motion.div
+          className="flex-1 overflow-visible"
+          whileHover={{ scale: isInteractive ? 1.01 : 1 }}
+          onHoverStart={() => isInteractive && setIsHovered(true)}
+          onHoverEnd={() => isInteractive && setIsHovered(false)}
+          style={{ gridArea: 'card' }}
+          onClick={() => isInteractive && onClick(module.id)}>
+          <motion.div
+            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${!isInteractive ? 'cursor-not-allowed' : 'cursor-pointer'
+              } ${status === 'locked' ? 'opacity-70' : ''} ${status === 'passed' ? 'opacity-85' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
+            style={{
+              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
+              boxShadow: isExercise ? '0 8px 20px rgba(0,0,0,0.15)' : '0 4px 10px rgba(0,0,0,0.1)',
+            }}
+            whileTap={{ scale: isInteractive ? 0.99 : 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+
+            {(status === 'passed' || status === 'failed') && (
+              <div className={`pointer-events-none absolute inset-0 ${status === 'passed' ? 'bg-green-500/10' : 'bg-red-500/10'}`}></div>
+            )}
+
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')', backgroundSize: '30px 30px' }} />
+
+            <div className="flex items-center">
+              <div className="mr-4">
+                <FatIcon icon={IconComponent} color={baseColor} size={32} status={status} />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold" style={{ color: textColor }}>
+                  {module.name ?? name}
+                </h2>
+                <p className="text-sm opacity-90" style={{ color: textColor }}>
+                  {module.description ?? description}
+                </p>
+                <div
+                  className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                    color: textColor,
+                  }}>
+                  {statusText}
+                </div>
+                {(status === 'passed' || status === 'failed') && (
+                  <div className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2.5 py-1 text-xs font-semibold" style={{ color: textColor }}>
+                    <Star size={12} className="opacity-80 flex-shrink-0" />
+                    <span className="font-mono">{module?.score} / {module.activities_count}</span>
+                  </div>
+                )}
+              </div>
+              <motion.div
+                animate={{ x: isHovered && isInteractive ? 3 : 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+                <StatusIcon color={textColor} size={24} />
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {module.type === 'pre-test' && (
+        <div className="relative mt-12 mb-8">
+          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
+          <div className="relative flex justify-center">
+            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
+              OPERAÇÕES MATEMÁTICA
+            </span>
+          </div>
+        </div>
+      )}
+    </motion.div>
   )
 }
 
@@ -172,177 +305,6 @@ type ModuleIntroCardProps = {
   onClick: (moduleId: number) => void
 }
 
-function ModuleIntroCard({ module, index, onClick }: ModuleIntroCardProps) {
-
-  console.log('ModuleIntroCard', module);
-  const [isHovered, setIsHovered] = useState(false)
-  const status = module.status!
-  const completedActivities = module.activities_completed!
-  const progressPercentage = (completedActivities / module.activities_count!) * 100
-
-  const { color, baseColor, icon: IconComponent, gradientStart, name, description } = getConfig(module.type, module.operation)
-
-  const isInteractive = status === 'current' || status === 'failed' || status === 'passed'
-
-  // 2. Define cores e estilos com base no novo status.
-  let cardColor = color
-  let cardGradientStart = gradientStart
-  let cardGradientEnd = baseColor
-  let textColor = isLightColor(baseColor) ? '#000000' : '#FFFFFF'
-
-  if (status === 'locked') {
-    cardColor = '#9CA3AF'
-    cardGradientStart = '#9CA3AF'
-    cardGradientEnd = '#6B7280'
-    textColor = '#FFFFFF'
-  } else if (status === 'failed') {
-    // Cor avermelhada para indicar que precisa tentar novamente.
-    cardColor = '#FF8A80' // Light Red
-    cardGradientStart = '#FF8A80'
-    cardGradientEnd = '#FF5252' // Red
-    textColor = '#FFFFFF'
-  }
-
-  // 3. Define o ícone e o texto do status com base nos novos casos.
-  const StatusInfo = {
-    current: { icon: ArrowRight, text: 'Em andamento' },
-    locked: { icon: LockClosed, text: 'Bloqueado' },
-    passed: { icon: CheckCircle, text: 'Aprovado' },
-    failed: { icon: RotateCcw, text: 'Tente Novamente' },
-    completed: { icon: CheckCircle, text: 'Completado' }, // Fallback para status antigo
-  }
-  const { icon: StatusIcon, text: statusText } = StatusInfo[status] || StatusInfo.completed;
-
-  // -- FIM DAS ALTERAÇÕES --
-
-  const isExercise = module.type !== 'exercise'
-
-  return (
-    <motion.div
-      className={`mb-8 ${isExercise ? 'relative z-10' : ''}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}>
-      {module.type === 'post-test' && (
-        <div className="relative mt-12 mb-8">
-          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
-          <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
-              AVALIAÇÃO FINAL
-            </span>
-          </div>
-        </div>
-      )}
-
-      <div
-        className="mb-2 grid"
-        style={{
-          gridTemplateColumns: '70px 1fr',
-          gridTemplateAreas: `"number card" "______ bar"`,
-        }}>
-        <div
-          className="relative mr-4 self-center"
-          style={{ gridArea: 'number' }}>
-          <div
-            className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${status === 'locked' ? 'opacity-60' : ''
-              } ${status === 'passed' ? 'opacity-80' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
-            style={{
-              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              color: textColor,
-              boxShadow: isExercise ? '0 0 0 4px rgba(0,0,0,0.05)' : '0 4px 6px rgba(0,0,0,0.1)',
-            }}>
-            {index + 1}
-          </div>
-        </div>
-        <motion.div
-          className="flex-1"
-          whileHover={{ scale: isInteractive ? 1.02 : 1 }}
-          onHoverStart={() => isInteractive && setIsHovered(true)}
-          onHoverEnd={() => isInteractive && setIsHovered(false)}
-          style={{ gridArea: 'card' }}
-          onClick={() => isInteractive && onClick(module.id)}>
-          <motion.div
-            className={`relative overflow-hidden rounded-2xl p-5 shadow-lg ${!isInteractive ? 'cursor-not-allowed' : 'cursor-pointer'
-              } ${status === 'locked' ? 'opacity-70' : ''} ${status === 'passed' ? 'opacity-85' : ''} ${isExercise ? 'border-2 border-white' : ''}`}
-            style={{
-              background: `linear-gradient(135deg, ${cardGradientStart}, ${cardGradientEnd})`,
-              boxShadow: isExercise ? '0 8px 20px rgba(0,0,0,0.15)' : '0 4px 10px rgba(0,0,0,0.1)',
-            }}
-            whileTap={{ scale: isInteractive ? 0.98 : 1 }}>
-
-            {(status === 'passed' || status === 'failed') && (
-              <div className={`pointer-events-none absolute inset-0 ${status === 'passed' ? 'bg-green-500/10' : 'bg-red-500/10'}`}></div>
-            )}
-
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><circle cx="60" cy="20" r="3" fill="white"/><circle cx="20" cy="60" r="3" fill="white"/><circle cx="60" cy="60" r="3" fill="white"/><circle cx="40" cy="40" r="3" fill="white"/><circle cx="80" cy="40" r="3" fill="white"/><circle cx="40" cy="80" r="3" fill="white"/><circle cx="80" cy="80" r="3" fill="white"/></svg>\')', backgroundSize: '30px 30px' }} />
-
-            <div className="flex items-center">
-              <div className="mr-4">
-                <FatIcon icon={IconComponent} color={baseColor} size={32} status={status} />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold" style={{ color: textColor }}>
-                  {module.name ?? name}
-                </h2>
-                <p className="text-sm opacity-90" style={{ color: textColor }}>
-                  {module.description ?? description}
-                </p>
-                <div
-                  className="mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.3)',
-                    color: textColor,
-                  }}>
-                  {statusText}
-                </div>
-                {(status === 'passed' || status === 'failed') && (
-                  <div className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2.5 py-1 text-xs font-semibold" style={{ color: textColor }}>
-                    <Star size={12} className="opacity-80 flex-shrink-0" />
-                    <span className="font-mono">{module?.score} / {module.activities_count}</span>
-                  </div>
-                )}
-              </div>
-              <motion.div
-                animate={{ x: isHovered && isInteractive ? 5 : 0 }}
-                transition={{ type: 'spring', stiffness: 300 }}>
-                <StatusIcon color={textColor} size={24} />
-              </motion.div>
-            </div>
-          </motion.div>
-        </motion.div>
-        <div className="mt-2 px-1" style={{ gridArea: 'bar' }}>
-          <div className="flex items-center gap-3">
-            <div className={`h-3 flex-1 overflow-hidden rounded-full bg-gray-200 ${!isInteractive ? 'opacity-50' : ''}`}>
-              <motion.div
-                className="h-full rounded-full"
-                style={{ background: cardColor }}
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 1, delay: index * 0.1 }}
-              />
-            </div>
-            <div
-              className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${!isInteractive ? 'opacity-50' : ''}`}
-              style={{ backgroundColor: cardColor, color: textColor }}>
-              {completedActivities} de {module.activities_count}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {module.type === 'pre-test' && (
-        <div className="relative mt-12 mb-8">
-          <div className="absolute right-6 left-6 h-0.5 bg-gray-200"></div>
-          <div className="relative flex justify-center">
-            <span className="bg-gray-50 px-4 text-sm font-medium text-gray-500">
-              OPERAÇÕES MATEMÁTICA
-            </span>
-          </div>
-        </div>
-      )}
-    </motion.div>
-  )
-}
 
 type FatIconProps = {
   icon: LucideIcon
@@ -369,3 +331,4 @@ function FatIcon({ icon: Icon, color, size = 24, className = '', status = 'curre
     </div>
   )
 }
+

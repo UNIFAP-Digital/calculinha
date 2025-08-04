@@ -6,6 +6,7 @@ use App\Http\Resources\AttemptResource;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\RoomResource;
 use App\Http\Resources\StudentResource;
+use App\Http\Resources\AttemptModuleResource;
 use App\Models\Attempt;
 use App\Models\AttemptModule;
 use App\Models\Module;
@@ -41,25 +42,40 @@ class AttemptController extends Controller
             'student' => $user instanceof Student ? StudentResource::make($user) : null,
         ]);
     }
-
-    public function show(Room $room, int $moduleId)
+ public function show(Room $room, int $moduleId)
     {
         Gate::authorize('view', [Attempt::class, $room]);
         $user = Auth::user();
 
-        if ($user instanceof Student) {
-            $module = AttemptModule::findOrFail($moduleId);
-            $attempt = Attempt::current($room, $user);
-            $attempt->modules()->findOrFail($module->id);
-        } else {
-            $module = Module::findOrFail($moduleId);
-        }
+        $moduleData = null;
 
-        $module->load('activities');
+        if ($user instanceof Student) {
+            // Para alunos: $moduleId é o ID do AttemptModule
+            // Carregamos diretamente o AttemptModule com suas atividades
+            $attemptModule = AttemptModule::with([
+                'activities' => fn($query) => $query->orderBy('position'),
+                'activities.originalActivity' // Carrega a atividade original para acessar o conteúdo
+            ])->findOrFail($moduleId);
+
+            // Verificar se o AttemptModule pertence ao aluno atual
+            $attempt = Attempt::current($room, $user);
+            if ($attemptModule->attempt_id !== $attempt->id) {
+                abort(403, 'Este módulo não pertence à sua tentativa atual.');
+            }
+
+            // Usamos o AttemptModuleResource para garantir que os IDs corretos
+            // da tabela 'attempt_module_activities' sejam enviados para o frontend.
+            $moduleData = ModuleResource::make($attemptModule);
+
+        } else {
+            // Para professores/admins: $moduleId é o ID do Module original
+            $module = Module::with('activities')->findOrFail($moduleId);
+            $moduleData = ModuleResource::make($module);
+        }
 
         return Inertia::render('quiz/Show', [
             'room'    => RoomResource::make($room),
-            'module'  => ModuleResource::make($module),
+            'module'  => $moduleData, // Envia os dados formatados corretamente
             'student' => $user instanceof Student ? StudentResource::make($user) : null
         ]);
     }

@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useShakeAnimation } from '@/hooks/useShakeAnimation'
 import { cn } from '@/utils/ui'
 import confetti from 'canvas-confetti'
-import { motion } from 'motion/react'
+import motion from 'motion/react'
 import { SyntheticEvent } from 'react'
 
 const FEEDBACK_COLORS = {
@@ -31,17 +31,17 @@ interface OptionCardProps {
 const MotionCard = motion.create(Card)
 
 const solidColorMap = [
-  '#f97316', // orange-500
-  '#a855f7', // purple-500
-  '#10b981', // emerald-500
-  '#ef4444', // red-500
+  '#f97316', 
+  '#a855f7', 
+  '#10b981', 
+  '#ef4444', 
 ]
 
 const gradientMap = [
-  'linear-gradient(to bottom right, #f97316, #fb923c)', // orange gradient
-  'linear-gradient(to bottom right, #14b8a6, #2dd4bf)', // teal gradient
-  'linear-gradient(to bottom right, #6366f1, #818cf8)', // indigo gradient
-  'linear-gradient(to bottom right, #ec4899, #f472b6)', // pink gradient
+  'linear-gradient(to bottom right, #f97316, #fb923c)', 
+  'linear-gradient(to bottom right, #14b8a6, #2dd4bf)', 
+  'linear-gradient(to bottom right, #6366f1, #818cf8)', 
+  'linear-gradient(to bottom right, #ec4899, #f472b6)', 
 ]
 
 export function QuizOptionCard(props: OptionCardProps) {

@@ -3,11 +3,11 @@
 import { colorThemes } from '@/theme'
 import { Character, characters } from '@/utils/characters'
 import { Link } from '@inertiajs/react'
-import { motion } from 'framer-motion'
+import {motion} from "motion/react"
 import { Coins, Home, RotateCcw } from 'lucide-react'
 import { useMemo } from 'react'
+import { AppLogo } from '@/components/ui/AppLogo'
 
-// Mensagens sempre positivas e encorajadoras para crianças
 const FEEDBACK_MESSAGES = [
   'Parabéns!',
   'Muito bem!',
@@ -19,7 +19,6 @@ const FEEDBACK_MESSAGES = [
   'Você conseguiu!',
 ]
 
-// Chalk texture and effects components (from quiz game)
 const ChalkTextureFilter = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <defs>
@@ -85,7 +84,6 @@ const MathFloatingElements = () => {
   )
 }
 
-// Static character avatar
 function StaticCharacterAvatar({ character }: { character: Character }) {
   return (
     <div className="flex items-center justify-center">
@@ -116,16 +114,13 @@ export default function QuizResult({
   startGameAgain,
   module,
 }: QuizResultProps) {
-  // Get module theme (same as introduction and quiz game)
   const moduleName = module?.name || 'Adição'
   const moduleTheme =
     colorThemes.find((theme) => theme.name === moduleName) || colorThemes[0]
 
-  // Get character (same as introduction)
   const character =
     characters[module?.operation || 'addition'] || characters.addition
 
-  // Get random positive feedback message
   const feedbackMessage = useMemo(() => {
     return FEEDBACK_MESSAGES[
       Math.floor(Math.random() * FEEDBACK_MESSAGES.length)
@@ -136,7 +131,6 @@ export default function QuizResult({
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
-      {/* Background (same as quiz game) */}
       <div
         className="absolute inset-0"
         style={{
@@ -164,11 +158,13 @@ export default function QuizResult({
         <ChalkDust />
       </div>
 
-      {/* Main content - Fixed height layout */}
       <main className="relative z-10 flex h-full flex-col">
+        <div className="flex justify-center pt-4 pb-2">
+          <AppLogo iconSize="md" textSize="lg" variant="white" />
+        </div>
+        
         <div className="flex flex-1 flex-col items-center justify-center px-4 py-6">
           <div className="flex w-full max-w-lg flex-col items-center">
-            {/* 1. Title */}
             <div className="mb-6 text-center">
               <h1
                 className="text-3xl font-bold text-white drop-shadow-2xl sm:text-4xl md:text-5xl"
@@ -185,12 +181,10 @@ export default function QuizResult({
               </h1>
             </div>
 
-            {/* Character Avatar */}
             <div className="mb-6">
               <StaticCharacterAvatar character={character} />
             </div>
 
-            {/* 2. Acertos */}
             <div className="mb-6 text-center">
               <p
                 className="text-lg font-semibold text-white/90 drop-shadow-lg sm:text-xl"
@@ -204,7 +198,6 @@ export default function QuizResult({
               </p>
             </div>
 
-            {/* 3. Moedas */}
             <div className="mb-8 text-center">
               <div className="flex items-center justify-center gap-3">
                 <p
@@ -271,3 +264,5 @@ export default function QuizResult({
     </div>
   )
 }
+
+

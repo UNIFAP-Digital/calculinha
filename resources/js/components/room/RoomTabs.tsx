@@ -19,10 +19,10 @@ export default function RoomTabs({ room, setActiveTab, activeTab }: RoomTabsProp
           <span className="hidden sm:inline">Participantes</span>
           <span className="sm:hidden">Partic.</span>
         </TabsTrigger>
-        <TabsTrigger value="modules">
+        {/* <TabsTrigger value="modules">
           <Workflow className="mr-2 h-4 w-4" />
           <span className="inline">Trilhas</span>
-        </TabsTrigger>
+        </TabsTrigger> */}
       </TabsList>
 
       <TabsContent value="participants">
