@@ -3,13 +3,23 @@ import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Activity } from '@/models/activity'
 import { Head, router } from '@inertiajs/react'
-import { Plus } from 'lucide-react'
+import { Plus, ChevronDown } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import ActivityFormCard from '@/components/activity/ActivityFormCard'
 import ActivityList from '@/components/activity/ActivityList'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 
 interface ActivityManagementPageProps {
   activities: Activity[]
+}
+
+const operationLabels = {
+  addition: 'Adição',
+  subtraction: 'Subtração', 
+  multiplication: 'Multiplicação',
+  division: 'Divisão'
 }
 
 export default function ActivityManagementPage({
@@ -17,8 +27,7 @@ export default function ActivityManagementPage({
 }: ActivityManagementPageProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [isAdding, setIsAdding] = useState(false)
-
-  console.log('Activities:', activities);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   const filteredActivities = useMemo(() => {
     return activities.filter(
@@ -29,8 +38,26 @@ export default function ActivityManagementPage({
     )
   }, [activities, searchTerm])
 
+  const groupedActivities = useMemo(() => {
+    const groups: Record<string, Activity[]> = {}
+    filteredActivities.forEach(activity => {
+      if (!groups[activity.operation]) {
+        groups[activity.operation] = []
+      }
+      groups[activity.operation].push(activity)
+    })
+    return groups
+  }, [filteredActivities])
+
   const handleDelete = (activity: Activity) => {
     router.delete(route('activities.destroy', activity.id))
+  }
+
+  const toggleSection = (operation: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [operation]: !prev[operation]
+    }))
   }
 
   return (
@@ -64,14 +91,48 @@ export default function ActivityManagementPage({
             </div>
           </>
         }>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {isAdding && <ActivityFormCard onSaved={() => setIsAdding(false)} onCancel={() => setIsAdding(false)} />}
 
-          <ActivityList activities={filteredActivities} onDelete={handleDelete} />
+          {Object.entries(groupedActivities).map(([operation, operationActivities], index) => (
+            <Collapsible 
+              key={operation} 
+              open={openSections[operation]} 
+              onOpenChange={() => toggleSection(operation)}
+            >
+              <CollapsibleTrigger className="w-full">
+                <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="text-sm font-medium">
+                      {operationLabels[operation as keyof typeof operationLabels] || operation}
+                    </Badge>
+                    <span className="text-muted-foreground text-sm">
+                      {operationActivities.length} atividade{operationActivities.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openSections[operation] ? 'rotate-180' : ''}`} />
+                </div>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent className="pt-4">
+                <ActivityList activities={operationActivities} onDelete={handleDelete} />
+              </CollapsibleContent>
+              
+              {index < Object.entries(groupedActivities).length - 1 && (
+                <Separator className="my-6" />
+              )}
+            </Collapsible>
+          ))}
 
           {activities.length === 0 && !isAdding && (
             <div className="text-muted-foreground text-center">
-              {filteredActivities.length === 0 ? 'Nenhuma atividade disponível.' : `Nenhuma atividade encontrada para "${searchTerm}."`}
+              Nenhuma atividade disponível.
+            </div>
+          )}
+
+          {activities.length > 0 && filteredActivities.length === 0 && (
+            <div className="text-muted-foreground text-center">
+              Nenhuma atividade encontrada para "{searchTerm}".
             </div>
           )}
         </div>
@@ -79,3 +140,5 @@ export default function ActivityManagementPage({
     </>
   )
 }
+
+

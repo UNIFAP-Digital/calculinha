@@ -1,6 +1,3 @@
-# docker-compose.yml
-# Removido: version: '3.8' (obsoleto)
-
 services:
   # PHP-FPM Service for Laravel Application
   app:

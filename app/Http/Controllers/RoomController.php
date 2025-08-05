@@ -78,16 +78,11 @@ class RoomController extends Controller
     public function edit(Room $room)
     {
         $room->load('modules');
-
-        $modules = Auth
-            ::user()
-            ->modules()
-            ->union(Module::whereNull('owner_id'))
-            ->get();
+        $userModules = Auth::user()->modules()->withoutAllOperation()->get();
 
         return Inertia::render('room/Form', [
             'room'    => new RoomResource($room),
-            'modules' => ModuleResource::collection($modules)
+            'modules' => ModuleResource::collection($userModules)
         ]);
     }
 

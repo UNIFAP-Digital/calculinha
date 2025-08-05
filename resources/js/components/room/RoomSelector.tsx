@@ -18,7 +18,6 @@ interface RoomSelectorProps {
 export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate, className }: RoomSelectorProps) {
   return (
     <div className={cn('md:w-80', className)}>
-      {/* Mobile View */}
       <div className="flex flex-col gap-4 md:hidden">
         <Select
           onValueChange={(id) => {
@@ -50,7 +49,6 @@ export default function RoomSelector({ rooms, selectedRoomId, onSelect, onCreate
         </Button>
       </div>
 
-      {/* Desktop View */}
       <div className="hidden md:block">
         <div className="space-y-3">
           <CreateRoomCard onClick={onCreate} />

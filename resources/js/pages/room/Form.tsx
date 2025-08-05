@@ -24,11 +24,14 @@ export default function RoomFormPage({ room, modules }: RoomFormPageProps) {
   const requiredModules = 4
   const title = isEditing ? 'Editar Sala' : 'Adicionar Sala'
 
+  const effectiveRequiredModules = Math.min(requiredModules, modules.length);
+
   const { data, setData, errors, post, put, processing, reset } = useForm({
     name: '',
     is_active: true as boolean,
-    module_ids: [] as number[],
-  })
+    // Use o número efetivo para a seleção padrão.
+    module_ids: modules.slice(0, effectiveRequiredModules).map((module) => module.id),
+  });
 
   useEffect(() => {
     if (room) {
@@ -36,11 +39,15 @@ export default function RoomFormPage({ room, modules }: RoomFormPageProps) {
         name: room?.name ?? '',
         is_active: room?.is_active ?? true,
         module_ids: room?.modules?.map((module) => module.id) ?? [],
-      })
+      });
     } else {
-      reset()
+      reset('name', 'is_active');
+      setData(
+        'module_ids',
+        modules.slice(0, effectiveRequiredModules).map((module) => module.id),
+      );
     }
-  }, [room, reset, setData])
+  }, [room, effectiveRequiredModules]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
