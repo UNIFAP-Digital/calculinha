@@ -15,7 +15,6 @@ export default function VLibras() {
     script.onload = () => {
       new window.VLibras.Widget()
     }
-    console.log("VLIBRAS HERE")
     document.body.appendChild(script)
   }, [])
 

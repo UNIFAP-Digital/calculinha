@@ -17,7 +17,6 @@ function CSRFTokenUpdater() {
       const metaTag = document.querySelector('meta[name="csrf-token"]')
       if (metaTag && metaTag.getAttribute('content') !== csrfToken) {
         metaTag.setAttribute('content', csrfToken)
-        console.log('CSRF token updated:', csrfToken)
       }
     }
   }, [csrfToken])

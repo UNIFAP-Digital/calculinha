@@ -80,7 +80,6 @@ export default function ModuleFormPage({
   }, [activities, data.operation])
 
   const handleOperationChange = (value: string) => {
-    console.log(value)
     setData({
       ...data,
       operation: value,

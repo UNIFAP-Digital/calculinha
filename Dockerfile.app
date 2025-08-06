@@ -1,19 +1,8 @@
-# Dockerfile
+FROM php:8.3-fpm-alpine AS app_builder
 
-# Stage 1: PHP-FPM Application Builder (including frontend assets)
-# This stage builds the Laravel application and compiles frontend assets.
-FROM php:8.3-fpm-alpine as app_builder
-
-# Set the working directory inside the container
 WORKDIR /var/www/html
 
-# Install system dependencies required for Laravel and Node.js in production
-# - git: Still useful for some Composer operations or if you fetch packages directly
-# - unzip: For Composer to extract archives
-# - nodejs, npm: For building frontend assets with Vite
-# - postgresql-dev: For PostgreSQL development headers, required by pdo_pgsql extension
-# - pdo_pgsql: PHP extension for PostgreSQL
-# - postgresql-client: Required for pg_isready in entrypoint.sh
+
 RUN apk add --no-cache git unzip nodejs npm \
     postgresql-dev postgresql-client \
     && docker-php-ext-install pdo_pgsql
@@ -60,7 +49,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Stage 2: Final PHP-FPM Application Image
 # This stage creates the lean PHP-FPM image, copying only the necessary application files
-FROM php:8.3-fpm-alpine as app_final
+FROM php:8.3-fpm-alpine AS app_final
 
 # Set the working directory
 WORKDIR /var/www/html
@@ -91,7 +80,7 @@ CMD ["php-fpm"]
 
 # Stage 3: Nginx Service Image
 # This stage creates the Nginx image, responsible for serving static assets and proxying PHP requests
-FROM nginx:stable-alpine as nginx_final
+FROM nginx:stable-alpine AS nginx_final
 
 # Copy the compiled frontend assets from the 'app_builder' stage
 # This ensures Nginx serves the assets that were built within the Docker build process

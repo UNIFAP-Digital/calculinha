@@ -138,11 +138,7 @@ export function StudentRanking({ student, position: order }: StudentRankingProps
 
   const modules = getAllModules()
   const points = calculateStudentPoints()
-
-  console.log()
-
-  console.log()
-
+  
   return (
     <Collapsible className="overmodule-hidden rounded-lg border shadow-xs">
       <CollapsibleTrigger className="w-full" disabled={!hasPlayed()}>

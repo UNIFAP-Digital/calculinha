@@ -22,15 +22,9 @@ until pg_isready -h db -p 5432 -U ${DB_USERNAME}; do
 done
 echo "PostgreSQL is up and running!"
 
-# Executa as migrações do Laravel.
-# Alterado: migrate:fresh para migrate. Não apagamos dados de produção.
 echo "Running Laravel migrations..."
 php artisan migrate:fresh --seed --force
 
-# Nota: Se você precisar de seeding em produção, use php artisan migrate --seed --force
-# Se o seeding for feito, certifique-se de que os seeders são seguros para produção.
-
-# Limpa e faz cache das configurações para otimização de produção.
 echo "Optimizing Laravel configuration and routes..."
 php artisan optimize:clear
 php artisan config:cache

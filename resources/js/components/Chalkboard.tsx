@@ -60,7 +60,6 @@ function PlayButton({ colorTheme }: { colorTheme: (typeof colorThemes)[0] }) {
   const handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       setIsPressed(false)
-      console.log(`${colorTheme.name} button activated with keyboard`)
     }
   }
 

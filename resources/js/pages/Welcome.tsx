@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react'
 import { AppLogo } from '@/components/ui/AppLogo'
 
 export default function Welcome() {
+  console.log('versão 4.0');
   return (
     <>
       <Head title="Bem-vindo à Calculinha">
