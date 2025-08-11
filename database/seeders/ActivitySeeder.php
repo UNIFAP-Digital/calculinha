@@ -69,7 +69,7 @@ class ActivitySeeder extends Seeder
     {
         return [
             // APENAS OBJETOS
-            ["Resolva corretamente a subtração de 🏀🏀🏀🏀🏀🏀 n  – 🏀🏀= ?", "🏀🏀🏀🏀", ["🏀🏀🏀", "🏀🏀", "🏀"]],
+            ["Resolva corretamente a subtração de 🏀🏀🏀🏀🏀🏀 – 🏀🏀= ?", "🏀🏀🏀🏀", ["🏀🏀🏀", "🏀🏀", "🏀"]],
             ["Resolva corretamente a subtração de 🍿🍿🍿🍿🍿🍿 – 🍿🍿🍿= ?", "🍿🍿🍿", ["🍿🍿🍿🍿", "🍿🍿🍿🍿🍿", "🍿🍿"]],
             ["Resolva corretamente a subtração de 🛴🛴🛴🛴🛴🛴🛴 – 🛴🛴= ?", "🛴🛴🛴🛴🛴", ["🛴🛴🛴", "🛴🛴", "🛴"]],
             ["Resolva corretamente a subtração de 🏠🏠🏠🏠🏠🏠 – 🏠🏠= ?", "🏠🏠🏠🏠", ["🏠🏠", "🏠", "🏠🏠🏠🏠🏠"]],

@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\QuizCompletionController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware(['web', 'auth:student'])->name('api.')->group(function () {
+Route::middleware(['auth:student'])->name('api.')->group(function () {
     Route::post('/quiz/complete', [QuizCompletionController::class, 'store'])->name('quiz.complete');
 });
 
