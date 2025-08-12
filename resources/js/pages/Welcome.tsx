@@ -56,9 +56,9 @@ export default function Welcome() {
               </div>
               <div className="relative flex h-full w-full items-center justify-center">
                 <img 
-                  src="/material/math_elements.png" 
+                  src="/welcomeTeacher.png" 
                   alt="Elementos matemáticos" 
-                  className="h-2/3 w-2/3 object-contain opacity-30" 
+                  className="h-full w-full object-contain opacity-50" 
                 />
               </div>
             </div>
