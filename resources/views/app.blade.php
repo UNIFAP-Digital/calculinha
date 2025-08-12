@@ -38,17 +38,19 @@
       <div class="vw-plugin-top-wrapper"></div>
     </div>
   </div>
+  @inertia
   <script src="/app/vlibras-plugin.js"></script>
   <script>
-    new window.VLibras.Widget({
-      rootPath: "/app",
-      opacity: 1,
-      position: 'L',
-      avatar: 'random'
+    document.addEventListener('DOMContentLoaded', function() {
+      new window.VLibras.Widget({
+        rootPath: '/app',
+        opacity: 0.8,
+        position: 'L', 
+        avatar: 'random', 
+        width: 220,
+        height: 280
+      });
     });
   </script>
-  @inertia
-
 </body>
-
 </html>
