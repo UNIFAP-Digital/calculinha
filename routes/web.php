@@ -9,7 +9,7 @@ use App\Http\Controllers\RoomModuleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\Api\QuizCompletionController;
 
 Route::inertia('/', 'Welcome')->name('index');
 
@@ -26,6 +26,8 @@ Route::middleware('auth:student')->group(function () {
         return redirect()->route('index');
 
     })->name('student.dashboard');
+    
+    Route::post('/quiz/complete', [QuizCompletionController::class, 'store'])->name('quiz.complete');
 
     Route::controller(AttemptController::class)
         ->name('quiz.')

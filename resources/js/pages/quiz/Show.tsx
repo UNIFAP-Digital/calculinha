@@ -25,7 +25,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
     if (!isStudent || !state.matches('result')) return;
 
     try {
-      await httpPost(route('api.quiz.complete'), {
+      await httpPost(route('quiz.complete'), {
         room_id: room.id,
         attempt_module_id: module.id,
         score: state.context.hits,
