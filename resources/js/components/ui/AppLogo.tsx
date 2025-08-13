@@ -2,7 +2,7 @@ import { cn } from '@/utils/ui'
 
 interface AppLogoProps {
   className?: string
-  iconSize?: 'sm' | 'md' | 'lg'
+  iconSize?: 'sm' | 'md' | 'lg' | 'xl'
   textSize?: 'sm' | 'md' | 'lg' | 'xl'
   variant?: 'default' | 'white'
 }
@@ -16,14 +16,15 @@ export function AppLogo({
   const iconSizes = {
     sm: 'h-6 w-6',
     md: 'h-8 w-8', 
-    lg: 'h-10 w-10'
+    lg: 'h-10 w-10',
+    xl: 'h-14 w-14'
   }
 
   const textSizes = {
     sm: 'text-lg',
     md: 'text-xl',
     lg: 'text-2xl',
-    xl: 'text-3xl'
+    xl: 'text-4xl',
   }
 
   const textColor = variant === 'white' ? 'text-white' : 'text-blue-600 dark:text-blue-400'

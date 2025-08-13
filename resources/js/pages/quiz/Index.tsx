@@ -84,7 +84,7 @@ export default function QuizIndexPage({ room, attempt }: GameSelectPageProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}>
               <div className="mb-4 flex justify-center">
-                <AppLogo iconSize="lg" textSize="xl" />
+                <AppLogo iconSize="xl" textSize="xl" />
               </div>
               <p className="text-xl px-12 text-gray-600">
                 Complete cada módulo para desbloquear o próximo e avançar na sua
