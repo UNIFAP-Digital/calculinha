@@ -7,6 +7,7 @@ import {motion} from "motion/react"
 import { Coins, Home, RotateCcw } from 'lucide-react'
 import { useMemo } from 'react'
 import { AppLogo } from '@/components/ui/AppLogo'
+import { Module } from '@/models/module'
 
 const FEEDBACK_MESSAGES = [
   'Parabéns!',
@@ -104,7 +105,7 @@ interface QuizResultProps {
   score: number
   totalActivities: number
   startGameAgain: () => void
-  module?: { name?: string; operation?: string }
+  module: Module;
 }
 
 export default function QuizResult({
@@ -117,7 +118,6 @@ export default function QuizResult({
   const moduleName = module?.name || 'Adição'
   const moduleTheme =
     colorThemes.find((theme) => theme.name === moduleName) || colorThemes[0]
-
   const character =
     characters[module?.operation || 'addition'] || characters.addition
 

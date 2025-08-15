@@ -72,6 +72,7 @@ export default function QuizShowPage({ room, module }: QuizShowPageProps) {
       )}
       {state.matches('result') && (
         <QuizResult
+          module={module}
           roomId={room.id}
           score={state.context.hits}
           totalActivities={state.context.totalActivities}
