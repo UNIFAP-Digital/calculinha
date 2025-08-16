@@ -46,8 +46,8 @@ export default function Welcome() {
             buttonVariant="secondary"
             containerClassName="animate-fade-in-delay"
           >
-            <div className="relative aspect-square w-full overflow-hidden rounded-t-md bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-500">
-              <div className="absolute inset-0 flex items-center justify-center opacity-20">
+            <div className="relative aspect-square w-full overflow-hidden rounded-t-md ">
+              <div className="absolute inset-0 flex items-center justify-center opacity-80">
                 <span className="animate-wiggle absolute top-3 left-3 text-lg font-bold text-white/30">+</span>
                 <span className="animate-float absolute top-4 right-4 text-xl font-bold text-white/30">÷</span>
                 <span className="animate-bounce-slow absolute bottom-3 left-6 text-xl font-bold text-white/30">×</span>
@@ -58,7 +58,7 @@ export default function Welcome() {
                 <img 
                   src="/welcomeTeacher.png" 
                   alt="Elementos matemáticos" 
-                  className="h-full w-full object-contain opacity-50" 
+                  className="h-full w-full object-contain opacity-80" 
                 />
               </div>
             </div>
